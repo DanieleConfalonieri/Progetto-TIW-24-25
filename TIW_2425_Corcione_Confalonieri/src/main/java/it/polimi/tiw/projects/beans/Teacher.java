@@ -3,6 +3,7 @@ package it.polimi.tiw.projects.beans;
 public class Teacher {
 	private int id;
 	private String email;
+	private String name;
 	
 	public void setId(int id) {
 		this.id = id;
@@ -18,5 +19,13 @@ public class Teacher {
 	
 	public String getEmail() {
 		return email;
+	}
+	
+	public void setName(String name){
+		this.name = name;
+	}
+	
+	public String getName(){
+		return name;
 	}
 }

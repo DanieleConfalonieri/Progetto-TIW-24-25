@@ -67,6 +67,9 @@ public class CheckLogin extends HttpServlet {
 		String pwd = request.getParameter("pwd");
 		String role = request.getParameter("role");
 		
+		System.out.println("CheckLogin doPost");
+		System.out.println(user + pwd + role);
+		
 		if (user == null || user.isEmpty() || pwd == null || pwd.isEmpty() || role == null || role.isEmpty()) {
 			response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Missing parameters");
 			return;
@@ -82,16 +85,19 @@ public class CheckLogin extends HttpServlet {
 				t = tDAO.checkCredentials(user, pwd);
 			} catch (SQLException e) {
 				// throw new ServletException(e);
+				e.printStackTrace();
 				response.sendError(HttpServletResponse.SC_BAD_GATEWAY, "Failure in database credential checking");
 				return;
 			}
 			
 			if(t==null) {
 				// docente non presente nel db, non si puo' autenticare
+				System.out.println("Teacher non trovato");
 				path = path + "/index.html";
 			}
 			else {
 				request.getSession().setAttribute("user", t);
+				System.out.println("redirecting GoToHomeTeacher");
 				String target = "/GoToHomeTeacher";
 				path = path + target;
 			}
@@ -120,6 +126,15 @@ public class CheckLogin extends HttpServlet {
 		}
 		
 		response.sendRedirect(path);
+	}
+	
+	public void destroy() {
+		try {
+			if (connection != null) {
+				connection.close();
+			}
+		} catch (SQLException sqle) {
+		}
 	}
 
 }

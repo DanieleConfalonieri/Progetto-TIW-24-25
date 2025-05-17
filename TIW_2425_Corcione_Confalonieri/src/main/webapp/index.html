@@ -9,10 +9,10 @@
 	<h2>Corcione Raffaella, Confalonieri Daniele</h2>
 	<form action="CheckLogin"
 		method="POST">
-		username: <input type="text" name="username"> <br>
-		password: <input type="password" name="pwd"><br>
-		studente: <input type="radio" id="studente" name="role"><br>
-		docente: <input type="radio" id="docente" name="role"><br>
+		username: <input type="text" name="username" required> <br>
+		password: <input type="password" name="pwd" required><br>
+		studente: <input type="radio" id="studente" name="role" value="studente" required><br>
+		docente: <input type="radio" id="docente" name="role" value="docente" required><br>
 		<input type="submit" value="login">
 	</form>
 </body>

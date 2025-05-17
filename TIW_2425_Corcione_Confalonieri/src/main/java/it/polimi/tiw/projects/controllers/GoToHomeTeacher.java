@@ -73,6 +73,7 @@ public class GoToHomeTeacher extends HttpServlet {
 		HttpSession s = request.getSession();
 		Teacher t = (Teacher) s.getAttribute("user");
 		int id = t.getId();
+		System.out.println(t.getName());
 		List<Course> courses = null;
 		
 		CourseDAO cDao = new CourseDAO(connection);
@@ -86,7 +87,7 @@ public class GoToHomeTeacher extends HttpServlet {
 		String path = "/WEB-INF/HomeDocente.html";
 		JakartaServletWebApplication webApplication = JakartaServletWebApplication.buildApplication(getServletContext());
         WebContext ctx = new WebContext(webApplication.buildExchange(request, response), request.getLocale());
-        ctx.setVariable("projects", courses);
+        ctx.setVariable("courses", courses);
 		templateEngine.process(path, ctx, response.getWriter());
 	}
 

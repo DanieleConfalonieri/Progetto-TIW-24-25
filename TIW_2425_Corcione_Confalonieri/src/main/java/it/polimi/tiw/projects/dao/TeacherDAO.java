@@ -32,7 +32,8 @@ public class TeacherDAO {
 					result.next();
 					Teacher teacher = new Teacher();
 					teacher.setId(result.getInt("MatricolaDocente"));
-					teacher.setEmail(result.getString("email"));
+					teacher.setEmail(result.getString("Mail"));
+					teacher.setName(result.getString("Nome"));
 					return teacher;
 				}
 			}
