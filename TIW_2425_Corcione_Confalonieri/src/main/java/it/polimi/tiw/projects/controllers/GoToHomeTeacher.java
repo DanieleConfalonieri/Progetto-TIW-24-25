@@ -84,7 +84,7 @@ public class GoToHomeTeacher extends HttpServlet {
 			response.sendError(HttpServletResponse.SC_BAD_GATEWAY, "Failure in teacher's courses database extraction");
 			return;
 		}
-		String path = "/WEB-INF/HomeDocente.html";
+		String path = "/HomeDocente.html";
 		JakartaServletWebApplication webApplication = JakartaServletWebApplication.buildApplication(getServletContext());
         WebContext ctx = new WebContext(webApplication.buildExchange(request, response), request.getLocale());
         ctx.setVariable("courses", courses);

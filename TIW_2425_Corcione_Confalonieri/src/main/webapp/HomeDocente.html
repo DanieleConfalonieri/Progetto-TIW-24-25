@@ -17,9 +17,9 @@
 		</thead>
 		<tbody>
 			<tr th:each="course : ${courses}">
-			<td th:text="${course.code}">Nessun corso da vedere.</td>
-			<td th:text="${course.name}"> </td>
-			<td th:text="${course.teacher}"> </td>
+			<td th:text="${course.code}"> Nessun corso da vedere.</td>
+			<td th:text="${course.name}"></td>
+			<td><a th:href="@{/GoToExamsTeacher(course=${course.code},courseName=${course.name})}"> Vai al corso </a></td>
 			</tr>
 		</tbody>
 	</table>

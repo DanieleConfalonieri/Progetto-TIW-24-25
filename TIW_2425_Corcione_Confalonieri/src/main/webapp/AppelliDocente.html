@@ -8,16 +8,17 @@
 	<!-- <div align="right">
 		<a th:href="@{/Logout}">Logout</a>
 	</div> -->
-	<h1>Appelli per il corso</h1>
+	<h1>Appelli per il corso </h1>
+	<h1 th:text="${courseName}">nomecorso</h1>
 	<table> 
 		<thead>
-		 	<tr>Corsi:</tr> 
+		 	<tr>Appelli:</tr> 
 		</thead>
 		<tbody>
-			<tr th:each="course : ${courses}">
-			<td th:text="${course.code}">Nessun corso da vedere.</td>
-			<td th:text="${course.name}"> </td>
-			<td th:text="${course.teacher}"> </td>
+			<tr th:each="exam : ${exams}">
+			<td th:text="${exam.code}">Nessun appello da vedere.</td>
+			<td th:text="${exam.date}"> </td>
+			<td th:text="${exam.course}"> </td>
 			</tr>
 		</tbody>
 	</table>
