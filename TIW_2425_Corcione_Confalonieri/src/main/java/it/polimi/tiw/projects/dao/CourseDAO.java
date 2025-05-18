@@ -18,7 +18,7 @@ public class CourseDAO {
 	
 	public List<Course> getCoursesByTeacher (int teacherId) throws SQLException{
 		List<Course> courses = new ArrayList<Course>();
-		String query = "SELECT * FROM corso WHERE MatricolaDocente = ?";
+		String query = "SELECT * FROM corso WHERE MatricolaDocente = ? ORDER BY NomeCorso DESC";
 		try (PreparedStatement statement = connection.prepareStatement(query);) {
 			statement.setString(1, String.valueOf(teacherId));
 			try (ResultSet res = statement.executeQuery();) {

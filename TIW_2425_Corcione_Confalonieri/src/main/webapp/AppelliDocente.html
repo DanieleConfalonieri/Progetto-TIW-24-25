@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="ISO-8859-1">
+<title>AppelliDocente</title>
+</head>
+<body>
+	<!-- <div align="right">
+		<a th:href="@{/Logout}">Logout</a>
+	</div> -->
+	<h1>Appelli per il corso</h1>
+	<table> 
+		<thead>
+		 	<tr>Corsi:</tr> 
+		</thead>
+		<tbody>
+			<tr th:each="course : ${courses}">
+			<td th:text="${course.code}">Nessun corso da vedere.</td>
+			<td th:text="${course.name}"> </td>
+			<td th:text="${course.teacher}"> </td>
+			</tr>
+		</tbody>
+	</table>
+</body>
+</html>
