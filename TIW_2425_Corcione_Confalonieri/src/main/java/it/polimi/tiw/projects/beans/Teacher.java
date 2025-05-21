@@ -4,6 +4,8 @@ public class Teacher {
 	private int id;
 	private String email;
 	private String name;
+	private String surname;
+	//private String password;  ??? unsafe
 	
 	public void setId(int id) {
 		this.id = id;
@@ -27,5 +29,13 @@ public class Teacher {
 	
 	public String getName(){
 		return name;
+	}
+	
+	public void setSurname(String surname) {
+		this.surname = surname;
+	}
+	
+	public String getSurname() {
+		return surname;
 	}
 }

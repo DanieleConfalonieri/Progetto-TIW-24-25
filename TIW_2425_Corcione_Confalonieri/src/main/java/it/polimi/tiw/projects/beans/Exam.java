@@ -1,16 +1,16 @@
 package it.polimi.tiw.projects.beans;
 
 public class Exam {
-	private int code;
+	private int examCode;
 	private String date;
-	private int course;
+	private int courseCode;
 	
-	public void setCode(int code) {
-		this.code = code;
+	public void setCode(int examCode) {
+		this.examCode = examCode;
 	}
 	
 	public int getCode() {
-		return code;
+		return examCode;
 	}
 	
 	public void setDate(String date) {
@@ -21,11 +21,11 @@ public class Exam {
 		return date;
 	}
 	
-	public void setCourse(int course) {
-		this.course = course;
+	public void setCourse(int courseCode) {
+		this.courseCode = courseCode;
 	}
 	
 	public int getCourse() {
-		return course;
+		return courseCode;
 	}
 }
