@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="ISO-8859-1">
+<title>Home Studente</title>
+</head>
+<body>
+	<!-- <div align="right">
+		<a th:href="@{/Logout}">Logout</a>
+	</div> -->
+	<h1>Benvenuto nella home Studente</h1>
+	Nice to see you again
+	<span th:text="${session.user.name}">Nome</span><br>
+	<table> 
+		<thead>
+		 	<tr>Corsi:</tr> 
+		</thead>
+		<tbody>
+			<tr th:each="course : ${courses}">
+			<td th:text="${course.code}"> Nessun corso da vedere.</td>
+			<td th:text="${course.name}"></td>
+			<td><a th:href="@{/GoToExamsStudent(course=${course.code},courseName=${course.name})}"> Vai al corso </a></td>
+			</tr>
+		</tbody>
+	</table>
+</body>
+</html>
