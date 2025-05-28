@@ -3,14 +3,14 @@
 <head>
 <meta charset="ISO-8859-1">
 <title>Home Studente</title>
+<link rel="stylesheet" href=css/style.css>
 </head>
 <body>
 	<!-- <div align="right">
 		<a th:href="@{/Logout}">Logout</a>
 	</div> -->
-	<h1>Benvenuto nella home Studente</h1>
-	Nice to see you again
-	<span th:text="${session.user.name}">Nome</span><br>
+	<h1><span>Benvenuto nella home Studente</span>
+	<span th:text="${session.user.name}">Nome</span></h1>
 	<span th:if="${courses == null or #lists.isEmpty(courses)}">Nessun corso da vedere.</span>
 	<span>
 		<table> 
