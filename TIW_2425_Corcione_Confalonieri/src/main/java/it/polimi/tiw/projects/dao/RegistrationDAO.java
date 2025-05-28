@@ -88,4 +88,10 @@ public class RegistrationDAO {
 	public void refuseGrade(int examId) throws SQLException {
 		
 	}
+	
+	public List<Registration> reorder(List<Registration> list, String column){
+		
+		
+		return list;
+	}
 }

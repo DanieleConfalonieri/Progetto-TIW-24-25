@@ -151,7 +151,7 @@ CREATE TABLE `iscrizione` (
 
 LOCK TABLES `iscrizione` WRITE;
 /*!40000 ALTER TABLE `iscrizione` DISABLE KEYS */;
-INSERT INTO `iscrizione` VALUES (1, 215144, '30', 'INSERITO');
+INSERT INTO `iscrizione` VALUES (1, 215144, '30', 'INSERITO'),(1, 324434, '18', 'INSERITO');
 /*!40000 ALTER TABLE `iscrizione` ENABLE KEYS */;
 UNLOCK TABLES;
 
