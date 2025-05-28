@@ -5,6 +5,8 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 import it.polimi.tiw.projects.beans.Exam;
@@ -90,8 +92,74 @@ public class RegistrationDAO {
 	}
 	
 	public List<Registration> reorder(List<Registration> list, String column){
-		
-		
+		Comparator<Registration> comparator = getComparatorByGivenColumn(column);
+		int howIsSorted = isSorted(list, column, comparator);
+		if(howIsSorted == 0 || howIsSorted == 2) {
+			Collections.sort(list, comparator);
+		}
+		else if(howIsSorted == 1) {
+			Collections.sort(list, comparator.reversed());
+		}
+		else {
+			throw new RuntimeException("Error: something went wrong while reordering");
+		}
 		return list;
 	}
+	/**
+	 * This function is used to determine how, a given list of registrations, is ordered.
+	 * Returns: 0 if the list is not ordered, 1 if the list is ordered ascending and 2 if the list is ordered descending.
+	 * 
+	 * @return How the list is ordered
+	 */
+	public int isSorted(List<Registration> list, String column, Comparator<Registration> comparator) {
+		boolean isSortedAscending = true, isSortedDescending = true;
+		int len = list.size(), i;
+		for(i=0;i<len;i++) {
+			if(comparator.compare(list.get(i), list.get(i+1))>0) {
+				isSortedAscending = false;
+			}
+			if(comparator.compare(list.get(len-i-1), list.get(len-i-2))>0) {
+				isSortedDescending = false;
+			}
+		}
+		if(isSortedAscending) {
+			return 1;
+		}
+		else if(isSortedDescending) {
+			return 2;
+		}
+		else
+			return 0;
+	}
+
+
+	
+	public Comparator<Registration> getComparatorByGivenColumn(String column){
+		switch(column) {
+			case "Matricola" -> {
+				return Comparator.comparing(t -> t.getStudent().getId());
+			}
+			case "Email" -> {
+				return Comparator.comparing(t -> t.getStudent().getEmail());
+			}
+			case "Nome" -> {
+				return Comparator.comparing(t -> t.getStudent().getName());
+			}
+			case "Cognome" -> {
+				return Comparator.comparing(t -> t.getStudent().getSurname());
+			}
+			case "Degree" -> {
+				return Comparator.comparing(t -> t.getStudent().getDegree());
+			}
+			case "Grade" -> {
+				return Comparator.comparing(Registration::getGrade);
+			}
+			case "StatusGrade" -> {
+				return Comparator.comparing(Registration::getStatusGrade);
+			}
+			default -> {return null;}
+		}
+	}
+		
+	
 }

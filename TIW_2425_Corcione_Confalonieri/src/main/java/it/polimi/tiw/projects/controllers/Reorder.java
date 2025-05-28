@@ -17,6 +17,8 @@ import org.thymeleaf.templatemode.TemplateMode;
 import org.thymeleaf.templateresolver.WebApplicationTemplateResolver;
 import org.thymeleaf.web.servlet.JakartaServletWebApplication;
 
+import it.polimi.tiw.projects.dao.RegistrationDAO;
+
 /**
  * Servlet implementation class Reorder
  */
@@ -63,6 +65,9 @@ public class Reorder extends HttpServlet {
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		// colonna per cui ordinare, contenuto della tabella (lista di registration)
+		int courseId = Integer.parseInt(request.getParameter("listOfRegistrations"));
+		String courseName = request.getParameter("column");
+		RegistrationDAO regDao = new RegistrationDAO(connection);
 		
 	}
 

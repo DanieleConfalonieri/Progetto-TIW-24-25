@@ -21,13 +21,13 @@
 		<table> 
 			<thead>
 			 	<tr>
-			 		<td><a >Matricola</a></td>
-			 		<td><a >Cognome</a></td>
-			 		<td><a >Nome</a></td>
-			 		<td><a >Email</a></td>
-			 		<td><a >Corso di laurea</a></td>
-			 		<td><a >Voto</a></td>
-			 		<td><a >Stato</a></td>
+			 		<td><a th:href="@{/Reorder(listOfRegistrations = ${registrations}, column = 'Matricola'})}"> Matricola </a></td>
+			 		<td><a th:href="@{/Reorder(listOfRegistrations = ${registrations}, column = 'Cognome'})}"> Cognome </a></td>
+			 		<td><a th:href="@{/Reorder(listOfRegistrations = ${registrations}, column = 'Nome'})}"> Nome </a></td>
+			 		<td><a th:href="@{/Reorder(listOfRegistrations = ${registrations}, column = 'Email'})}"> Email </a></td>
+			 		<td><a th:href="@{/Reorder(listOfRegistrations = ${registrations}, column = 'Degree'})}"> Corso di Laurea </a></td>
+			 		<td><a th:href="@{/Reorder(listOfRegistrations = ${registrations}, column = 'Grade'})}"> Voto </a></td>
+			 		<td><a th:href="@{/Reorder(listOfRegistrations = ${registrations}, column = 'StatusGrade'})}"> Stato Voto </a></td>
 			 	</tr> 
 			</thead>
 			<tbody>
