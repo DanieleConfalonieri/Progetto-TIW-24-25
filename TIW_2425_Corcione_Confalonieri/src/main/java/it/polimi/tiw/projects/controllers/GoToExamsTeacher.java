@@ -77,9 +77,9 @@ public class GoToExamsTeacher extends HttpServlet {
 		String courseName = request.getParameter("courseName");
 		List<Exam> exams = new ArrayList<>();
 		
-		ExamDAO cDao = new ExamDAO(connection);
+		ExamDAO eDao = new ExamDAO(connection);
 		try {
-			exams = cDao.getExamsByCourse(courseId);
+			exams = eDao.getExamsByCourse(courseId);
 		}
 		catch (SQLException e) {
 			response.sendError(HttpServletResponse.SC_BAD_GATEWAY, "Failure in course's exams database extraction");

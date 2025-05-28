@@ -96,7 +96,7 @@ CREATE TABLE `docente` (
 
 LOCK TABLES `docente` WRITE;
 /*!40000 ALTER TABLE `docente` DISABLE KEYS */;
-INSERT INTO `docente` VALUES (100000, 'Piero', 'Fraternali', 'piero', 'passPiero'),(200000,'Stefano','Bregni','bregni','passBregni');
+INSERT INTO `docente` VALUES (100000,'Piero','Fraternali','piero','passPiero'),(200000,'Stefano','Bregni','bregni','passBregni'),(300000,'Daniele','Braga','braga','passBraga');
 /*!40000 ALTER TABLE `docente` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -151,6 +151,7 @@ CREATE TABLE `iscrizione` (
 
 LOCK TABLES `iscrizione` WRITE;
 /*!40000 ALTER TABLE `iscrizione` DISABLE KEYS */;
+INSERT INTO `iscrizione` VALUES (1, 215144, '30', 'INSERITO');
 /*!40000 ALTER TABLE `iscrizione` ENABLE KEYS */;
 UNLOCK TABLES;
 

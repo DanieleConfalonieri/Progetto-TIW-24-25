@@ -8,20 +8,26 @@
 	<!-- <div align="right">
 		<a th:href="@{/Logout}">Logout</a>
 	</div> -->
-	<h1>Benvenuto nella home Docente</h1>
-	Nice to see you again
-	<span th:text="${session.user.name}">Nome</span><br>
-	<table> 
-		<thead>
-		 	<tr>Corsi:</tr> 
-		</thead>
-		<tbody>
-			<tr th:each="course : ${courses}">
-			<td th:text="${course.code}"> Nessun corso da vedere.</td>
-			<td th:text="${course.name}"></td>
-			<td><a th:href="@{/GoToExamsTeacher(course=${course.code},courseName=${course.name})}"> Vai al corso </a></td>
-			</tr>
-		</tbody>
-	</table>
+	<h1><span>Benvenuto nella home Docente, </span>
+	<span th:text="${session.user.name}">Nome</span></h1>
+	<span th:if="${courses == null or #lists.isEmpty(courses)}">Nessun corso da vedere. </span>
+	<span th:unless="${courses == null or #lists.isEmpty(courses)}">
+		<table> 
+			<thead>
+			 	<tr>
+			 		<td>Codice corso</td>
+			 		<td>Nome corso</td>
+			 		<td>Vedi corso</td>
+			 	</tr> 
+			</thead>
+			<tbody>
+				<tr th:each="course : ${courses}">
+					<td th:text="${course.code}" />
+					<td th:text="${course.name}" />
+					<td><a th:href="@{/GoToExamsTeacher(course=${course.code},courseName=${course.name})}"> Vai al corso </a></td>
+				</tr>
+			</tbody>
+		</table>
+	</span>
 </body>
 </html>

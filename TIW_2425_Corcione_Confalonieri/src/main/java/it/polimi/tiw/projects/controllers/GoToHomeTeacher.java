@@ -73,7 +73,6 @@ public class GoToHomeTeacher extends HttpServlet {
 		HttpSession s = request.getSession();
 		Teacher t = (Teacher) s.getAttribute("user");
 		int id = t.getId();
-		System.out.println(t.getName());
 		List<Course> courses = null;
 		
 		CourseDAO cDao = new CourseDAO(connection);

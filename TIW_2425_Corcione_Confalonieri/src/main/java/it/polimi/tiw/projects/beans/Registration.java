@@ -30,7 +30,7 @@ public class Registration {
 			switch(intGrade) {
 				case 1 -> grade = "Assente";
 				case 2 -> grade = "Rimandato";
-				case 3 -> grade = "Assente";
+				case 3 -> grade = "Riprovato";
 				case 30 -> grade = "30L";
 				default -> grade = "";
 			}

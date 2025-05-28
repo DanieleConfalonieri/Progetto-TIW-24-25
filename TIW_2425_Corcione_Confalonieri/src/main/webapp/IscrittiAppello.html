@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="ISO-8859-1">
+<title>AppelliDocente</title>
+</head>
+<body>
+	<!-- <div align="right">
+		<a th:href="@{/Logout}">Logout</a>
+	</div> -->
+	<h1>Iscritti all'appello
+		<span th:text="${examId}">examId</span>
+		<span> in data </span>
+		<span th:text="${examDate}">examDate</span>
+		<span> del corso </span>
+		<span th:text="${courseName}">courseName</span>
+	</h1>
+	<span th:if="${registrations == null or #lists.isEmpty(registrations)}">Nessun iscritto per questo appello.</span>
+	<span th:unless="${registrations == null or #lists.isEmpty(registrations)}">
+		<table> 
+			<thead>
+			 	<tr>
+			 		<td><a >Matricola</a></td>
+			 		<td><a >Cognome</a></td>
+			 		<td><a >Nome</a></td>
+			 		<td><a >Email</a></td>
+			 		<td><a >Corso di laurea</a></td>
+			 		<td><a >Voto</a></td>
+			 		<td><a >Stato</a></td>
+			 	</tr> 
+			</thead>
+			<tbody>
+				<tr th:each="registration : ${registrations}">
+					<td th:text="${registration.student.id}"> </td>
+					<td th:text="${registration.Student.surname}"> </td>
+					<td th:text="${registration.Student.name}"> </td>
+					<td th:text="${registration.Student.email}"> </td>
+					<td th:text="${registration.Student.degree}"> </td>
+					<td th:text="${registration.grade}"> </td>
+					<td th:text="${registration.statusGrade}"> </td>
+				</tr>
+			</tbody>
+		</table>
+	</span>
+</body>
+</html>

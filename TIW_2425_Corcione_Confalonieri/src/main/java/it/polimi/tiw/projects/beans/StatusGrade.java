@@ -10,17 +10,17 @@ public enum StatusGrade {
 		this.value = value;
 	}
 	
-	public static StatusGrade getStatusGradeFromInt(int value) {
+	public static StatusGrade getStatusGradeFromString(String value) {
 		switch (value) {
-		case 0:
+		case "NON INSERITO":
 			return StatusGrade.NON_INSERITO;
-		case 1:
+		case "INSERITO":
 			return StatusGrade.INSERITO;
-		case 2:
+		case "PUBBLICATO":
 			return StatusGrade.PUBBLICATO;
-		case 3:
+		case "RIFIUTATO":
 			return StatusGrade.RIFIUTATO;
-		case 4:
+		case "VERBALIZZATO":
 			return StatusGrade.VERBALIZZATO;
 		}
 		return null;
