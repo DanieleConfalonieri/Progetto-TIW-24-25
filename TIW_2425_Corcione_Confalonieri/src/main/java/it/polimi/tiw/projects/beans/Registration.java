@@ -22,20 +22,10 @@ public class Registration {
 		return examCode;
 	}
 	
-	public void setGrade(int intGrade) {
-		if(intGrade >= 18 && intGrade <= 30) {
-			grade = Integer.toString(intGrade);
-		}
-		else {
-			switch(intGrade) {
-				case 1 -> grade = "Assente";
-				case 2 -> grade = "Rimandato";
-				case 3 -> grade = "Riprovato";
-				case 30 -> grade = "30L";
-				default -> grade = "";
-			}
-		}
+	public void setGrade(String grade) {
+		this.grade = grade;
 	}
+	
 	public String getGrade() {
 		return grade;
 	}

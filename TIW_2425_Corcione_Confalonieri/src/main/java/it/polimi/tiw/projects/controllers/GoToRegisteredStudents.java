@@ -76,13 +76,9 @@ public class GoToRegisteredStudents extends HttpServlet {
 		RegistrationDAO rDao = new RegistrationDAO(connection);
 		try {
 			registeredStudents = rDao.getStudentsByExam(examId);
-			for(int i=0; i<registeredStudents.size(); i++) {
-				System.out.println(registeredStudents.get(i).getStudent().getName());
-			}
 		}
 		catch (SQLException e) {
 			response.sendError(HttpServletResponse.SC_BAD_GATEWAY, "Failure in exam's registered students database extraction");
-			e.printStackTrace();
 			return;
 		}
 		String path = "/IscrittiAppello.html";

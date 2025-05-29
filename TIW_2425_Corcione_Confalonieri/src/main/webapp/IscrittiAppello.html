@@ -14,34 +14,88 @@
 		<span> in data </span>
 		<span th:text="${examDate}">examDate</span>
 		<span> del corso </span>
-		<span th:text="${courseName}">courseName</span>
+		<span th:text="${courseName}">courseId</span>
 	</h1>
-	<span th:if="${registrations == null or #lists.isEmpty(registrations)}">Nessun iscritto per questo appello.</span>
-	<span th:unless="${registrations == null or #lists.isEmpty(registrations)}">
-		<table> 
-			<thead>
-			 	<tr>
-			 		<td><a th:href="@{/Reorder(listOfRegistrations = ${registrations}, column = 'Matricola'})}"> Matricola </a></td>
-			 		<td><a th:href="@{/Reorder(listOfRegistrations = ${registrations}, column = 'Cognome'})}"> Cognome </a></td>
-			 		<td><a th:href="@{/Reorder(listOfRegistrations = ${registrations}, column = 'Nome'})}"> Nome </a></td>
-			 		<td><a th:href="@{/Reorder(listOfRegistrations = ${registrations}, column = 'Email'})}"> Email </a></td>
-			 		<td><a th:href="@{/Reorder(listOfRegistrations = ${registrations}, column = 'Degree'})}"> Corso di Laurea </a></td>
-			 		<td><a th:href="@{/Reorder(listOfRegistrations = ${registrations}, column = 'Grade'})}"> Voto </a></td>
-			 		<td><a th:href="@{/Reorder(listOfRegistrations = ${registrations}, column = 'StatusGrade'})}"> Stato Voto </a></td>
-			 	</tr> 
-			</thead>
-			<tbody>
-				<tr th:each="registration : ${registrations}">
-					<td th:text="${registration.student.id}"> </td>
-					<td th:text="${registration.Student.surname}"> </td>
-					<td th:text="${registration.Student.name}"> </td>
-					<td th:text="${registration.Student.email}"> </td>
-					<td th:text="${registration.Student.degree}"> </td>
-					<td th:text="${registration.grade}"> </td>
-					<td th:text="${registration.statusGrade}"> </td>
-				</tr>
-			</tbody>
-		</table>
-	</span>
+	<div th:if="${registrations == null or #lists.isEmpty(registrations)}">Nessun iscritto per questo appello.</div>
+	<div th:unless="${registrations == null or #lists.isEmpty(registrations)}">
+<!-- 		<table>  -->
+<!-- 			<thead> -->
+<!-- 			 	<tr> -->
+<!-- 			 		<td><a th:href="@{/Reorder(examId={$examId},order={$order},column=Matricola)}"> Matricola </a></td> -->
+<!-- 			 		<td><a th:href="@{/Reorder(examId={$examId},order={$order},column=Cognome)}"> Cognome </a></td> -->
+<!-- 			 		<td><a th:href="@{/Reorder(examId={$examId},order={$order},column=Nome)}"> Nome </a></td> -->
+<!-- 			 		<td><a th:href="@{/Reorder(examId={$examId},order={$order},column=Email)}"> Email </a></td> -->
+<!-- 			 		<td><a th:href="@{/Reorder(examId={$examId},order={$order},column=Degree)}"> Corso di Laurea </a></td> -->
+<!-- 			 		<td><a th:href="@{/Reorder(examId={$examId},order={$order},column=Grade)}"> Voto </a></td> -->
+<!-- 			 		<td><a th:href="@{/Reorder(examId={$examId},order={$order},column=StatusGrade)}"> Stato Voto </a></td> -->
+<!-- 			 	</tr>  -->
+<!-- 			</thead> -->
+<!-- 			<tbody> -->
+<!-- 				<tr th:each="registration : ${registrations}"> -->
+<!-- 					<td th:text="${registration.student.id}"> </td> -->
+<!-- 					<td th:text="${registration.Student.surname}"> </td> -->
+<!-- 					<td th:text="${registration.Student.name}"> </td> -->
+<!-- 					<td th:text="${registration.Student.email}"> </td> -->
+<!-- 					<td th:text="${registration.Student.degree}"> </td> -->
+<!-- 					<td th:text="${registration.grade}"> </td> -->
+<!-- 					<td th:text="${registration.statusGrade}"> </td> -->
+<!-- 				</tr> -->
+<!-- 			</tbody> -->
+<!-- 		</table> -->
+
+		<form method="GET" th:action="@{/Reorder}">
+			<input type="hidden" name="examId" th:value="${examId}" />
+		    <input type="hidden" name="data" th:value="${examDate}" />
+		    <input type="hidden" name="courseId" th:value="${courseName}" />
+			<table>
+				<thead>
+					<tr>
+						<th><button type="submit" name="sortField" value="Matricola">Matricola</button></th>
+						<th><button type="submit" name="sortField" value="Cognome">Cognome</button></th>
+						<th><button type="submit" name="sortField" value="Nome">Nome</button></th>
+						<th><button type="submit" name="sortField" value="Email">Email</button></th>
+						<th><button type="submit" name="sortField" value="Degree">Corso di Laurea</button></th>
+						<th><button type="submit" name="sortField" value="Grade">Voto</button></th>
+						<th><button type="submit" name="sortField" value="StatusGrade">Stato Voto</button></th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr th:each="registration, i : ${registrations}">
+						<td>
+							<span th:text="${registration.student.id}"></span>
+							<input type="hidden" th:name="'registrations['+${i.index}+'].student.id'" th:value="${registration.student.id}" />
+						</td>
+						<td>
+							<span th:text="${registration.student.surname}"></span>
+							<input type="hidden" th:name="'registrations['+${i.index}+'].student.surname'" th:value="${registration.student.surname}" />
+						</td>
+						<td>
+							<span th:text="${registration.student.name}"></span>
+							<input type="hidden" th:name="'registrations['+${i.index}+'].student.name'" th:value="${registration.student.name}" />
+						</td>
+						<td>
+							<span th:text="${registration.student.email}"></span>
+							<input type="hidden" th:name="'registrations['+${i.index}+'].student.email'" th:value="${registration.student.email}" />
+						</td>
+						<td>
+							<span th:text="${registration.student.degree}"></span>
+							<input type="hidden" th:name="'registrations['+${i.index}+'].student.degree'" th:value="${registration.student.degree}" />
+						</td>
+						<td>
+							<span th:text="${registration.grade}"></span>
+							<input type="hidden" th:name="'registrations['+${i.index}+'].grade'" th:value="${registration.grade}" />
+						</td>
+						<td>
+							<span th:text="${registration.statusGrade}"></span>
+							<input type="hidden" th:name="'registrations['+${i.index}+'].statusGrade'" th:value="${registration.statusGrade}" />
+						</td>
+<!-- 						<td> -->
+<!-- 							<a th:href="">MODIFICA</a> -->
+<!-- 						</td> -->
+					</tr>
+				</tbody>
+			</table>
+		</form>
+	</div>
 </body>
 </html>

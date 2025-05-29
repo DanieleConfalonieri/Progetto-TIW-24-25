@@ -41,7 +41,7 @@ public class RegistrationDAO {
 					Registration r = new Registration();
 					r.setStudent(s);
 					r.setExam(examId);
-					r.setGrade(res.getInt("Voto")); // ??
+					r.setGrade(res.getString("Voto"));
 					r.setStatusGrade(StatusGrade.getStatusGradeFromString(res.getString("StatoVoto")));
 					registered.add(r);
 				}
@@ -94,7 +94,7 @@ public class RegistrationDAO {
 	public List<Registration> reorder(List<Registration> list, String column){
 		Comparator<Registration> comparator = getComparatorByGivenColumn(column);
 		int howIsSorted = isSorted(list, column, comparator);
-		if(howIsSorted == 0 || howIsSorted == 2) {
+		if(howIsSorted==0 || howIsSorted==2) {
 			Collections.sort(list, comparator);
 		}
 		else if(howIsSorted == 1) {
@@ -115,10 +115,10 @@ public class RegistrationDAO {
 		boolean isSortedAscending = true, isSortedDescending = true;
 		int len = list.size(), i;
 		for(i=0;i<len;i++) {
-			if(comparator.compare(list.get(i), list.get(i+1))>0) {
+			if((i+1<len) && (comparator.compare(list.get(i), list.get(i+1))>0)) {
 				isSortedAscending = false;
 			}
-			if(comparator.compare(list.get(len-i-1), list.get(len-i-2))>0) {
+			if((len-i-2>0) && (comparator.compare(list.get(len-i-1), list.get(len-i-2))>0)) {
 				isSortedDescending = false;
 			}
 		}
