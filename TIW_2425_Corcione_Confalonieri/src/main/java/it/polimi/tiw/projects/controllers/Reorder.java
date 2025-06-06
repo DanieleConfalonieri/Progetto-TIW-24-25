@@ -39,7 +39,6 @@ public class Reorder extends HttpServlet {
      */
     public Reorder() {
         super();
-        // TODO Auto-generated constructor stub
     }
     
     public void init() throws ServletException {
@@ -111,6 +110,9 @@ public class Reorder extends HttpServlet {
 		JakartaServletWebApplication webApplication = JakartaServletWebApplication.buildApplication(getServletContext());
 		WebContext ctx = new WebContext(webApplication.buildExchange(request, response), request.getLocale());
 		ctx.setVariable("registrations", registrations);
+		for(int i1=0; i1<registrations.size(); i1++) {
+			System.out.println(registrations.get(i1).getStatusGrade());
+		}
 		ctx.setVariable("examId", examId);
 		ctx.setVariable("examDate", examDate);
         ctx.setVariable("courseName", courseId);

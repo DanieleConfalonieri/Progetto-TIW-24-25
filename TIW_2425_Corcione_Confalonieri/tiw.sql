@@ -151,7 +151,7 @@ CREATE TABLE `iscrizione` (
 
 LOCK TABLES `iscrizione` WRITE;
 /*!40000 ALTER TABLE `iscrizione` DISABLE KEYS */;
-INSERT INTO `iscrizione` VALUES (1, 215144, '30', 'INSERITO'),(1, 324434, '18', 'INSERITO'),(1, 133442, 'ASSENTE', 'INSERITO');
+INSERT INTO `iscrizione` VALUES (1, 215144, '30', 'INSERITO'),(1, 324434, '18', 'INSERITO'),(1, 133442, 'ASSENTE', 'INSERITO'),(1, 979789, null, 'NON INSERITO');
 /*!40000 ALTER TABLE `iscrizione` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -180,7 +180,7 @@ CREATE TABLE `studente` (
 
 LOCK TABLES `studente` WRITE;
 /*!40000 ALTER TABLE `studente` DISABLE KEYS */;
-INSERT INTO `studente` VALUES (215144, 'Raffaella', 'Corcione', 'raffa', 'passRaf', 'IngInf'),(324434, 'Franco', 'Jonny', 'franco', 'passFranco', 'IngInf'),(133442, 'Anneo', 'Seneca', 'seneca', 'apokolokyntosis', 'NaturalesQuaestiones');
+INSERT INTO `studente` VALUES (215144, 'Raffaella', 'Corcione', 'raffa', 'passRaf', 'IngInf'),(324434, 'Franco', 'Jonny', 'franco', 'passFranco', 'IngInf'),(133442, 'Anneo', 'Seneca', 'seneca', 'apokolokyntosis', 'NaturalesQuaestiones'),(979789, 'Daniele', 'Confalonieri', 'dani', 'passDani', 'IngInf');
 /*!40000 ALTER TABLE `studente` ENABLE KEYS */;
 UNLOCK TABLES;
 

@@ -5,6 +5,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
@@ -152,7 +153,19 @@ public class RegistrationDAO {
 				return Comparator.comparing(t -> t.getStudent().getDegree());
 			}
 			case "Grade" -> {
-				return Comparator.comparing(Registration::getGrade);
+				//return Comparator.comparing(Registration::getGrade);
+				return new Comparator<Registration>() {
+					public int compare(Registration r1, Registration r2) {
+						List grades = Arrays.asList("null", "ASSENTE", "RIMANDATO", "RIPROVATO", "18", "19", "20", "21", "22", "23", "24", "25", "26", "27", "28", "29", "30", "30L");
+						String g1 = r1.getGrade();
+						String g2 = r2.getGrade();
+						if(g1.isEmpty() || g1==null) return -1;
+						if(g2.isEmpty() || g2==null) return 1;
+						if(grades.indexOf(g1) < grades.indexOf(g2)) return -1;
+						else if(grades.indexOf(g1) > grades.indexOf(g2)) return 1;
+						else return 0;
+					}
+				};
 			}
 			case "StatusGrade" -> {
 				return Comparator.comparing(Registration::getStatusGrade);
