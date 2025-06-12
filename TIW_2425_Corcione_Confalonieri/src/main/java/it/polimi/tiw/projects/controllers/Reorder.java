@@ -72,7 +72,7 @@ public class Reorder extends HttpServlet {
 		String col = request.getParameter("sortField");
 		int examId = Integer.parseInt(request.getParameter("examId"));
 		String examDate = request.getParameter("data");
-		int courseId = Integer.parseInt(request.getParameter("courseId"));
+		String courseName = request.getParameter("courseName");
 		RegistrationDAO regDao = new RegistrationDAO(connection);
 		List<Registration> registrations = new ArrayList<>();
 		int i = 0;
@@ -110,12 +110,9 @@ public class Reorder extends HttpServlet {
 		JakartaServletWebApplication webApplication = JakartaServletWebApplication.buildApplication(getServletContext());
 		WebContext ctx = new WebContext(webApplication.buildExchange(request, response), request.getLocale());
 		ctx.setVariable("registrations", registrations);
-		for(int i1=0; i1<registrations.size(); i1++) {
-			System.out.println(registrations.get(i1).getStatusGrade());
-		}
 		ctx.setVariable("examId", examId);
 		ctx.setVariable("examDate", examDate);
-        ctx.setVariable("courseName", courseId);
+        ctx.setVariable("courseName", courseName);
 		String path = "/IscrittiAppello.html";
 		templateEngine.process(path, ctx, response.getWriter());
 	}
@@ -124,8 +121,15 @@ public class Reorder extends HttpServlet {
 	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)
 	 */
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		// TODO Auto-generated method stub
 		doGet(request, response);
 	}
 
+	public void destroy() {
+		try {
+			if (connection != null) {
+				connection.close();
+			}
+		} catch (SQLException sqle) {
+		}
+	}
 }

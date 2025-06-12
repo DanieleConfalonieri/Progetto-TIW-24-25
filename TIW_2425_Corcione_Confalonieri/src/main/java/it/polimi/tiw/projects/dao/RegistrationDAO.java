@@ -23,6 +23,38 @@ public class RegistrationDAO {
 	}
 	
 	/*
+	 * dato il codice di un appello e la matricola di uno studente, ritorna l'iscrizione associata.
+	 * Se non è presente alcuna iscrizione dello studente per l'appello, ritorna null
+	 */
+	public Registration getRegistration(int examId, int studId) throws SQLException{
+		Registration result = new Registration();
+		String query = "SELECT * FROM iscrizione JOIN studente ON studente.MatricolaStudente=iscrizione.MatricolaStudente WHERE CodiceAppello = ? and studente.MatricolaStudente = ?";
+		try (PreparedStatement statement = connection.prepareStatement(query)) {
+			statement.setInt(1, examId);
+			statement.setInt(2, studId);
+			try(ResultSet res = statement.executeQuery()){
+				if(res.next()) {
+					Student s = new Student();
+					s.setId(res.getInt("MatricolaStudente"));
+					s.setName(res.getString("Nome"));
+					s.setSurname(res.getString("Cognome"));
+					s.setEmail(res.getString("Mail"));
+					s.setDegree(res.getString("CorsoLaurea"));
+					result.setStudent(s);
+					result.setExamCode(examId);
+					result.setGrade(res.getString("Voto"));
+					result.setStatusGrade(StatusGrade.getStatusGradeFromString(res.getString("StatoVoto")));
+				}
+				else {
+					result = null;
+				}
+			}
+		}
+		
+		return result;
+	}
+	
+	/*
 	 * ritorna lista di studenti iscritti all'appello identificato dal codice examId.
 	 * usato dal docente per vedere gli iscritti ad un appello.
 	 */
@@ -41,7 +73,7 @@ public class RegistrationDAO {
 					s.setDegree(res.getString("CorsoLaurea"));
 					Registration r = new Registration();
 					r.setStudent(s);
-					r.setExam(examId);
+					r.setExamCode(examId);
 					r.setGrade(res.getString("Voto"));
 					r.setStatusGrade(StatusGrade.getStatusGradeFromString(res.getString("StatoVoto")));
 					registered.add(r);
@@ -62,15 +94,19 @@ public class RegistrationDAO {
 	
 	/*
 	 * permette ad un docente di inserire o modificare il voto di uno studente per un determinato appello.
-	 * non restituisce niente, ma ricarica la pagina con la valutazione nuova.
 	 */
-	public void updateGradeByStudentExam(StatusGrade grade, int studId, int examId) throws SQLException {
-		
+	public void updateGrade(String grade, int studId, int examId) throws SQLException {
+		String query = "update iscrizione set Voto = ?, StatoVoto = 'INSERITO' where CodiceAppello = ? and MatricolaStudente = ?";
+		try (PreparedStatement statement = connection.prepareStatement(query)){
+			statement.setString(1, grade);
+			statement.setInt(2, examId);
+			statement.setInt(3, studId);
+			statement.execute();
+		}
 	}
 	
 	/*
 	 * pubblica i voti nello stato INSERITO.
-	 * ricarica la pagina degli ISCRITTI.
 	 */
 	public void publishInsertedGrades(int examId) throws SQLException {
 		
@@ -78,7 +114,7 @@ public class RegistrationDAO {
 	
 	/*
 	 * verbalizza i voti nello stato PUBBLICATO.
-	 * crea un verbale (visualizzabile in qualche modo subito) e ricarica la pagina ISCRITTI.
+	 * crea un verbale (visualizzabile in qualche modo subito).
 	 */
 	public void registerPublishedGrades(int examId) throws SQLException {
 		
@@ -106,6 +142,7 @@ public class RegistrationDAO {
 		}
 		return list;
 	}
+	
 	/**
 	 * This function is used to determine how, a given list of registrations, is ordered.
 	 * Returns: 0 if the list is not ordered, 1 if the list is ordered ascending and 2 if the list is ordered descending.

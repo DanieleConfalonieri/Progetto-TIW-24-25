@@ -14,11 +14,11 @@ public class Registration {
 		return student;
 	}
 	
-	public void setExam(int examCode) {
+	public void setExamCode(int examCode) {
 		this.examCode = examCode;
 	}
 	
-	public int getExam() {
+	public int getExamCode() {
 		return examCode;
 	}
 	

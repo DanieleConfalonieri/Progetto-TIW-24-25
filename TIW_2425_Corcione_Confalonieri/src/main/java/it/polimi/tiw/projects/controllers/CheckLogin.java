@@ -82,7 +82,6 @@ public class CheckLogin extends HttpServlet {
 				t = tDAO.checkCredentials(user, pwd);
 			} catch (SQLException e) {
 				// throw new ServletException(e);
-				e.printStackTrace();
 				response.sendError(HttpServletResponse.SC_BAD_GATEWAY, "Failure in database credential checking");
 				return;
 			}

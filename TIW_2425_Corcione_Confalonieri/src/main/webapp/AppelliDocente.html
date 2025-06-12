@@ -29,7 +29,7 @@
 				<td th:text="${exam.code}"> </td>
 				<td th:text="${exam.date}"> </td>
 				<td th:text="${exam.course}"> </td>
-				<td><a th:href="@{/GoToRegisteredStudents(examId=${exam.code},examDate=${exam.date},courseName=${exam.course})}"> Vai agli iscritti </a></td>
+				<td><a th:href="@{/GoToRegisteredStudents(examId=${exam.code},examDate=${exam.date},courseName=${courseName})}"> Vai agli iscritti </a></td>
 				</tr>
 			</tbody>
 		</table>

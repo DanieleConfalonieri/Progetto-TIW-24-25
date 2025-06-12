@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="ISO-8859-1">
+<title>Modifica voto</title>
+<link rel="stylesheet" href=css/style.css>
+</head>
+<body>
+	<h1>Modifica del voto per lo studente
+		<span th:text="${registration.student.id}">studId</span>
+		<span> per l'appello </span>
+		<span th:text="${registration.examCode}">examId</span>
+	</h1>
+	<form method="GET" th:action="@{/UpdateGrade}">
+			<input type="hidden" name="examId" th:value="${registration.examCode}" />
+		    <input type="hidden" name="studId" th:value="${registration.student.id}" />
+		    <span th:text="${registration.student.id}">Matricola</span>
+		    <span th:text="${registration.student.name}">Nome</span>
+		    <span th:text="${registration.student.surname}">Cognome</span>
+		    <span th:text="${registration.student.email}">Email</span>
+		    <span th:text="${registration.student.degree}">Corso di laurea</span>
+		    
+		    <input type="text" th:name="newGrade" th:value="${registration.grade}" />
+		    
+		    <span th:text="${registration.statusGrade}">Stato attuale</span>
+	</form>
+</body>
+</html>

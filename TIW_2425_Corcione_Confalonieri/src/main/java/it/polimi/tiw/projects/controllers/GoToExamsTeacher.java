@@ -101,4 +101,12 @@ public class GoToExamsTeacher extends HttpServlet {
 		doGet(request, response);
 	}
 
+	public void destroy() {
+		try {
+			if (connection != null) {
+				connection.close();
+			}
+		} catch (SQLException sqle) {
+		}
+	}
 }

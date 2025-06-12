@@ -16,6 +16,34 @@ public class ExamDAO {
 		this.connection = con;
 	}
 	
+	public String getExamDate(int examId) throws SQLException {
+		String data = null;
+		String query = "SELECT DataAppello FROM appello WHERE CodiceAppello = ?";
+		try(PreparedStatement statement = connection.prepareStatement(query)){
+			statement.setInt(1, examId);
+			try(ResultSet res = statement.executeQuery()){
+				if(res.next()) {
+					data = res.getString("DataAppello");
+				}
+			}
+		}
+		return data;
+	}
+	
+	public String getCourseName(int examId) throws SQLException {
+		String corso = null;
+		String query = "SELECT NomeCorso FROM appello join corso on appello.CodiceCorso = corso.CodiceCorso WHERE CodiceAppello = ?";
+		try(PreparedStatement statement = connection.prepareStatement(query)){
+			statement.setInt(1, examId);
+			try(ResultSet res = statement.executeQuery()){
+				if(res.next()) {
+					corso = res.getString("NomeCorso");
+				}
+			}
+		}
+		return corso;
+	}
+	
 	public List<Exam> getExamsByCourse(int courseId) throws SQLException{
 		List<Exam> exams = new ArrayList<>();
 		String query = "SELECT * FROM appello WHERE CodiceCorso=? ORDER BY DataAppello DESC";
