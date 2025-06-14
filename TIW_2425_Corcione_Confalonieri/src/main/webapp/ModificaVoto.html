@@ -12,17 +12,15 @@
 		<span th:text="${registration.examCode}">examId</span>
 	</h1>
 	<form method="GET" th:action="@{/UpdateGrade}">
-			<input type="hidden" name="examId" th:value="${registration.examCode}" />
-		    <input type="hidden" name="studId" th:value="${registration.student.id}" />
-		    <span th:text="${registration.student.id}">Matricola</span>
-		    <span th:text="${registration.student.name}">Nome</span>
-		    <span th:text="${registration.student.surname}">Cognome</span>
-		    <span th:text="${registration.student.email}">Email</span>
-		    <span th:text="${registration.student.degree}">Corso di laurea</span>
-		    
-		    <input type="text" th:name="newGrade" th:value="${registration.grade}" />
-		    
-		    <span th:text="${registration.statusGrade}">Stato attuale</span>
+			<input type="hidden" name="examId" th:value="${registration.examCode}" /> <br>
+		    <input type="hidden" name="studId" th:value="${registration.student.id}" /> <br>
+		    <span th:text="'Matricola: ' + ${registration.student.id}">Matricola</span> <br>
+		    <span th:text="${'Nome: ' + registration.student.name}">Nome</span> <br>
+		    <span th:text="${'Cognome: ' + registration.student.surname}">Cognome</span> <br>
+		    <span th:text="${'Email: ' + registration.student.email}">Email</span> <br>
+		    <span th:text="${'Corso di laurea: ' + registration.student.degree}">Corso di laurea</span> <br>
+		    <input type="text" th:name="newGrade" th:value="${registration.grade}" /> <br>
+		    <span th:text="${'Stato attuale: ' + registration.statusGrade}">Stato attuale</span> <br>
 	</form>
 </body>
 </html>

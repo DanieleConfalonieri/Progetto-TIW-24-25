@@ -15,10 +15,12 @@ import java.util.Arrays;
 import java.util.List;
 
 import org.thymeleaf.TemplateEngine;
+import org.thymeleaf.context.WebContext;
 import org.thymeleaf.templatemode.TemplateMode;
 import org.thymeleaf.templateresolver.WebApplicationTemplateResolver;
 import org.thymeleaf.web.servlet.JakartaServletWebApplication;
 
+import it.polimi.tiw.projects.beans.Registration;
 import it.polimi.tiw.projects.dao.ExamDAO;
 import it.polimi.tiw.projects.dao.RegistrationDAO;
 
@@ -73,7 +75,7 @@ public class UpdateGrade extends HttpServlet {
 	 */
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		String path = getServletContext().getContextPath();
-		int examId, studId;
+		int examId = 0, studId = 0;
 		String newGrade = null;
 		try {
 			examId = Integer.parseInt(request.getParameter("examId"));
@@ -81,8 +83,8 @@ public class UpdateGrade extends HttpServlet {
 			newGrade = request.getParameter("newGrade");
 			List grades = Arrays.asList("null", "ASSENTE", "RIMANDATO", "RIPROVATO", "18", "19", "20", "21", "22", "23", "24", "25", "26", "27", "28", "29", "30", "30L");
 			newGrade = newGrade.toUpperCase();
+			RegistrationDAO rDao = new RegistrationDAO(connection);
 			if(grades.contains(newGrade)) {
-				RegistrationDAO rDao = new RegistrationDAO(connection);
 				try {
 					rDao.updateGrade(newGrade, studId, examId); // non necessita di gestione transazioni perchè è un solo comando SQL atomico
 					// mi servono: examId che ho già, examDate, courseName
@@ -93,16 +95,15 @@ public class UpdateGrade extends HttpServlet {
 				}
 				catch (SQLException e) {
 					response.sendError(HttpServletResponse.SC_BAD_GATEWAY, "Failure in grade database update");
-					e.printStackTrace();
 					return;
 				}
 			}
 			else {
-				path = path + "/ModificaVoto.html"; // aggiungere parametri
+				path = path + "/GoToUpdate?examId=" + examId + "&studId=" + studId;
 			}
 		}
 		catch (NumberFormatException e) {
-			path = path + "/ModificaVoto.html";
+			path = path + "/GoToUpdate?examId=" + examId + "&studId=" + studId;
 		}
 		
 		// form feedback pattern - servlet-to-client-to-server
