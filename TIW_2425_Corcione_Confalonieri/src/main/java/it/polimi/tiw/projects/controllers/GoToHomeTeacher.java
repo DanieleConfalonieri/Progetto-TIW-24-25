@@ -23,6 +23,7 @@ import org.thymeleaf.web.servlet.JakartaServletWebApplication;
 
 import it.polimi.tiw.projects.beans.Course;
 import it.polimi.tiw.projects.beans.Teacher;
+import it.polimi.tiw.projects.dao.AttendanceDAO;
 import it.polimi.tiw.projects.dao.CourseDAO;
 
 /**
@@ -80,7 +81,7 @@ public class GoToHomeTeacher extends HttpServlet {
 			courses = cDao.getCoursesByTeacher(id);
 		}
 		catch (SQLException e) {
-			response.sendError(HttpServletResponse.SC_BAD_GATEWAY, "Failure in teacher's courses database extraction");
+			response.sendError(HttpServletResponse.SC_BAD_GATEWAY, "Failure in student's courses database extraction");
 			return;
 		}
 		String path = "/HomeDocente.html";

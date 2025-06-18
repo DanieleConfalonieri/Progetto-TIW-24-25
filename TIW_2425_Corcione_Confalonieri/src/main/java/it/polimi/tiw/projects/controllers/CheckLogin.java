@@ -107,7 +107,7 @@ public class CheckLogin extends HttpServlet {
 				return;
 			}
 			
-			if(s==null) {
+			if(s == null) {
 				// studente non presente nel db, non si puo' autenticare
 				path = path + "/index.html";
 			}

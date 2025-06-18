@@ -13,6 +13,7 @@ import java.io.IOException;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.thymeleaf.TemplateEngine;
@@ -22,7 +23,9 @@ import org.thymeleaf.templateresolver.WebApplicationTemplateResolver;
 import org.thymeleaf.web.servlet.JakartaServletWebApplication;
 
 import it.polimi.tiw.projects.beans.Course;
+import it.polimi.tiw.projects.beans.Student;
 import it.polimi.tiw.projects.beans.Teacher;
+import it.polimi.tiw.projects.dao.AttendanceDAO;
 import it.polimi.tiw.projects.dao.CourseDAO;
 
 /**
@@ -70,21 +73,20 @@ public class GoToHomeStudent extends HttpServlet {
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		// recupero dalla sessione il docente che ha fatto il login
-		HttpSession s = request.getSession();
-		Teacher t = (Teacher) s.getAttribute("user");
-		int id = t.getId();
-		System.out.println(t.getName());
-		List<Course> courses = null;
-		
-		CourseDAO cDao = new CourseDAO(connection);
+		HttpSession session = request.getSession();
+		Student student = (Student) session.getAttribute("user");
+		int id = student.getId();
+		List<Course> courses = new ArrayList<Course>();
+		AttendanceDAO aDao = new AttendanceDAO(connection);
 		try {
-			courses = cDao.getCoursesByTeacher(id);
+			courses = aDao.getCoursesByStudent(id);
 		}
 		catch (SQLException e) {
-			response.sendError(HttpServletResponse.SC_BAD_GATEWAY, "Failure in teacher's courses database extraction");
+			response.sendError(HttpServletResponse.SC_BAD_GATEWAY, "Failure in student's courses database extraction");
 			return;
 		}
-		String path = "/HomeDocente.html";
+		
+		String path = "/HomeStudente.html";
 		JakartaServletWebApplication webApplication = JakartaServletWebApplication.buildApplication(getServletContext());
         WebContext ctx = new WebContext(webApplication.buildExchange(request, response), request.getLocale());
         ctx.setVariable("courses", courses);

@@ -11,17 +11,21 @@
 	</div> -->
 	<h1><span>Benvenuto nella home Studente</span>
 	<span th:text="${session.user.name}">Nome</span></h1>
-	<span th:if="${courses == null or #lists.isEmpty(courses)}">Nessun corso da vedere.</span>
-	<span>
+	<span th:if="${courses == null or #lists.isEmpty(courses)}">Nessun corso da vedere. </span>
+	<span th:unless="${courses == null or #lists.isEmpty(courses)}">
 		<table> 
 			<thead>
-			 	<tr>Corsi:</tr> 
+			 	<tr>
+			 		<td>Codice corso</td>
+			 		<td>Nome corso</td>
+			 		<td>Vedi corso</td>
+			 	</tr> 
 			</thead>
 			<tbody>
 				<tr th:each="course : ${courses}">
-					<td th:text="${course.code}"></td>
-					<td th:text="${course.name}"></td>
-					<td><a th:href="@{/GoToExamsStudent(course=${course.code},courseName=${course.name})}"> Vai al corso </a></td>
+					<td th:text="${course.code}" />
+					<td th:text="${course.name}" />
+					<td><a th:href="@{/GoToExamsStudent(course=${course.code})}"> Vai al corso </a></td>
 				</tr>
 			</tbody>
 		</table>

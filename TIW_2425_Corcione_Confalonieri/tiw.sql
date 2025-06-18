@@ -41,7 +41,7 @@ CREATE TABLE `appello` (
 
 LOCK TABLES `appello` WRITE;
 /*!40000 ALTER TABLE `appello` DISABLE KEYS */;
-INSERT INTO `appello` VALUES (01, '2025-06-01', 01),(02, '2025-07-01', 01), (03, '2025-06-02', 02);
+INSERT INTO `appello` VALUES (1,'2025-06-01',1),(3,'2025-06-02',2),(2,'2025-07-01',1);
 /*!40000 ALTER TABLE `appello` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -68,7 +68,7 @@ CREATE TABLE `corso` (
 
 LOCK TABLES `corso` WRITE;
 /*!40000 ALTER TABLE `corso` DISABLE KEYS */;
-INSERT INTO `corso` VALUES (01, "TIW", 100000),(02, "SDR", 200000),(03, "DB2", 100000);
+INSERT INTO `corso` VALUES (1,'TIW',100000),(2,'SDR',200000),(3,'DB2',100000);
 /*!40000 ALTER TABLE `corso` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -123,6 +123,7 @@ CREATE TABLE `frequenza` (
 
 LOCK TABLES `frequenza` WRITE;
 /*!40000 ALTER TABLE `frequenza` DISABLE KEYS */;
+INSERT INTO `frequenza` VALUES (211328,1),(215144,1),(211328,2),(211328,3),(215144,3);
 /*!40000 ALTER TABLE `frequenza` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -151,7 +152,7 @@ CREATE TABLE `iscrizione` (
 
 LOCK TABLES `iscrizione` WRITE;
 /*!40000 ALTER TABLE `iscrizione` DISABLE KEYS */;
-INSERT INTO `iscrizione` VALUES (1, 215144, '30', 'INSERITO'),(1, 324434, '18', 'INSERITO'),(1, 133442, 'ASSENTE', 'INSERITO'),(1, 979789, null, 'NON INSERITO');
+INSERT INTO `iscrizione` VALUES (1,133442,'ASSENTE','INSERITO'),(1,211328,NULL,'NON INSERITO'),(1,215144,'30','INSERITO'),(1,324434,'18','INSERITO');
 /*!40000 ALTER TABLE `iscrizione` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -180,7 +181,7 @@ CREATE TABLE `studente` (
 
 LOCK TABLES `studente` WRITE;
 /*!40000 ALTER TABLE `studente` DISABLE KEYS */;
-INSERT INTO `studente` VALUES (215144, 'Raffaella', 'Corcione', 'raffa', 'passRaf', 'IngInf'),(324434, 'Franco', 'Jonny', 'franco', 'passFranco', 'IngInf'),(133442, 'Anneo', 'Seneca', 'seneca', 'apokolokyntosis', 'NaturalesQuaestiones'),(979789, 'Daniele', 'Confalonieri', 'dani', 'passDani', 'IngInf');
+INSERT INTO `studente` VALUES (133442,'Anneo','Seneca','seneca','apokolokyntosis','NaturalesQuaestiones'),(211328,'Daniele','Confalonieri','dani','passDani','IngInf'),(215144,'Raffaella','Corcione','raffa','passRaf','IngInf'),(324434,'Franco','Jonny','franco','passFranco','IngInf');
 /*!40000 ALTER TABLE `studente` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -213,14 +214,6 @@ LOCK TABLES `verbale` WRITE;
 /*!40000 ALTER TABLE `verbale` DISABLE KEYS */;
 /*!40000 ALTER TABLE `verbale` ENABLE KEYS */;
 UNLOCK TABLES;
-
---
--- Dumping events for database 'tiw'
---
-
---
--- Dumping routines for database 'tiw'
---
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 
 /*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
@@ -231,4 +224,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2025-04-16 17:18:00
+-- Dump completed on 2025-06-18 16:07:06

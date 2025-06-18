@@ -37,4 +37,10 @@ public class Registration {
 	public StatusGrade getStatusGrade() {
 		return statusGrade;
 	}
+	
+	public boolean isRefusable() {
+		String lowCaseGrade = grade.toLowerCase();
+		return !(lowCaseGrade.equals("assente") || lowCaseGrade.equals("rimandato") || lowCaseGrade.equals("riprovato") || lowCaseGrade.equals(""));
+			
+	}
 }

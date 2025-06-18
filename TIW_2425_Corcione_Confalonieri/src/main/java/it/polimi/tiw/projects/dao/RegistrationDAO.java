@@ -10,6 +10,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
+import it.polimi.tiw.projects.beans.Course;
 import it.polimi.tiw.projects.beans.Exam;
 import it.polimi.tiw.projects.beans.Registration;
 import it.polimi.tiw.projects.beans.StatusGrade;
@@ -52,6 +53,18 @@ public class RegistrationDAO {
 		}
 		
 		return result;
+	}
+	
+	public List<Integer> getExamCodeListByExamListAndStud(List<Exam> exams, int studId) throws SQLException{
+		List<Integer> examCodes = new ArrayList<Integer>();
+		int i;
+		for(i=0;i<exams.size();i++) {
+			Registration r = getRegistration(exams.get(i).getCode(), studId);
+			if(r!= null) {
+				examCodes.add(r.getExamCode());
+			}
+		}
+		return examCodes;
 	}
 	
 	/*

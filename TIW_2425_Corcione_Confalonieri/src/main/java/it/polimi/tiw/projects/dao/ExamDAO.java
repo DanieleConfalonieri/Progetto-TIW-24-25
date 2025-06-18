@@ -62,4 +62,24 @@ public class ExamDAO {
 		
 		return exams;
 	}
+	
+	public List<Exam> getExamsByCourseAndStud(int courseId, int studId) throws SQLException{
+		List<Exam> exams = new ArrayList<>();
+		String query = "SELECT * FROM appello AS a join iscrizione as i on a.CodiceAppello = i.CodiceAppello WHERE a.CodiceCorso = ? AND i.MatricolaStudente = ? ORDER BY DataAppello DESC";
+		try(PreparedStatement statement = connection.prepareStatement(query)){
+			statement.setInt(1, courseId);
+			statement.setInt(2,  studId);
+			try(ResultSet res = statement.executeQuery()){
+				while(res.next()) {
+					Exam e = new Exam();
+					e.setCode(res.getInt("CodiceAppello"));
+					e.setCourse(res.getInt("CodiceCorso"));
+					e.setDate(res.getString("DataAppello"));
+					exams.add(e);
+				}
+			}
+		}
+		
+		return exams;
+	}
 }

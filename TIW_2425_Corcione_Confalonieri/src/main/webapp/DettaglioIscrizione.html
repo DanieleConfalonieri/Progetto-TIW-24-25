@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="ISO-8859-1">
+<title>Dettaglio Iscrizione</title>
+<link rel="stylesheet" href=css/style.css>
+</head>
+<body>
+	<!-- <div align="right">
+		<a th:href="@{/Logout}">Logout</a>
+	</div> -->
+	<h1>
+		<span>Dettaglio Iscrizione</span>
+		<span th:text="${courseName}"></span>
+	</h1>
+	<span th:if="${isPublished}">
+		<table> 
+			<thead>
+				 <tr>
+				 	<td>Codice corso</td>
+			 		<td>Nome corso</td>
+				 </tr> 
+			</thead>
+				<tbody>
+					<td th:text="${course.code}"> </td>
+					<td th:text="${course.name}"> </td>
+				</tbody>
+		</table>
+		<table> 
+			<thead>
+				</tr>
+				 	<td>Matricola</td>
+			 		<td>Mail</td>
+				 	<td>Nome</td>
+			 		<td>Cognome</td>
+			 		<td>Corso di laurea</td>
+				 </tr> 
+			</thead>
+				<tbody>
+					<td th:text="${session.user.id}"> </td>
+					<td th:text="${session.user.email}"> </td>
+					<td th:text="${session.user.name}"> </td>
+					<td th:text="${session.user.surname}"> </td>
+					<td th:text="${session.user.degree}"> </td>
+				</tbody>
+		</table>
+		
+		<span th:unless="${registration == null}">
+			<table> 
+				<thead>
+				 	<tr>
+				 		<td>Voto</td>
+				 		<td>Stato Voto</td>
+				 	</tr> 
+				</thead>
+				<tbody>
+					<td th:text="${registration.grade}"> </td>
+					<td th:text="${registration.statusGrade}"> </td>
+				</tbody>
+			</table>
+		</span>
+		<span th:if="${registration.isRefusable}">
+			<form method="GET" th:action="@{/RefuseGrade}">
+				<th><button type="submit" name="refuse" value="true">Rifiuta</button></th>
+			</form>
+		</span>
+	</span>
+	<span th:unless="${isPublished}">Voto non ancora definito</span>
+</body>
+</html>

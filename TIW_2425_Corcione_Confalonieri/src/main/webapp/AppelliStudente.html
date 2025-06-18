@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="ISO-8859-1">
+<title>AppelliStudente</title>
+<link rel="stylesheet" href=css/style.css>
+</head>
+<body>
+	<!-- <div align="right">
+		<a th:href="@{/Logout}">Logout</a>
+	</div> -->
+	<h1>
+		<span>Appelli per il corso </span>
+		<span th:text="${course.name}"></span>
+	</h1>
+	<span th:if="${exams == null or #lists.isEmpty(exams)}">Nessun appello da vedere.</span>
+	<span th:unless="${exams == null or #lists.isEmpty(exams)}">
+		<table> 
+			<thead>
+			 	<tr>
+			 		<td>Codice esame</td>
+			 		<td>Data</td>
+			 		<td>Codice corso</td>
+			 		<td>Dettaglio</td>
+			 	</tr> 
+			</thead>
+			<tbody>
+				<tr th:each="exam : ${exams}">
+					<td th:text="${exam.code}"> </td>
+					<td th:text="${exam.date}"> </td>
+					<td th:text="${exam.course}"> </td>
+					<td>
+						<a th:href="@{/GoToDetailExam(examId=${exam.code},courseId=${course.code})}">Vai all'Appello</a>
+					</td>
+				</tr>
+			</tbody>
+		</table>
+	</span>
+</body>
+</html>

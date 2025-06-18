@@ -31,8 +31,11 @@ public class StudentDAO {
 				else {
 					result.next();
 					Student student = new Student();
+					student.setName(result.getString("Nome"));
 					student.setId(result.getInt("MatricolaStudente"));
 					student.setEmail(result.getString("Mail"));
+					student.setSurname(result.getString("Cognome"));
+					student.setDegree(result.getString("CorsoLaurea"));
 					return student;
 				}
 			}
