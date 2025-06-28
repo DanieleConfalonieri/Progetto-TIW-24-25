@@ -65,11 +65,18 @@
 							<input type="hidden" th:name="'registrations['+${i.index}+'].statusGrade'" th:value="${registration.statusGrade}" />
 						</td>
 						<td>
-							<a th:href="@{/GoToUpdate(examId=${examId},studId=${registration.student.id})}">MODIFICA</a>
+							<div th:unless="${#strings.equals(registration.statusGrade, 'PUBBLICATO') or #strings.equals(registration.statusGrade, 'VERBALIZZATO')}">
+								<a th:href="@{/GoToUpdate(examId=${examId},studId=${registration.student.id})}">MODIFICA</a>
+							</div>
 						</td>
 					</tr>
 				</tbody>
 			</table>
+		</form>
+		
+		<form action="PublishGrades" method="GET">
+			<input type="hidden" name="examId" th:value="${examId}">
+			<input type="submit" value="PUBBLICA">
 		</form>
 	</div>
 </body>

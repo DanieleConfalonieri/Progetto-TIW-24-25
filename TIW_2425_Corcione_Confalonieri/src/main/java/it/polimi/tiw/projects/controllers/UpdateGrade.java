@@ -81,17 +81,13 @@ public class UpdateGrade extends HttpServlet {
 			examId = Integer.parseInt(request.getParameter("examId"));
 			studId = Integer.parseInt(request.getParameter("studId"));
 			newGrade = request.getParameter("newGrade");
-			List grades = Arrays.asList("null", "ASSENTE", "RIMANDATO", "RIPROVATO", "18", "19", "20", "21", "22", "23", "24", "25", "26", "27", "28", "29", "30", "30L");
+			List<String> grades = Arrays.asList("null", "ASSENTE", "RIMANDATO", "RIPROVATO", "18", "19", "20", "21", "22", "23", "24", "25", "26", "27", "28", "29", "30", "30L");
 			newGrade = newGrade.toUpperCase();
 			RegistrationDAO rDao = new RegistrationDAO(connection);
 			if(grades.contains(newGrade)) {
 				try {
 					rDao.updateGrade(newGrade, studId, examId); // non necessita di gestione transazioni perchè è un solo comando SQL atomico
-					// mi servono: examId che ho già, examDate, courseName
-					ExamDAO eDao = new ExamDAO(connection);
-					String examDate = eDao.getExamDate(examId);
-					String courseName = eDao.getCourseName(examId);
-					path = path + "/GoToRegisteredStudents?examId=" + examId + "&examDate=" + examDate + "&courseName=" + courseName;
+					path = path + "/GoToRegisteredStudents?examId=" + examId;
 				}
 				catch (SQLException e) {
 					response.sendError(HttpServletResponse.SC_BAD_GATEWAY, "Failure in grade database update");
@@ -103,7 +99,9 @@ public class UpdateGrade extends HttpServlet {
 			}
 		}
 		catch (NumberFormatException e) {
-			path = path + "/GoToUpdate?examId=" + examId + "&studId=" + studId;
+			response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Missing parameters");
+	        return;
+			//path = path + "/GoToUpdate?examId=" + examId + "&studId=" + studId;
 		}
 		
 		// form feedback pattern - servlet-to-client-to-server

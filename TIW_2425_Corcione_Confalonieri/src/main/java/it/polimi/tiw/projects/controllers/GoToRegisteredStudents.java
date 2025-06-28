@@ -21,6 +21,7 @@ import org.thymeleaf.templateresolver.WebApplicationTemplateResolver;
 import org.thymeleaf.web.servlet.JakartaServletWebApplication;
 
 import it.polimi.tiw.projects.beans.Registration;
+import it.polimi.tiw.projects.dao.ExamDAO;
 import it.polimi.tiw.projects.dao.RegistrationDAO;
 
 /**
@@ -69,12 +70,14 @@ public class GoToRegisteredStudents extends HttpServlet {
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		// recupero dai parametri della request l'appello di cui estrarre gli iscritti
 		int examId = Integer.parseInt(request.getParameter("examId"));
-		String examDate = request.getParameter("examDate");
-		String courseName = request.getParameter("courseName");
+		String examDate, courseName;
 		List<Registration> registeredStudents = new ArrayList<>();
 		
 		RegistrationDAO rDao = new RegistrationDAO(connection);
+		ExamDAO eDao = new ExamDAO(connection);
 		try {
+			examDate = eDao.getExamDate(examId);
+			courseName = eDao.getCourseName(examId);
 			registeredStudents = rDao.getStudentsByExam(examId);
 		}
 		catch (SQLException e) {

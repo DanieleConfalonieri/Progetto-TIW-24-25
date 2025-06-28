@@ -25,7 +25,7 @@ public class RegistrationDAO {
 	
 	/*
 	 * dato il codice di un appello e la matricola di uno studente, ritorna l'iscrizione associata.
-	 * Se non è presente alcuna iscrizione dello studente per l'appello, ritorna null
+	 * Se non è presente alcuna iscrizione dello studente per l'appello, ritorna null.
 	 */
 	public Registration getRegistration(int examId, int studId) throws SQLException{
 		Registration result = new Registration();
@@ -87,7 +87,7 @@ public class RegistrationDAO {
 					Registration r = new Registration();
 					r.setStudent(s);
 					r.setExamCode(examId);
-					r.setGrade(res.getString("Voto"));
+					r.setGrade(res.getString("Voto")!=null ? res.getString("Voto") : "-");
 					r.setStatusGrade(StatusGrade.getStatusGradeFromString(res.getString("StatoVoto")));
 					registered.add(r);
 				}
@@ -109,7 +109,7 @@ public class RegistrationDAO {
 	 * permette ad un docente di inserire o modificare il voto di uno studente per un determinato appello.
 	 */
 	public void updateGrade(String grade, int studId, int examId) throws SQLException {
-		String query = "update iscrizione set Voto = ?, StatoVoto = 'INSERITO' where CodiceAppello = ? and MatricolaStudente = ?";
+		String query = "UPDATE iscrizione set Voto = ?, StatoVoto = 'INSERITO' WHERE CodiceAppello = ? and MatricolaStudente = ?";
 		try (PreparedStatement statement = connection.prepareStatement(query)){
 			statement.setString(1, grade);
 			statement.setInt(2, examId);
@@ -119,10 +119,14 @@ public class RegistrationDAO {
 	}
 	
 	/*
-	 * pubblica i voti nello stato INSERITO.
+	 * pubblica i voti nello stato INSERITO per un dato appello.
 	 */
 	public void publishInsertedGrades(int examId) throws SQLException {
-		
+		String query = "UPDATE iscrizione set StatoVoto = 'PUBBLICATO' WHERE CodiceAppello = ? and StatoVoto = 'INSERITO'";
+		try (PreparedStatement statement = connection.prepareStatement(query)){
+			statement.setInt(1, examId);
+			statement.execute();
+		}
 	}
 	
 	/*
