@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="ISO-8859-1">
+<title>Dettaglio Verbale</title>
+<link rel="stylesheet" href=css/style.css>
+</head>
+<body>
+	<!-- <div align="right">
+		<a th:href="@{/Logout}">Logout</a>
+	</div> -->
+	<h1>
+		<span>Dettaglio Verbale numero </span>
+		<span th:text="${report.reportCode}"></span>
+	</h1>
+		
+	<h2>Dettagli verbale:</h2>
+	<table>
+		<thead>
+			<tr>
+		 		<td>Codice Verbale</td>
+		 		<td>Data creazione</td>
+		 		<td>Ora creazione</td>
+		 		<td>Matricola docente</td>
+		 		<td>Codice appello</td>
+		 	</tr> 
+		</thead>
+		<tbody>
+			<tr>
+		 		<td th:text="${report.reportCode}" />
+		 		<td th:text="${report.date}" />
+		 		<td th:text="${report.time}" />
+		 		<td th:text="${report.teacher}" />
+		 		<td th:text="${report.exam}" />
+		 	</tr>
+		</tbody>
+	</table>
+	
+	<h2>Elenco studenti:</h2>
+	<table>
+		<thead>
+			<tr>
+		 		<td>Nome</td>
+		 		<td>Cognome</td>
+		 		<td>Matricola</td>
+		 		<td>Voto</td>
+		 	</tr> 
+		</thead>
+		<tbody>
+			<tr th:each="registration : ${students}">
+		 		<td th:text="${registration.student.name}" />
+		 		<td th:text="${registration.student.surname}" />
+		 		<td th:text="${registration.student.id}" />
+		 		<td th:text="${registration.grade}" />
+		 	</tr>
+		</tbody>
+	</table>
+</body>
+</html>

@@ -13,6 +13,7 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.WebContext;
@@ -21,6 +22,7 @@ import org.thymeleaf.templateresolver.WebApplicationTemplateResolver;
 import org.thymeleaf.web.servlet.JakartaServletWebApplication;
 
 import it.polimi.tiw.projects.beans.Registration;
+import it.polimi.tiw.projects.beans.StatusGrade;
 import it.polimi.tiw.projects.dao.ExamDAO;
 import it.polimi.tiw.projects.dao.RegistrationDAO;
 
@@ -84,6 +86,10 @@ public class GoToRegisteredStudents extends HttpServlet {
 			response.sendError(HttpServletResponse.SC_BAD_GATEWAY, "Failure in exam's registered students database extraction");
 			return;
 		}
+		
+		boolean isPublishable = !registeredStudents.stream().filter(g -> g.getStatusGrade().equals(StatusGrade.INSERITO)).collect(Collectors.toList()).isEmpty();
+		boolean isVerbalizable = !registeredStudents.stream().filter(g -> g.getStatusGrade().equals(StatusGrade.PUBBLICATO)).collect(Collectors.toList()).isEmpty();
+		
 		String path = "/IscrittiAppello.html";
 		JakartaServletWebApplication webApplication = JakartaServletWebApplication.buildApplication(getServletContext());
         WebContext ctx = new WebContext(webApplication.buildExchange(request, response), request.getLocale());
@@ -91,6 +97,8 @@ public class GoToRegisteredStudents extends HttpServlet {
         ctx.setVariable("examDate", examDate);
         ctx.setVariable("courseName", courseName);
         ctx.setVariable("registrations", registeredStudents);
+        ctx.setVariable("isPublishable", isPublishable);
+        ctx.setVariable("isVerbalizable", isVerbalizable);
 		templateEngine.process(path, ctx, response.getWriter());
 	}
 

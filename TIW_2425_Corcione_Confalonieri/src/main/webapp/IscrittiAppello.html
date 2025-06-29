@@ -22,6 +22,8 @@
 			<input type="hidden" name="examId" th:value="${examId}" />
 		    <input type="hidden" name="data" th:value="${examDate}" />
 		    <input type="hidden" name="courseName" th:value="${courseName}" />
+		    <input type="hidden" name="isPublishable" th:value="${isPublishable}" />
+		    <input type="hidden" name="isVerbalizable" th:value="${isVerbalizable}" />
 			<table>
 				<thead>
 					<tr>
@@ -32,6 +34,7 @@
 						<th><button type="submit" name="sortField" value="Degree">Corso di Laurea</button></th>
 						<th><button type="submit" name="sortField" value="Grade">Voto</button></th>
 						<th><button type="submit" name="sortField" value="StatusGrade">Stato Voto</button></th>
+						<th><button type="submit" name="sortField" value="ReportCode">Codice Verbale</button></th>
 					</tr>
 				</thead>
 				<tbody>
@@ -61,8 +64,12 @@
 							<input type="hidden" th:name="'registrations['+${i.index}+'].grade'" th:value="${registration.grade}" />
 						</td>
 						<td>
-							<span th:text="${registration.statusGrade}"></span>
+							<span th:text="${registration.statusGrade.name()=='NON_INSERITO' ? 'NON INSERITO' : registration.statusGrade}"></span>
 							<input type="hidden" th:name="'registrations['+${i.index}+'].statusGrade'" th:value="${registration.statusGrade}" />
+						</td>
+						<td>
+							<span th:text="${registration.reportCode==0 ? '-' : registration.reportCode}"></span>
+							<input type="hidden" th:name="'registrations['+${i.index}+'].reportCode'" th:value="${registration.reportCode}" />
 						</td>
 						<td>
 							<div th:unless="${#strings.equals(registration.statusGrade, 'PUBBLICATO') or #strings.equals(registration.statusGrade, 'VERBALIZZATO')}">
@@ -74,10 +81,18 @@
 			</table>
 		</form>
 		
-		<form action="PublishGrades" method="GET">
-			<input type="hidden" name="examId" th:value="${examId}">
-			<input type="submit" value="PUBBLICA">
-		</form>
+		<div th:if="${isPublishable}">
+			<form action="PublishGrades" method="GET">
+				<input type="hidden" name="examId" th:value="${examId}">
+				<input type="submit" value="PUBBLICA">
+			</form>
+		</div>
+		<div th:if="${isVerbalizable}">
+			<form action="RegisterGrades" method="GET">
+				<input type="hidden" name="examId" th:value="${examId}">
+				<input type="submit" value="VERBALIZZA">
+			</form>
+		</div>
 	</div>
 </body>
 </html>

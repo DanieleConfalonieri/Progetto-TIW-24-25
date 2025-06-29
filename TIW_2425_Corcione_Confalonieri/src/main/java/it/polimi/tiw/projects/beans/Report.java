@@ -7,11 +7,11 @@ public class Report {
 	private int teacher;
 	private int exam;
 	
-	public void setCode(int reportCode) {
+	public void setReportCode(int reportCode) {
 		this.reportCode = reportCode;
 	}
 	
-	public int getCode() {
+	public int getReportCode() {
 		return reportCode;
 	}
 	

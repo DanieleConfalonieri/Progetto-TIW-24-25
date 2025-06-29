@@ -5,6 +5,7 @@ public class Registration {
 	private int examCode;
 	private String grade;
 	private StatusGrade statusGrade;
+	private int reportCode;
 	
 	public void setStudent(Student student) {
 		this.student = student;
@@ -36,6 +37,14 @@ public class Registration {
 	
 	public StatusGrade getStatusGrade() {
 		return statusGrade;
+	}
+	
+	public void setReportCode(int reportCode) {
+		this.reportCode = reportCode;
+	}
+	
+	public int getReportCode() {
+		return reportCode;
 	}
 	
 	public boolean isRefusable() {

@@ -12,7 +12,7 @@ public enum StatusGrade {
 	
 	public static StatusGrade getStatusGradeFromString(String value) {
 		switch (value) {
-		case "NON INSERITO":
+		case "NON INSERITO", "NON_INSERITO":
 			return StatusGrade.NON_INSERITO;
 		case "INSERITO":
 			return StatusGrade.INSERITO;

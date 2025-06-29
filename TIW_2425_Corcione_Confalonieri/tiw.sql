@@ -139,10 +139,12 @@ CREATE TABLE `iscrizione` (
   `MatricolaStudente` int NOT NULL,
   `Voto` enum('ASSENTE','RIMANDATO','RIPROVATO','18','19','20','21','22','23','24','25','26','27','28','29','30','30L') DEFAULT NULL,
   `StatoVoto` enum('NON INSERITO','INSERITO','PUBBLICATO','RIFIUTATO','VERBALIZZATO') NOT NULL,
+  `CodiceVerbale` int,
   PRIMARY KEY (`CodiceAppello`,`MatricolaStudente`),
   KEY `MatricolaStudente` (`MatricolaStudente`),
   CONSTRAINT `iscrizione_ibfk_1` FOREIGN KEY (`CodiceAppello`) REFERENCES `appello` (`CodiceAppello`) ON DELETE CASCADE ON UPDATE CASCADE,
-  CONSTRAINT `iscrizione_ibfk_2` FOREIGN KEY (`MatricolaStudente`) REFERENCES `studente` (`MatricolaStudente`) ON DELETE CASCADE ON UPDATE CASCADE
+  CONSTRAINT `iscrizione_ibfk_2` FOREIGN KEY (`MatricolaStudente`) REFERENCES `studente` (`MatricolaStudente`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `iscrizione` FOREIGN KEY (`CodiceVerbale`) REFERENCES `verbale` (`CodiceVerbale`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -152,7 +154,7 @@ CREATE TABLE `iscrizione` (
 
 LOCK TABLES `iscrizione` WRITE;
 /*!40000 ALTER TABLE `iscrizione` DISABLE KEYS */;
-INSERT INTO `iscrizione` VALUES (1,133442,'ASSENTE','INSERITO'),(1,211328,NULL,'NON INSERITO'),(1,215144,'30','INSERITO'),(1,324434,'18','INSERITO');
+INSERT INTO `iscrizione` VALUES (1,133442,'ASSENTE','INSERITO', null),(1,211328,NULL,'NON INSERITO', null),(1,215144,'30','INSERITO', null),(1,324434,'18','INSERITO', null);
 /*!40000 ALTER TABLE `iscrizione` ENABLE KEYS */;
 UNLOCK TABLES;
 

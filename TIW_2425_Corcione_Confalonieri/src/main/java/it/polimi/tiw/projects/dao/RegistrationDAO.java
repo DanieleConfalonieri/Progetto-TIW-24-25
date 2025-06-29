@@ -16,6 +16,8 @@ import it.polimi.tiw.projects.beans.Registration;
 import it.polimi.tiw.projects.beans.StatusGrade;
 import it.polimi.tiw.projects.beans.Student;
 
+import java.time.*;
+
 public class RegistrationDAO {
 	private Connection connection;
 	
@@ -89,6 +91,7 @@ public class RegistrationDAO {
 					r.setExamCode(examId);
 					r.setGrade(res.getString("Voto")!=null ? res.getString("Voto") : "-");
 					r.setStatusGrade(StatusGrade.getStatusGradeFromString(res.getString("StatoVoto")));
+					r.setReportCode(res.getInt("CodiceVerbale"));
 					registered.add(r);
 				}
 			}
@@ -127,14 +130,6 @@ public class RegistrationDAO {
 			statement.setInt(1, examId);
 			statement.execute();
 		}
-	}
-	
-	/*
-	 * verbalizza i voti nello stato PUBBLICATO.
-	 * crea un verbale (visualizzabile in qualche modo subito).
-	 */
-	public void registerPublishedGrades(int examId) throws SQLException {
-		
 	}
 	
 	/*
@@ -224,9 +219,10 @@ public class RegistrationDAO {
 			case "StatusGrade" -> {
 				return Comparator.comparing(Registration::getStatusGrade);
 			}
+			case "ReportCode" -> {
+				return Comparator.comparing(t -> t.getReportCode());
+			}
 			default -> {return null;}
 		}
 	}
-		
-	
 }

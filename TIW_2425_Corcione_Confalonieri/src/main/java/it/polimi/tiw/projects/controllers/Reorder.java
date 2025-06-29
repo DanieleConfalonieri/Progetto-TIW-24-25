@@ -69,16 +69,28 @@ public class Reorder extends HttpServlet {
 	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		String col = request.getParameter("sortField");
-		int examId = Integer.parseInt(request.getParameter("examId"));
-		String examDate = request.getParameter("data");
-		String courseName = request.getParameter("courseName");
+		String col, examDate, courseName;
+		int examId;
+		boolean isPublishable, isVerbalizable;
+		try {
+			col = request.getParameter("sortField");
+			examId = Integer.parseInt(request.getParameter("examId"));
+			examDate = request.getParameter("data");
+			courseName = request.getParameter("courseName");
+			isPublishable = Boolean.parseBoolean(request.getParameter("isPublishable"));
+			isVerbalizable = Boolean.parseBoolean(request.getParameter("isVerbalizable"));
+		} catch (NumberFormatException e) {
+			response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Missing parameters");
+	        return;
+		}
+		
 		RegistrationDAO regDao = new RegistrationDAO(connection);
 		List<Registration> registrations = new ArrayList<>();
 		int i = 0;
 		int studId;
 		String surname="", name, email, degree, grade;
 		StatusGrade statusGrade;
+		int reportCode;
 		boolean finished = false;
 		while(!finished) {
 			Registration reg = new Registration();
@@ -98,6 +110,8 @@ public class Reorder extends HttpServlet {
 				reg.setGrade(grade);
 				statusGrade = StatusGrade.getStatusGradeFromString(request.getParameter("registrations["+i+"].statusGrade"));
 				reg.setStatusGrade(statusGrade);
+				reportCode = request.getParameter("registrations["+i+"].reportCode").equals("-") ? 0 : Integer.parseInt(request.getParameter("registrations["+i+"].reportCode"));
+				reg.setReportCode(reportCode);
 			} catch (Exception e) {
 				finished = true;
 			}
@@ -113,6 +127,8 @@ public class Reorder extends HttpServlet {
 		ctx.setVariable("examId", examId);
 		ctx.setVariable("examDate", examDate);
         ctx.setVariable("courseName", courseName);
+        ctx.setVariable("isPublishable", isPublishable);
+        ctx.setVariable("isVerbalizable", isVerbalizable);
 		String path = "/IscrittiAppello.html";
 		templateEngine.process(path, ctx, response.getWriter());
 	}
