@@ -136,8 +136,21 @@ public class RegistrationDAO {
 	 * permette ad uno studente di rifiutare il voto di un appello.
 	 * ricarica la pagina ESITO dello studente.
 	 */
-	public void refuseGrade(int examId) throws SQLException {
-		
+	public void refuseGrade(int examId, int studId) throws SQLException {
+		connection.setAutoCommit(false);
+		Registration reg = getRegistration(examId, studId);
+		if(reg.isRefusable()) {
+			String query = "UPDATE iscrizione set StatoVoto = 'RIFIUTATO' WHERE CodiceAppello = ? and MatricolaStudente = ?";
+			try (PreparedStatement statement = connection.prepareStatement(query)){
+				statement.setInt(1, examId);
+				statement.setInt(2, studId);
+				statement.executeUpdate();
+				connection.commit();
+			}
+		}
+		else {
+			throw new RuntimeException("Non puoi rifiutare il seguente voto");
+		}
 	}
 	
 	public List<Registration> reorder(List<Registration> list, String column){

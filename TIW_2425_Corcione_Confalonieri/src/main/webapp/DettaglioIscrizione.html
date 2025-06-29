@@ -13,7 +13,7 @@
 		<span>Dettaglio Iscrizione</span>
 		<span th:text="${courseName}"></span>
 	</h1>
-	<span th:if="${isPublished}">
+	<span th:if="${isPublished || isRefused}">
 		<table> 
 			<thead>
 				 <tr>
@@ -59,12 +59,17 @@
 				</tbody>
 			</table>
 		</span>
-		<span th:if="${registration.isRefusable}">
-			<form method="GET" th:action="@{/RefuseGrade}">
-				<th><button type="submit" name="refuse" value="true">Rifiuta</button></th>
+		<span th:if="${registration.isRefusable && !isRefused}">
+			<form action="RefuseGrade" method="GET">
+				<input type="hidden" name="examId" th:value="${registration.examCode}">
+				<input type="hidden" name="courseId" th:value="${course.code}">
+				<input type="submit" value="RIFIUTA">
 			</form>
 		</span>
+		<span th:unless="${registration.isRefusable && !isRefused}">
+			Il voto è stato rifiutato.
+		</span>
 	</span>
-	<span th:unless="${isPublished}">Voto non ancora definito</span>
+	<span th:unless="${isPublished || isRefused}">Voto non ancora definito.</span>
 </body>
 </html>

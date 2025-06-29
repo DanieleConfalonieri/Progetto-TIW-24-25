@@ -96,6 +96,8 @@ public class GoToDetailExam extends HttpServlet {
 		JakartaServletWebApplication webApplication = JakartaServletWebApplication.buildApplication(getServletContext());
         WebContext ctx = new WebContext(webApplication.buildExchange(request, response), request.getLocale());
         boolean isPublished = registration.getStatusGrade().equals(StatusGrade.PUBBLICATO);
+        boolean isRefused = registration.getStatusGrade().equals(StatusGrade.RIFIUTATO);
+        ctx.setVariable("isRefused", isRefused);
         ctx.setVariable("isPublished", isPublished);
         ctx.setVariable("registration", registration);
         ctx.setVariable("course", course);
