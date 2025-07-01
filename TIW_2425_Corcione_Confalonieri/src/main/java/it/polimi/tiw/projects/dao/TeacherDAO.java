@@ -34,6 +34,7 @@ public class TeacherDAO {
 					teacher.setId(result.getInt("MatricolaDocente"));
 					teacher.setEmail(result.getString("Mail"));
 					teacher.setName(result.getString("Nome"));
+					teacher.setSurname(result.getString("Cognome"));
 					return teacher;
 				}
 			}

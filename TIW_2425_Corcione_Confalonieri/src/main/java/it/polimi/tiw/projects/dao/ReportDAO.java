@@ -108,6 +108,30 @@ public class ReportDAO {
 		return result;
 	}
 	
+	public List<Report> getReportsByTeacher(int teacherId) throws SQLException {
+		List<Report> result = new ArrayList<>();
+		String query = "SELECT * FROM verbale join appello join corso on verbale.CodiceAppello=appello.CodiceAppello and appello.CodiceCorso=corso.CodiceCorso"
+				+ " WHERE CodiceDocente = ? ORDER BY corso.NomeCorso DESC, appello.DataAppello ASC";
+		try (PreparedStatement statement = connection.prepareStatement(query)){
+			statement.setInt(1, teacherId);
+			try(ResultSet res = statement.executeQuery()){
+				while(res.next()) {
+					Report s = new Report();
+					s.setReportCode(res.getInt("CodiceVerbale"));
+					s.setDate(res.getString("DataVerbale"));
+					s.setTime(res.getString("Ora"));
+					s.setTeacher(res.getInt("CodiceDocente"));
+					s.setExam(res.getInt("CodiceAppello"));
+					s.setCourseName(res.getString("NomeCorso"));
+					s.setExamDate(res.getString("DataAppello"));
+					result.add(s);
+				}
+			}
+		}
+		
+		return result;
+	}
+	
 	private int getId() {
 		int result;
 		String query = "SELECT max(CodiceVerbale) as maxCodice FROM verbale";

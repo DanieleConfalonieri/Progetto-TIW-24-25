@@ -6,6 +6,8 @@ public class Report {
 	private String time;
 	private int teacher;
 	private int exam;
+	private String courseName;
+	private String examDate;
 	
 	public void setReportCode(int reportCode) {
 		this.reportCode = reportCode;
@@ -46,5 +48,20 @@ public class Report {
 	public int getExam() {
 		return exam;
 	}
-
+	
+	public void setCourseName(String courseName) {
+		this.courseName = courseName;
+	}
+	
+	public String getCourseName() {
+		return courseName;
+	}
+	
+	public void setExamDate(String examDate) {
+		this.examDate = examDate;
+	}
+	
+	public String getExamDate() {
+		return examDate;
+	}
 }

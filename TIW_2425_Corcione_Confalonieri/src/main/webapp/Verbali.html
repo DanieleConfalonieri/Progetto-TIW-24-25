@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="ISO-8859-1">
+<title>Verbali</title>
+<link rel="stylesheet" href=css/style.css>
+</head>
+<body>
+	<!-- <div align="right">
+		<a th:href="@{/Logout}">Logout</a>
+	</div> -->
+	<h1>
+		<span>Verbali del docente </span>
+		<span th:text="${session.user.surname}"></span>
+	</h1>
+	<span th:if="${reports == null or #lists.isEmpty(reports)}">Nessun verbale da vedere.</span>
+	<span th:unless="${reports == null or #lists.isEmpty(reports)}">
+		<table> 
+			<thead>
+			 	<tr>
+			 		<td>Codice verbale</td>
+			 		<td>Data creazione</td>
+			 		<td>Ora creazione</td>
+			 		<td>Codice Docente</td>
+			 		<td>Codice Appello</td>
+			 		<td>Nome Corso</td>
+			 		<td>Data Appello</td>
+			 	</tr> 
+			</thead>
+			<tbody>
+				<tr th:each="report : ${reports}">
+				<td th:text="${report.reportCode}"> </td>
+				<td th:text="${report.date}"> </td>
+				<td th:text="${report.time}"> </td>
+				<td th:text="${report.teacher}"> </td>
+				<td th:text="${report.exam}"> </td>
+				<td th:text="${report.courseName}"> </td>
+				<td th:text="${report.examDate}"> </td>
+				</tr>
+			</tbody>
+		</table>
+	</span>
+</body>
+</html>
