@@ -58,16 +58,19 @@ public class ReportDAO {
 	        pStatement3.setInt(4, teacherId);
 	        pStatement3.setInt(5, examId);
 	        pStatement3.executeUpdate();
+	        connection.commit();
 
 	        // Aggiorna iscrizioni PUBBLICATO
 	        pStatement1.setInt(1, newId);
 	        pStatement1.setInt(2, examId);
 	        pStatement1.executeUpdate();
+	        connection.commit();
 
 	        // Aggiorna iscrizioni RIFIUTATO
 	        pStatement2.setInt(1, newId);
 	        pStatement2.setInt(2, examId);
 	        pStatement2.executeUpdate();
+	        connection.commit();
 	        
 	        // Aggiorna StatoVoto RIMANDATI
 	        pStatement4.setInt(1, newId);
