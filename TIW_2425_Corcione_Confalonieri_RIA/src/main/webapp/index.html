@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="ISO-8859-1">
+<title>Login page</title>
+<script src="utils.js" charset="utf-8" defer></script>
+<script src="loginManagement.js" charset="utf-8" defer></script>
+</head>
+<body>
+	<h1>Progetto di Tecnologie Informatiche per il Web, versione JavaScript, a.a. 2024/2025, Politecnico di Milano</h1>
+	<h2>Corcione Raffaella, Confalonieri Daniele</h2>
+	<p id="errormessage"></p>
+	<form id="login-form">
+		username: <input type="text" name="username" required> <br>
+		password: <input type="password" name="pwd" required><br>
+		studente: <input type="radio" id="studente" name="role" value="studente" required><br>
+		docente: <input type="radio" id="docente" name="role" value="docente" required><br>
+		<input id="loginbutton" type="button" value="login">
+	</form>
+</body>
+</html>
