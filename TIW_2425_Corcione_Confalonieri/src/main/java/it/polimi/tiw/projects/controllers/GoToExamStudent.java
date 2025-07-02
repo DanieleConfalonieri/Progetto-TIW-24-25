@@ -75,10 +75,16 @@ public class GoToExamStudent extends HttpServlet {
 	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		HttpSession session = request.getSession();
-		Student student = (Student) session.getAttribute("user");
-		int studId = student.getId();
-		int courseId = Integer.parseInt(request.getParameter("course"));
+		int courseId = 0, studId = 0;
+		try {
+			HttpSession session = request.getSession();
+			Student student = (Student) session.getAttribute("user");
+			studId = student.getId();
+			courseId = Integer.parseInt(request.getParameter("course"));
+		} catch (NullPointerException | NumberFormatException e) {
+			response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Missing parameters");
+			return;
+		}
 		List<Exam> exams = new ArrayList<Exam>();
 		Course course;
 		CourseDAO cDao = new CourseDAO(connection);

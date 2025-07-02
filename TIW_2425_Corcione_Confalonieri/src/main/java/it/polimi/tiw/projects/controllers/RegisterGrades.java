@@ -84,7 +84,6 @@ public class RegisterGrades extends HttpServlet {
 			report = rDao.registerPublishedGrades(examId);
 		} catch (SQLException e) {
 			response.sendError(HttpServletResponse.SC_BAD_GATEWAY, "Failure in grade database update");
-			e.printStackTrace();
 			return;
 		}
 		List<Registration> students = new ArrayList<>();

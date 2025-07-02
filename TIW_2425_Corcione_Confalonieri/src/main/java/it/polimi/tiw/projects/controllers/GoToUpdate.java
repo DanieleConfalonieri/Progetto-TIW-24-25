@@ -66,8 +66,14 @@ public class GoToUpdate extends HttpServlet {
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		// recupero dalla request la matricola dello studente e il codice dell'appello che mi servono per sapere quale iscrizione modificare
-		int examId = Integer.parseInt(request.getParameter("examId"));
-		int studId = Integer.parseInt(request.getParameter("studId"));
+		int examId = 0, studId = 0;
+		try {
+			examId = Integer.parseInt(request.getParameter("examId"));
+			studId = Integer.parseInt(request.getParameter("studId"));
+		} catch (NumberFormatException e) {
+			response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Missing parameters");
+			return;
+		}
 		RegistrationDAO rDao = new RegistrationDAO(connection);
 		Registration reg;
 		try {

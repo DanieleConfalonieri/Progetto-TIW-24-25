@@ -71,9 +71,15 @@ public class GoToHomeTeacher extends HttpServlet {
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		// recupero dalla sessione il docente che ha fatto il login
-		HttpSession s = request.getSession();
-		Teacher t = (Teacher) s.getAttribute("user");
-		int id = t.getId();
+		int id = 0;
+		try {
+			HttpSession s = request.getSession();
+			Teacher t = (Teacher) s.getAttribute("user");
+			id = t.getId();
+		} catch (NullPointerException e) {
+			response.sendError(HttpServletResponse.SC_FORBIDDEN, "User not logged in");
+			return;
+		}
 		List<Course> courses = null;
 		
 		CourseDAO cDao = new CourseDAO(connection);

@@ -101,7 +101,6 @@ public class UpdateGrade extends HttpServlet {
 		catch (NumberFormatException e) {
 			response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Missing parameters");
 	        return;
-			//path = path + "/GoToUpdate?examId=" + examId + "&studId=" + studId;
 		}
 		
 		// form feedback pattern - servlet-to-client-to-server

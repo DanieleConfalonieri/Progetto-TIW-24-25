@@ -73,8 +73,19 @@ public class GoToExamsTeacher extends HttpServlet {
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		// recupero dai parametri della request il corso di cui estrarre gli appelli
-		int courseId = Integer.parseInt(request.getParameter("course"));
+		int courseId = 0;
+		try {
+			courseId = Integer.parseInt(request.getParameter("course"));
+		} catch (NumberFormatException e) {
+			response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Missing parameters");
+			return;
+		}
 		String courseName = request.getParameter("courseName");
+		if(courseName==null) {
+			response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Missing parameters");
+			return;
+		}
+		
 		List<Exam> exams = new ArrayList<>();
 		
 		ExamDAO eDao = new ExamDAO(connection);

@@ -79,8 +79,14 @@ public class GoToDetailExam extends HttpServlet {
 		HttpSession session = request.getSession();
 		Student student = (Student) session.getAttribute("user");
 		int studId = student.getId();
-		int examId = Integer.parseInt(request.getParameter("examId"));
-		int courseId = Integer.parseInt(request.getParameter("courseId"));
+		int examId, courseId;
+		try {
+			examId = Integer.parseInt(request.getParameter("examId"));
+			courseId = Integer.parseInt(request.getParameter("courseId"));
+		} catch (NumberFormatException e) {
+			response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Missing parameters");
+			return;
+		}
 		Registration registration;
 		Course course;
 		CourseDAO cDao = new CourseDAO(connection);
@@ -102,8 +108,6 @@ public class GoToDetailExam extends HttpServlet {
         ctx.setVariable("registration", registration);
         ctx.setVariable("course", course);
 		templateEngine.process(path, ctx, response.getWriter());
-		
-		
 	}
 
 	/**

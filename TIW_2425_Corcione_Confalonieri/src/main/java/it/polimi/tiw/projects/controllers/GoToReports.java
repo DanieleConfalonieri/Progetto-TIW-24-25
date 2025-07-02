@@ -78,12 +78,12 @@ public class GoToReports extends HttpServlet {
 		try {
 			t = (Teacher) request.getSession().getAttribute("user");
 		} catch (ClassCastException e) {
-			response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Wrong user");
+			response.sendError(HttpServletResponse.SC_FORBIDDEN, "User not logged in");
 			return;
 		}
 		
 		if(t.getId() != idDocente) { // controlla che il docente per cui si stanno richiedendo i verbali sia lo stesso che è il titolare della sessione
-			response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Wrong user");
+			response.sendError(HttpServletResponse.SC_BAD_REQUEST, "User not logged in");
 			return;
 		}
 		

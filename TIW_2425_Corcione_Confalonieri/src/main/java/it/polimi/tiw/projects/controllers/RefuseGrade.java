@@ -76,11 +76,17 @@ public class RefuseGrade extends HttpServlet {
 	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		HttpSession session = request.getSession();
-		Student student = (Student) session.getAttribute("user");
-		int studId = student.getId();
-		int courseId = Integer.parseInt(request.getParameter("courseId"));
-		int examId = Integer.parseInt(request.getParameter("examId"));
+		int studId = 0, courseId = 0, examId = 0;
+		try {
+			HttpSession session = request.getSession();
+			Student student = (Student) session.getAttribute("user");
+			studId = student.getId();
+			courseId = Integer.parseInt(request.getParameter("courseId"));
+			examId = Integer.parseInt(request.getParameter("examId"));
+		} catch (NumberFormatException | NullPointerException e) {
+			response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Missing parameters");
+			return;
+		}
 		Registration registration;
 		Course course;
 		CourseDAO cDao = new CourseDAO(connection);

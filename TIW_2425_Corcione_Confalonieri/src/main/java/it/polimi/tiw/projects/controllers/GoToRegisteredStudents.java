@@ -71,7 +71,13 @@ public class GoToRegisteredStudents extends HttpServlet {
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		// recupero dai parametri della request l'appello di cui estrarre gli iscritti
-		int examId = Integer.parseInt(request.getParameter("examId"));
+		int examId = 0;
+		try {
+			examId = Integer.parseInt(request.getParameter("examId"));
+		} catch (NumberFormatException e) {
+			response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Missing parameters");
+			return;
+		}
 		String examDate, courseName;
 		List<Registration> registeredStudents = new ArrayList<>();
 		
