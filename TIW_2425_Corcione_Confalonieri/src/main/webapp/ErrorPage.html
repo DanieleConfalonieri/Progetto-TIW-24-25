@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="ISO-8859-1">
+<title>Pagina Errore</title>
+<link rel="stylesheet" href=css/style.css>
+</head>
+<body>
+	<h1>
+		<span th:text="${message}">Generic Error</span>
+	</h1>
+	<div align = "right">
+		<form action="Logout" method="GET">
+				<input type="submit" value="Logout">
+		</form>
+	</div>
+	<div th:if="${isStudent}" align = "left">
+		<form action="GoToHomeStudent" method="GET">
+				<input type="submit" value="HomeStudent">
+		</form>
+	</div>
+	<div th:unless="${isStudent}" align = "left">
+		<form action="GoToHomeTeacher" method="GET">
+				<input type="submit" value="HomeTeacher">
+		</form>
+	</div>
+
+</body>
+</html>
