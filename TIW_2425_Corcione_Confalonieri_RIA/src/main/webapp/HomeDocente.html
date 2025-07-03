@@ -4,10 +4,38 @@
 <meta charset="UTF-8">
 <title>Home Docente</title>
 <script src="homeDocente.js" charset="utf-8" defer></script>
+<script src="utils.js" charset="utf-8" defer></script>
+<link rel="stylesheet" href=css/style.css>
 </head>
 <body>
 	<h1><span>Benvenuto nella home docente, </span>
 	<span id=id_nomeDocente></span></h1>
 	
+	<span id = "id_coursealert"></span>
+	<table id="id_courselistcontainer">
+		<thead>
+			<tr>
+		 		<td>Codice corso</td>
+		 		<td>Nome corso</td>
+		 		<td>Vedi corso</td>
+		 	</tr>
+	 	</thead>
+	 	<tbody id="id_courselistcontainerbody">
+		</tbody> 
+	</table>
+	
+	<span id = "id_examalert"></span>
+	<table id="id_examlistcontainer">
+		<thead>
+			<tr>
+		 		<td>Codice appello</td>
+		 		<td>Data appello</td>
+		 		<td>Codice corso</td>
+		 		<td>Vedi iscritti</td>
+		 	</tr>
+	 	</thead>
+	 	<tbody id="id_examlistcontainerbody">
+		</tbody> 
+	</table>
 </body>
 </html>
