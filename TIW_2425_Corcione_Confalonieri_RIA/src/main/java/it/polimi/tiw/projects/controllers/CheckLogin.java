@@ -91,11 +91,11 @@ public class CheckLogin extends HttpServlet {
 				response.getWriter().println("Credenziali non riconosciute");
 			}
 			else {
-				request.getSession().setAttribute("user", user);
+				request.getSession().setAttribute("user", t);
 				response.setStatus(HttpServletResponse.SC_OK);
 				response.setContentType("application/json");
 				response.setCharacterEncoding("UTF-8");
-				response.getWriter().println("docente " + user + " " + t.getName());
+				response.getWriter().println("docente " + t.getId() + " " + t.getName());
 			}
 		}
 		else if(role.equals("studente")) {
@@ -120,7 +120,7 @@ public class CheckLogin extends HttpServlet {
 				response.setStatus(HttpServletResponse.SC_OK);
 				response.setContentType("application/json");
 				response.setCharacterEncoding("UTF-8");
-				response.getWriter().println("studente " + user + " " + s.getName());
+				response.getWriter().println("studente " + s.getId() + " " + s.getName());
 			}
 		}
 	}
