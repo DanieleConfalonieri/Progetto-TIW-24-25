@@ -5,6 +5,7 @@
 
 {
 	let pageOrchestrator = new PageOrchestrator(); // main controller
+	let courseList, examsList, registeredStudents;
 	
 	window.addEventListener("load", (e) => {
 		if (sessionStorage.getItem("id") == null) {
@@ -20,12 +21,12 @@
 		this.start = function(){
 			document.getElementById("id_nomeDocente").textContent = sessionStorage.getItem('name');
 			courseList = new CourseList(document.getElementById("id_coursealert"), document.getElementById("id_courselistcontainer"), document.getElementById("id_courselistcontainerbody"));
-			examList = new ExamList(document.getElementById("id_examalert")), document.getElementById("id_examlistcontainer"), document.getElementById("id_examlistcontainerbody");
+			examsList = new ExamList(document.getElementById("id_examalert"), document.getElementById("id_examlistcontainer"), document.getElementById("id_examlistcontainerbody"));
 		}
 		
 		this.refresh = function(){
 			courseList.reset();
-			examList.reset();
+			examsList.reset();
 			courseList.show();
 		}
 	}
@@ -48,6 +49,7 @@
 					if(req.status === 200){ // OK
 						var courses = JSON.parse(req.responseText);
 						if(courses.length === 0){
+							self.listcontainer.style.visibility = "hidden";
 							self.alert.textContent = "Nessun corso da vedere.";
 							return;
 						}
@@ -63,6 +65,7 @@
 		}
 		
 		this.update = function(coursesList){
+			this.alert.textContent = "";
 			var row, code, name, link, anchor;
 			this.listcontainerbody.innerHTML = "";
 			var self = this;
@@ -100,19 +103,20 @@
 			this.listcontainer.style.visibility = "hidden";
 		}
 		
-		this.show = function(courseCode){ // deve effettuare la chiamata al server e chiamare update()
+		this.show = function(courseCode){
 			var self = this; // deve essere accedibile dalla makeCall interna -> chiusura
-			makeCall("GET", "GoToExamsTeacher", null, function(req){
+			makeCall("GET", "GoToExamsTeacher?courseId="+courseCode, null, function(req){
 				// funzione di callback all'evento di GET della lista dei corsi - è la funzione onreadystatechange della richiesta per come è definita makeCall
 				if(req.readyState === 4){ // richiesta evasa
 					var message = req.responseText;
 					if(req.status === 200){ // OK
 						var exams = JSON.parse(req.responseText);
-						if(courses.length === 0){
+						if(exams.length === 0){
+							self.listcontainer.style.visibility = "hidden";
 							self.alert.textContent = "Nessun appello da vedere.";
 							return;
 						}
-						self.update(exams);
+						self.update(exams, courseCode);
 					} else if(req.status === 403){
 						window.location.href = req.getResponseHeader("Location");
 						window.sessionStorage.removeItem('username');
@@ -121,6 +125,38 @@
 					}
 				}
 			});
+		}
+		
+		this.update = function(examList, courseCode){
+			this.alert.textContent = "";
+			var row, code, date, course, link, anchor;
+			this.listcontainerbody.innerHTML = "";
+			var self = this;
+			examList.forEach(function(exam){
+				row = document.createElement("tr");
+				code = document.createElement("td");
+				code.textContent = exam.examCode;
+				row.appendChild(code);
+				date = document.createElement("td");
+				date.textContent = exam.date;
+				row.appendChild(date);
+				course = document.createElement("td");
+				course.textContent = courseCode;
+				row.appendChild(course);
+				link = document.createElement("td");
+				anchor = document.createElement("a");
+				anchor.href = "#";
+				linkText = document.createTextNode("Vedi iscritti");
+				anchor.appendChild(linkText);
+				link.appendChild(anchor);
+				row.appendChild(link);
+				anchor.setAttribute('examCode', exam.examCode);
+				anchor.addEventListener("click", (e) => {
+					registeredStudents.show(e.target.getAttribute("examCode"));
+				}, false);
+				self.listcontainerbody.appendChild(row);
+			});
+			this.listcontainer.style.visibility = "visible";
 		}
 	}
 }

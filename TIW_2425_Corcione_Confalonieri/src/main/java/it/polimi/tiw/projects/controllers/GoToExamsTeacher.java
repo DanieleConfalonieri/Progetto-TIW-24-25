@@ -80,6 +80,7 @@ public class GoToExamsTeacher extends HttpServlet {
 			response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Missing parameters");
 			return;
 		}
+		// TODO controllo utente
 		String courseName = request.getParameter("courseName");
 		if(courseName==null) {
 			response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Missing parameters");
