@@ -34,5 +34,10 @@
 	<div align="right">
 		<a th:href="@{/GoToReports(idDocente=${session.user.id})}">Vai ai verbali</a>
 	</div>
+	<div align = "right">
+		<form action="Logout" method="GET">
+				<input type="submit" value="Logout">
+		</form>
+	</div>
 </body>
 </html>

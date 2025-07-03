@@ -1,0 +1,83 @@
+package it.polimi.tiw.projects.controllers;
+
+import jakarta.servlet.RequestDispatcher;
+import jakarta.servlet.ServletContext;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.UnavailableException;
+import jakarta.servlet.annotation.WebServlet;
+import jakarta.servlet.http.HttpServlet;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
+
+import java.io.IOException;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.SQLException;
+
+import it.polimi.tiw.projects.beans.Student;
+import it.polimi.tiw.projects.beans.Teacher;
+import it.polimi.tiw.projects.dao.StudentDAO;
+import it.polimi.tiw.projects.dao.TeacherDAO;
+
+/**
+ * Servlet implementation class Logout
+ */
+@WebServlet("/Logout")
+public class Logout extends HttpServlet {
+	private static final long serialVersionUID = 1L;
+	private Connection connection = null;
+       
+    /**
+     * @see HttpServlet#HttpServlet()
+     */
+    public Logout() {
+        super();
+    }
+    
+    public void init() throws ServletException {
+		try {
+			ServletContext context = getServletContext();
+			String driver = context.getInitParameter("dbDriver");
+			String url = context.getInitParameter("dbUrl");
+			String user = context.getInitParameter("dbUser");
+			String password = context.getInitParameter("dbPassword");
+			Class.forName(driver);
+			connection = DriverManager.getConnection(url, user, password);
+		} catch (ClassNotFoundException e) {
+			throw new UnavailableException("Can't load database driver");
+		} catch (SQLException e) {
+			throw new UnavailableException("Couldn't get db connection");
+		}
+	}
+
+	/**
+	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
+	 */
+	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		String path = getServletContext().getContextPath() + "/index.html";
+		HttpSession session = request.getSession(false);
+		if (session != null) {
+			session.removeAttribute("user");
+			response.sendRedirect(path);
+		}
+	}
+
+	/**
+	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)
+	 * 
+	 */
+	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		
+	}
+	
+	public void destroy() {
+		try {
+			if (connection != null) {
+				connection.close();
+			}
+		} catch (SQLException sqle) {
+		}
+	}
+
+}

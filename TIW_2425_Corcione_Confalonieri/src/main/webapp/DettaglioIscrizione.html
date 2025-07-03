@@ -74,5 +74,10 @@
 		</span>
 	</span>
 	<span th:unless="${isPublished || isRefused}">Voto non ancora definito.</span>
+	<div align = "right">
+		<form action="Logout" method="GET">
+				<input type="submit" value="Logout">
+		</form>
+	</div>
 </body>
 </html>
