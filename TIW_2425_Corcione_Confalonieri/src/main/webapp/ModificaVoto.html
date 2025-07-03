@@ -22,5 +22,10 @@
 		    <input type="text" th:name="newGrade" th:value="${registration.grade}" /> <br>
 		    <span th:text="${'Stato attuale: ' + registration.statusGrade}">Stato attuale</span> <br>
 	</form>
+	<div align = "right">
+		<form action="Logout" method="GET">
+				<input type="submit" value="Logout">
+		</form>
+	</div>
 </body>
 </html>
