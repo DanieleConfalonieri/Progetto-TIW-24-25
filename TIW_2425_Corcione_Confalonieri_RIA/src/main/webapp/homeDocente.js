@@ -276,7 +276,7 @@
 				grade.textContent = reg.grade ? reg.grade : "-";
 				row.appendChild(grade);
 				statusGrade = document.createElement("td");
-				statusGrade.textContent = reg.statusGrade;
+				statusGrade.textContent = reg.statusGrade === "NON_INSERITO" ? "NON INSERITO" : reg.statusGrade;
 				row.appendChild(statusGrade);
 				report = document.createElement("td");
 				report.textContent = reg.reportCode ? reg.reportCode : "-";

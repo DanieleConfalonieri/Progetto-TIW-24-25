@@ -90,6 +90,19 @@ public class GoToExamsTeacher extends HttpServlet {
 			//response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Missing parameters");
 			return;
 		}
+		
+		Integer teacherId;
+		try {
+			HttpSession session = request.getSession();
+			Teacher t = (Teacher) session.getAttribute("user");
+			teacherId = t.getId();
+		} catch (NullPointerException e) {
+			path = getServletContext().getContextPath() + "/Error?message=" + "Utente non autenticato.";
+			response.sendRedirect(path);
+			//response.sendError(HttpServletResponse.SC_FORBIDDEN, "Utente non autenticato.");
+			return;
+		}
+		
 		CourseDAO cDao = new CourseDAO(connection);
 		try {
 			Course c = cDao.getCoursesById(courseId);
@@ -97,6 +110,13 @@ public class GoToExamsTeacher extends HttpServlet {
 				path = getServletContext().getContextPath() + "/Error?message=" + "Il codice corso e il nome corso non corrispondono.";
 				response.sendRedirect(path);
 				//response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Il codice corso e il nome corso non corrispondono.");
+				return;
+			}
+			List<Course> coursesOfTeacher = cDao.getCoursesByTeacher(teacherId);
+			if(!coursesOfTeacher.contains(c)) {
+				path = getServletContext().getContextPath() + "/Error?message=" + "Questo corso non appartiene al docente.";
+				response.sendRedirect(path);
+				//response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Questo corso non appartiene al docente.");
 				return;
 			}
 		} catch (SQLException e) {
