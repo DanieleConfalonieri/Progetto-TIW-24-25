@@ -77,6 +77,7 @@ public class RefuseGrade extends HttpServlet {
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		int studId = 0, courseId = 0, examId = 0;
+		String path = getServletContext().getContextPath();
 		try {
 			HttpSession session = request.getSession();
 			Student student = (Student) session.getAttribute("user");
@@ -84,27 +85,39 @@ public class RefuseGrade extends HttpServlet {
 			courseId = Integer.parseInt(request.getParameter("courseId"));
 			examId = Integer.parseInt(request.getParameter("examId"));
 		} catch (NumberFormatException | NullPointerException e) {
-			response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Missing parameters");
+			path = path + "/Error?message=" + "Missing parameters";
+			response.sendRedirect(path);
+			//response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Missing parameters");
 			return;
 		}
 		Registration registration;
 		Course course;
 		CourseDAO cDao = new CourseDAO(connection);
 		RegistrationDAO rDao = new RegistrationDAO(connection);
+		ExamDAO eDao = new ExamDAO(connection);
 		try {
+			if(!eDao.validExamForCourse(courseId, examId)) {
+				path = path + "/Error?message=" + "L'appello e il corso non corrispondono.";
+				response.sendRedirect(path);
+				return;
+			}
 			try {
 				rDao.refuseGrade(examId, studId);
 			} catch (RuntimeException e) {
-				response.sendError(HttpServletResponse.SC_FORBIDDEN, e.getMessage());
+				path = path + "/Error?message=" + e.getMessage();
+				response.sendRedirect(path);
+				//response.sendError(HttpServletResponse.SC_FORBIDDEN, e.getMessage());
 				return;
 			}
 			registration = rDao.getRegistration(examId, studId);
 			course = cDao.getCoursesById(courseId);
 		} catch (SQLException e) {
-			response.sendError(HttpServletResponse.SC_BAD_GATEWAY, "Failure in course's exams database extraction");
+			path = path + "/Error?message=" + "Failure in course's exams database extraction";
+			response.sendRedirect(path);
+			//response.sendError(HttpServletResponse.SC_BAD_GATEWAY, "Failure in course's exams database extraction");
 			return;
 		}
-		String path = "/DettaglioIscrizione.html";
+		path = "/DettaglioIscrizione.html";
 		JakartaServletWebApplication webApplication = JakartaServletWebApplication.buildApplication(getServletContext());
         WebContext ctx = new WebContext(webApplication.buildExchange(request, response), request.getLocale());
         boolean isPublished = registration.getStatusGrade().equals(StatusGrade.PUBBLICATO);

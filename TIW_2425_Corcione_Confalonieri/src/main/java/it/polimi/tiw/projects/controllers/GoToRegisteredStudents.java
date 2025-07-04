@@ -7,6 +7,8 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
+
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -23,6 +25,7 @@ import org.thymeleaf.web.servlet.JakartaServletWebApplication;
 
 import it.polimi.tiw.projects.beans.Registration;
 import it.polimi.tiw.projects.beans.StatusGrade;
+import it.polimi.tiw.projects.beans.Teacher;
 import it.polimi.tiw.projects.dao.ExamDAO;
 import it.polimi.tiw.projects.dao.RegistrationDAO;
 
@@ -72,31 +75,55 @@ public class GoToRegisteredStudents extends HttpServlet {
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		// recupero dai parametri della request l'appello di cui estrarre gli iscritti
 		int examId = 0;
+		String path;
 		try {
 			examId = Integer.parseInt(request.getParameter("examId"));
 		} catch (NumberFormatException e) {
-			response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Missing parameters");
+			path = getServletContext().getContextPath() + "/Error?message=" + "Missing parameters";
+			response.sendRedirect(path);
+			//response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Missing parameters");
 			return;
 		}
 		String examDate, courseName;
+		Integer teacherId, actualTeacherId = 0;
 		List<Registration> registeredStudents = new ArrayList<>();
+		
+		try {
+			HttpSession session = request.getSession();
+			Teacher t = (Teacher) session.getAttribute("user");
+			actualTeacherId = t.getId();
+		} catch (NullPointerException e) {
+			path = getServletContext().getContextPath() + "/Error?message=" + "Utente non autenticato.";
+			response.sendRedirect(path);
+			//response.sendError(HttpServletResponse.SC_FORBIDDEN, "Utente non autenticato.");
+			return;
+		}
 		
 		RegistrationDAO rDao = new RegistrationDAO(connection);
 		ExamDAO eDao = new ExamDAO(connection);
 		try {
 			examDate = eDao.getExamDate(examId);
 			courseName = eDao.getCourseName(examId);
+			teacherId = eDao.getTeacher(examId);
 			registeredStudents = rDao.getStudentsByExam(examId);
+			if(examDate == null || courseName == null || teacherId == null || !teacherId.equals(actualTeacherId)) {
+				path = getServletContext().getContextPath() + "/Error?message=" + "Dati non validi.";
+				response.sendRedirect(path);
+				//response.sendError(HttpServletResponse.SC_BAD_GATEWAY, "Dati non validi.");
+				return;
+			}
 		}
 		catch (SQLException e) {
-			response.sendError(HttpServletResponse.SC_BAD_GATEWAY, "Failure in exam's registered students database extraction");
+			path = getServletContext().getContextPath() + "/Error?message=" + "Failure in exam's registered students database extraction";
+			response.sendRedirect(path);
+			//response.sendError(HttpServletResponse.SC_BAD_GATEWAY, "Failure in exam's registered students database extraction");
 			return;
 		}
 		
 		boolean isPublishable = !registeredStudents.stream().filter(g -> g.getStatusGrade().equals(StatusGrade.INSERITO)).collect(Collectors.toList()).isEmpty();
-		boolean isVerbalizable = !registeredStudents.stream().filter(g -> g.getStatusGrade().equals(StatusGrade.PUBBLICATO)).collect(Collectors.toList()).isEmpty();
+		boolean isVerbalizable = !registeredStudents.stream().filter(g -> g.getStatusGrade().equals(StatusGrade.PUBBLICATO) || g.getStatusGrade().equals(StatusGrade.RIFIUTATO)).collect(Collectors.toList()).isEmpty();
 		
-		String path = "/IscrittiAppello.html";
+		path = "/IscrittiAppello.html";
 		JakartaServletWebApplication webApplication = JakartaServletWebApplication.buildApplication(getServletContext());
         WebContext ctx = new WebContext(webApplication.buildExchange(request, response), request.getLocale());
         ctx.setVariable("examId", examId);

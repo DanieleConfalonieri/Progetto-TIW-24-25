@@ -7,6 +7,8 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
+
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -21,6 +23,8 @@ import org.thymeleaf.templateresolver.WebApplicationTemplateResolver;
 import org.thymeleaf.web.servlet.JakartaServletWebApplication;
 
 import it.polimi.tiw.projects.beans.Registration;
+import it.polimi.tiw.projects.beans.StatusGrade;
+import it.polimi.tiw.projects.beans.Teacher;
 import it.polimi.tiw.projects.dao.ExamDAO;
 import it.polimi.tiw.projects.dao.RegistrationDAO;
 
@@ -83,23 +87,60 @@ public class UpdateGrade extends HttpServlet {
 			newGrade = request.getParameter("newGrade");
 			List<String> grades = Arrays.asList("null", "ASSENTE", "RIMANDATO", "RIPROVATO", "18", "19", "20", "21", "22", "23", "24", "25", "26", "27", "28", "29", "30", "30L");
 			newGrade = newGrade.toUpperCase();
+			
+			Integer actualTeacherId = 0;
+			try {
+				HttpSession session = request.getSession();
+				Teacher t = (Teacher) session.getAttribute("user");
+				actualTeacherId = t.getId();
+			} catch (NullPointerException e) {
+				path = path + "/Error?message=" + "Utente non autenticato.";
+				response.sendRedirect(path);
+				//response.sendError(HttpServletResponse.SC_FORBIDDEN, "Utente non autenticato.");
+				return;
+			}
+			
+			ExamDAO eDao = new ExamDAO(connection);
 			RegistrationDAO rDao = new RegistrationDAO(connection);
 			if(grades.contains(newGrade)) {
 				try {
-					rDao.updateGrade(newGrade, studId, examId); // non necessita di gestione transazioni perchè è un solo comando SQL atomico
+					Integer teacherId = eDao.getTeacher(examId);
+					if(teacherId == null || !teacherId.equals(actualTeacherId)) {
+						path = path + "/Error?message=" + "L'appello e il docente non corrispondono.";
+						response.sendRedirect(path);
+						return;
+					}
+					Registration r = rDao.getRegistration(examId, studId);
+					if(r == null) {
+						path = path + "/Error?message=" + "Lo studente non e' iscritto all'appello.";
+						response.sendRedirect(path);
+						return;
+					}
+					if(r.getStatusGrade().equals(StatusGrade.PUBBLICATO) || r.getStatusGrade().equals(StatusGrade.RIFIUTATO) || r.getStatusGrade().equals(StatusGrade.VERBALIZZATO)) {
+						path = path + "/Error?message=" + "Voto non modificabile.";
+						response.sendRedirect(path);
+						return;
+					}
+					rDao.updateGrade(newGrade, studId, examId);
 					path = path + "/GoToRegisteredStudents?examId=" + examId;
 				}
 				catch (SQLException e) {
-					response.sendError(HttpServletResponse.SC_BAD_GATEWAY, "Failure in grade database update");
+					path = path + "/Error?message=" + "Failure in grade database update";
+					response.sendRedirect(path);
+					//response.sendError(HttpServletResponse.SC_BAD_GATEWAY, "Failure in grade database update");
 					return;
 				}
 			}
 			else {
-				path = path + "/GoToUpdate?examId=" + examId + "&studId=" + studId;
+				path = path + "/Error?message=" + "Voto non valido.";
+				response.sendRedirect(path);
+				return;
 			}
 		}
 		catch (NumberFormatException e) {
-			response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Missing parameters");
+			path = path + "/Error?message=" + "Missing parameters";
+			response.sendRedirect(path);
+			//response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Missing parameters");
 	        return;
 		}
 		

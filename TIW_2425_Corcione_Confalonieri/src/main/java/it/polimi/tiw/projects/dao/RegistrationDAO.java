@@ -130,6 +130,9 @@ public class RegistrationDAO {
 	public void refuseGrade(int examId, int studId) throws SQLException {
 		connection.setAutoCommit(false);
 		Registration reg = getRegistration(examId, studId);
+		if(reg == null) {
+			throw new RuntimeException("Iscrizione non presente.");
+		}
 		if(reg.isRefusable()) {
 			String query = "UPDATE iscrizione set StatoVoto = 'RIFIUTATO' WHERE CodiceAppello = ? and MatricolaStudente = ?";
 			try (PreparedStatement statement = connection.prepareStatement(query)){
@@ -140,7 +143,7 @@ public class RegistrationDAO {
 			}
 		}
 		else {
-			throw new RuntimeException("Non puoi rifiutare il seguente voto");
+			throw new RuntimeException("Non puoi rifiutare il seguente voto.");
 		}
 	}
 	

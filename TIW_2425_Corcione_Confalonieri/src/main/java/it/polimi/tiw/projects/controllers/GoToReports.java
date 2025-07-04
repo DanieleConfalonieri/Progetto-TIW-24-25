@@ -67,10 +67,13 @@ public class GoToReports extends HttpServlet {
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		int idDocente;
+		String path;
 		try {
 			idDocente = Integer.parseInt(request.getParameter("idDocente"));
 		} catch (NumberFormatException e) {
-			response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Missing parameters");
+			path = getServletContext().getContextPath() + "/Error?message=" + "Missing parameters";
+			response.sendRedirect(path);
+			//response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Missing parameters");
 			return;
 		}
 		
@@ -78,12 +81,16 @@ public class GoToReports extends HttpServlet {
 		try {
 			t = (Teacher) request.getSession().getAttribute("user");
 		} catch (ClassCastException e) {
-			response.sendError(HttpServletResponse.SC_FORBIDDEN, "User not logged in");
+			path = getServletContext().getContextPath() + "/Error?message=" + "Utente non autenticato.";
+			response.sendRedirect(path);
+			//response.sendError(HttpServletResponse.SC_FORBIDDEN, "User not logged in");
 			return;
 		}
 		
 		if(t.getId() != idDocente) { // controlla che il docente per cui si stanno richiedendo i verbali sia lo stesso che è il titolare della sessione
-			response.sendError(HttpServletResponse.SC_BAD_REQUEST, "User not logged in");
+			path = getServletContext().getContextPath() + "/Error?message=" + "Utente non autenticato.";
+			response.sendRedirect(path);
+			//response.sendError(HttpServletResponse.SC_FORBIDDEN, "User not logged in");
 			return;
 		}
 		
@@ -92,11 +99,13 @@ public class GoToReports extends HttpServlet {
 		try {
 			verbali = rDao.getReportsByTeacher(idDocente);
 		} catch (SQLException e) {
-			response.sendError(HttpServletResponse.SC_BAD_GATEWAY, "Failure in report database extraction");
+			path = getServletContext().getContextPath() + "/Error?message=" + "Failure in report database extraction";
+			response.sendRedirect(path);
+			//response.sendError(HttpServletResponse.SC_BAD_GATEWAY, "Failure in report database extraction");
 			return;
 		}
 		
-		String path = "/Verbali.html";
+		path = "/Verbali.html";
 		JakartaServletWebApplication webApplication = JakartaServletWebApplication.buildApplication(getServletContext());
         WebContext ctx = new WebContext(webApplication.buildExchange(request, response), request.getLocale());
         ctx.setVariable("reports", verbali);

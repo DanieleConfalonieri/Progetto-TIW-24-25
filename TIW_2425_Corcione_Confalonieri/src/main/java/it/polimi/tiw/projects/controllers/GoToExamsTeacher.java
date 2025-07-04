@@ -74,16 +74,35 @@ public class GoToExamsTeacher extends HttpServlet {
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		// recupero dai parametri della request il corso di cui estrarre gli appelli
 		int courseId = 0;
+		String path;
 		try {
 			courseId = Integer.parseInt(request.getParameter("course"));
 		} catch (NumberFormatException e) {
-			response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Missing parameters");
+			path = getServletContext().getContextPath() + "/Error?message=" + "Missing parameters";
+			response.sendRedirect(path);
+			//response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Missing parameters");
 			return;
 		}
-		// TODO controllo utente
 		String courseName = request.getParameter("courseName");
 		if(courseName==null) {
-			response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Missing parameters");
+			path = getServletContext().getContextPath() + "/Error?message=" + "Missing parameters";
+			response.sendRedirect(path);
+			//response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Missing parameters");
+			return;
+		}
+		CourseDAO cDao = new CourseDAO(connection);
+		try {
+			Course c = cDao.getCoursesById(courseId);
+			if(c==null || !c.getName().equals(courseName)) {
+				path = getServletContext().getContextPath() + "/Error?message=" + "Il codice corso e il nome corso non corrispondono.";
+				response.sendRedirect(path);
+				//response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Il codice corso e il nome corso non corrispondono.");
+				return;
+			}
+		} catch (SQLException e) {
+			path = getServletContext().getContextPath() + "/Error?message=" + "Failure in course's exams database extraction";
+			response.sendRedirect(path);
+			//response.sendError(HttpServletResponse.SC_BAD_GATEWAY, "Failure in course's exams database extraction");
 			return;
 		}
 		
@@ -94,10 +113,12 @@ public class GoToExamsTeacher extends HttpServlet {
 			exams = eDao.getExamsByCourse(courseId);
 		}
 		catch (SQLException e) {
-			response.sendError(HttpServletResponse.SC_BAD_GATEWAY, "Failure in course's exams database extraction");
+			path = getServletContext().getContextPath() + "/Error?message=" + "Failure in course's exams database extraction";
+			response.sendRedirect(path);
+			//response.sendError(HttpServletResponse.SC_BAD_GATEWAY, "Failure in course's exams database extraction");
 			return;
 		}
-		String path = "/AppelliDocente.html";
+		path = "/AppelliDocente.html";
 		JakartaServletWebApplication webApplication = JakartaServletWebApplication.buildApplication(getServletContext());
         WebContext ctx = new WebContext(webApplication.buildExchange(request, response), request.getLocale());
         ctx.setVariable("exams", exams);

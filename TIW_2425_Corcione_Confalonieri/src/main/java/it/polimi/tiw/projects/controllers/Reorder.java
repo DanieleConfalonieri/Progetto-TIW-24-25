@@ -13,6 +13,7 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.WebContext;
@@ -71,16 +72,16 @@ public class Reorder extends HttpServlet {
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		String col, examDate, courseName;
 		int examId;
-		boolean isPublishable, isVerbalizable;
+		String path = getServletContext().getContextPath();
 		try {
 			col = request.getParameter("sortField");
 			examId = Integer.parseInt(request.getParameter("examId"));
 			examDate = request.getParameter("data");
 			courseName = request.getParameter("courseName");
-			isPublishable = Boolean.parseBoolean(request.getParameter("isPublishable"));
-			isVerbalizable = Boolean.parseBoolean(request.getParameter("isVerbalizable"));
 		} catch (NumberFormatException e) {
-			response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Missing parameters");
+			path = path + "/Error?message=" + "Missing parameters";
+			response.sendRedirect(path);
+			//response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Missing parameters");
 	        return;
 		}
 		
@@ -120,6 +121,10 @@ public class Reorder extends HttpServlet {
 			}
 			i++;
 		}
+		
+		boolean isPublishable = !registrations.stream().filter(g -> g.getStatusGrade().equals(StatusGrade.INSERITO)).collect(Collectors.toList()).isEmpty();
+		boolean isVerbalizable = !registrations.stream().filter(g -> g.getStatusGrade().equals(StatusGrade.PUBBLICATO) || g.getStatusGrade().equals(StatusGrade.RIFIUTATO)).collect(Collectors.toList()).isEmpty();
+		
 		registrations = regDao.reorder(registrations, col);
 		JakartaServletWebApplication webApplication = JakartaServletWebApplication.buildApplication(getServletContext());
 		WebContext ctx = new WebContext(webApplication.buildExchange(request, response), request.getLocale());
@@ -129,7 +134,7 @@ public class Reorder extends HttpServlet {
         ctx.setVariable("courseName", courseName);
         ctx.setVariable("isPublishable", isPublishable);
         ctx.setVariable("isVerbalizable", isVerbalizable);
-		String path = "/IscrittiAppello.html";
+        path = "/IscrittiAppello.html";
 		templateEngine.process(path, ctx, response.getWriter());
 	}
 

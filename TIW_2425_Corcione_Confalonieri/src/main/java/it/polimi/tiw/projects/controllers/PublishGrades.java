@@ -8,6 +8,8 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
+
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -18,6 +20,8 @@ import org.thymeleaf.templatemode.TemplateMode;
 import org.thymeleaf.templateresolver.WebApplicationTemplateResolver;
 import org.thymeleaf.web.servlet.JakartaServletWebApplication;
 
+import it.polimi.tiw.projects.beans.Teacher;
+import it.polimi.tiw.projects.dao.ExamDAO;
 import it.polimi.tiw.projects.dao.RegistrationDAO;
 
 /**
@@ -65,21 +69,44 @@ public class PublishGrades extends HttpServlet {
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		// controllo parametri
 		int examId;
+		String path = getServletContext().getContextPath();
 		try {
 			examId = Integer.parseInt(request.getParameter("examId"));
 		} catch (NumberFormatException e) {
-			response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Missing parameters");
+			path = path + "/Error?message=" + "Missing parameters";
+			response.sendRedirect(path);
+			//response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Missing parameters");
 	        return;
 		}
 		
-		String path = getServletContext().getContextPath();
+		Integer actualTeacherId = 0;
+		try {
+			HttpSession session = request.getSession();
+			Teacher t = (Teacher) session.getAttribute("user");
+			actualTeacherId = t.getId();
+		} catch (NullPointerException e) {
+			path = path + "/Error?message=" + "Utente non autenticato.";
+			response.sendRedirect(path);
+			//response.sendError(HttpServletResponse.SC_FORBIDDEN, "Utente non autenticato.");
+			return;
+		}
 		
 		// pubblicazione voti
+		ExamDAO eDao = new ExamDAO(connection);
 		RegistrationDAO rDao = new RegistrationDAO(connection);
 		try {
+			Integer teacherId = eDao.getTeacher(examId);
+			if(teacherId==null || !teacherId.equals(actualTeacherId)) {
+				path = path + "/Error?message=" + "L'appello e il docente non corrispondono.";
+				response.sendRedirect(path);
+				//response.sendError(HttpServletResponse.SC_FORBIDDEN, "L'appello e il docente non corrispondono.");
+				return;
+			}
 			rDao.publishInsertedGrades(examId);
 		} catch (SQLException e) {
-			response.sendError(HttpServletResponse.SC_BAD_GATEWAY, "Failure in grade database update");
+			path = path + "/Error?message=" + "Failure in grade database update";
+			response.sendRedirect(path);
+			//response.sendError(HttpServletResponse.SC_BAD_GATEWAY, "Failure in grade database update");
 			return;
 		}
 		

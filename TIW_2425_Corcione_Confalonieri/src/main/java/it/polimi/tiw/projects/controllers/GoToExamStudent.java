@@ -76,13 +76,16 @@ public class GoToExamStudent extends HttpServlet {
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		int courseId = 0, studId = 0;
+		String path;
 		try {
 			HttpSession session = request.getSession();
 			Student student = (Student) session.getAttribute("user");
 			studId = student.getId();
 			courseId = Integer.parseInt(request.getParameter("course"));
 		} catch (NullPointerException | NumberFormatException e) {
-			response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Missing parameters");
+			path = getServletContext().getContextPath() + "/Error?message=" + "Missing parameters";
+			response.sendRedirect(path);
+			//response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Missing parameters");
 			return;
 		}
 		List<Exam> exams = new ArrayList<Exam>();
@@ -92,12 +95,26 @@ public class GoToExamStudent extends HttpServlet {
 		try {
 			exams = eDao.getExamsByCourseAndStud(courseId, studId);
 			course = cDao.getCoursesById(courseId);
+			if(course == null) {
+				path = getServletContext().getContextPath() + "/Error?message=" + "Invalid course id";
+				response.sendRedirect(path);
+				//response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Invalid course id");
+				return;
+			}
 		}
 		catch (SQLException e) {
-			response.sendError(HttpServletResponse.SC_BAD_GATEWAY, "Failure in course's exams database extraction");
+			path = getServletContext().getContextPath() + "/Error?message=" + "Failure in course's exams database extraction";
+			response.sendRedirect(path);
+			//response.sendError(HttpServletResponse.SC_BAD_GATEWAY, "Failure in course's exams database extraction");
 			return;
 		}
-		String path = "/AppelliStudente.html";
+		catch (RuntimeException e) {
+			path = getServletContext().getContextPath() + "/Error?message=" + e.getMessage();
+			response.sendRedirect(path);
+			//response.sendError(HttpServletResponse.SC_BAD_GATEWAY, e.getMessage());
+			return;
+		}
+		path = "/AppelliStudente.html";
 		JakartaServletWebApplication webApplication = JakartaServletWebApplication.buildApplication(getServletContext());
         WebContext ctx = new WebContext(webApplication.buildExchange(request, response), request.getLocale());
         ctx.setVariable("exams", exams);

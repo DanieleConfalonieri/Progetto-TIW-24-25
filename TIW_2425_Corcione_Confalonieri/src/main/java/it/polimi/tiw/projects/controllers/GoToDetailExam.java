@@ -80,25 +80,50 @@ public class GoToDetailExam extends HttpServlet {
 		Student student = (Student) session.getAttribute("user");
 		int studId = student.getId();
 		int examId, courseId;
+		String path;
 		try {
 			examId = Integer.parseInt(request.getParameter("examId"));
 			courseId = Integer.parseInt(request.getParameter("courseId"));
 		} catch (NumberFormatException e) {
-			response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Missing parameters");
+			path = getServletContext().getContextPath() + "/Error?message=" + "Missing parameters";
+			response.sendRedirect(path);
+			//response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Missing parameters");
 			return;
 		}
+		// verificare che lo studente stia richiedendo i dati per un appello a cui è iscritto, di un corso di cui l'appello fa parte
 		Registration registration;
 		Course course;
 		CourseDAO cDao = new CourseDAO(connection);
 		RegistrationDAO rDao = new RegistrationDAO(connection);
 		try {
-			registration = rDao.getRegistration(examId, studId);
-			course = cDao.getCoursesById(courseId);
+			registration = rDao.getRegistration(examId, studId); // appare solo se lo studente è effettivamente iscritto all'appello
+			course = cDao.getCoursesById(courseId); // 
+			if(registration == null) {
+				path = getServletContext().getContextPath() + "/Error?message=" + "Appello non valido";
+				response.sendRedirect(path);
+				//response.sendError(HttpServletResponse.SC_BAD_GATEWAY, "Invalid exam");
+				return;
+			}
+			if(course == null) {
+				path = getServletContext().getContextPath() + "/Error?message=" + "Corso non valido";
+				response.sendRedirect(path);
+				//response.sendError(HttpServletResponse.SC_BAD_GATEWAY, "Invalid course");
+				return;
+			}
+			ExamDAO eDao = new ExamDAO(connection);
+			if(!eDao.validExamForCourse(courseId, examId)) {
+				path = getServletContext().getContextPath() + "/Error?message=" + "Questo appello non fa parte del corso selezionato";
+				response.sendRedirect(path);
+				//response.sendError(HttpServletResponse.SC_BAD_GATEWAY, "Questo appello non fa parte del corso selezionato");
+				return;
+			}
 		} catch (SQLException e) {
-			response.sendError(HttpServletResponse.SC_BAD_GATEWAY, "Failure in course's exams database extraction");
+			path = getServletContext().getContextPath() + "/Error?message=" + "Failure in course's exams database extraction";
+			response.sendRedirect(path);
+			//response.sendError(HttpServletResponse.SC_BAD_GATEWAY, "Failure in course's exams database extraction");
 			return;
 		}
-		String path = "/DettaglioIscrizione.html";
+		path = "/DettaglioIscrizione.html";
 		JakartaServletWebApplication webApplication = JakartaServletWebApplication.buildApplication(getServletContext());
         WebContext ctx = new WebContext(webApplication.buildExchange(request, response), request.getLocale());
         boolean isPublished = registration.getStatusGrade().equals(StatusGrade.PUBBLICATO);

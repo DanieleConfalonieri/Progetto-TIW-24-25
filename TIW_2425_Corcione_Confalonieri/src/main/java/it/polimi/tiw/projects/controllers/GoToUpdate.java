@@ -7,6 +7,8 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
+
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -19,6 +21,9 @@ import org.thymeleaf.templateresolver.WebApplicationTemplateResolver;
 import org.thymeleaf.web.servlet.JakartaServletWebApplication;
 
 import it.polimi.tiw.projects.beans.Registration;
+import it.polimi.tiw.projects.beans.StatusGrade;
+import it.polimi.tiw.projects.beans.Teacher;
+import it.polimi.tiw.projects.dao.ExamDAO;
 import it.polimi.tiw.projects.dao.RegistrationDAO;
 
 /**
@@ -67,23 +72,64 @@ public class GoToUpdate extends HttpServlet {
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		// recupero dalla request la matricola dello studente e il codice dell'appello che mi servono per sapere quale iscrizione modificare
 		int examId = 0, studId = 0;
+		String path;
 		try {
 			examId = Integer.parseInt(request.getParameter("examId"));
 			studId = Integer.parseInt(request.getParameter("studId"));
 		} catch (NumberFormatException e) {
-			response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Missing parameters");
+			path = getServletContext().getContextPath() + "/Error?message=" + "Missing parameters";
+			response.sendRedirect(path);
+			//response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Missing parameters");
 			return;
 		}
+		
+		Integer actualTeacherId = 0;
+		try {
+			HttpSession session = request.getSession();
+			Teacher t = (Teacher) session.getAttribute("user");
+			actualTeacherId = t.getId();
+		} catch (NullPointerException e) {
+			path = getServletContext().getContextPath() + "/Error?message=" + "Utente non autenticato.";
+			response.sendRedirect(path);
+			//response.sendError(HttpServletResponse.SC_FORBIDDEN, "Utente non autenticato.");
+			return;
+		}
+		
+		// devo controllare che l'appello sia di un esame del docente e che lo studente sia effettivamente iscritto (l'iscrizione esiste),
+		// inoltre posso modificare il voto solo se non è già pubblicato, rifiutato o verbalizzato
+		
+		ExamDAO eDao = new ExamDAO(connection);
 		RegistrationDAO rDao = new RegistrationDAO(connection);
 		Registration reg;
 		try {
+			Integer teacherId = eDao.getTeacher(examId);
+			if(teacherId == null || !teacherId.equals(actualTeacherId)) {
+				path = getServletContext().getContextPath() + "/Error?message=" + "Appello non valido.";
+				response.sendRedirect(path);
+				//response.sendError(HttpServletResponse.SC_FORBIDDEN, "Appello non valido.");
+				return;
+			}
 			reg = rDao.getRegistration(examId, studId);
+			try {
+				StatusGrade status = reg.getStatusGrade();
+				if(status == StatusGrade.PUBBLICATO || status == StatusGrade.RIFIUTATO || status == StatusGrade.VERBALIZZATO) {
+					path = getServletContext().getContextPath() + "/Error?message=" + "Questo voto non e' modificabile.";
+					response.sendRedirect(path);
+					//response.sendError(HttpServletResponse.SC_FORBIDDEN, "Questo voto non è modificabile.");
+					return;
+				}
+			} catch (NullPointerException e) {
+				path = getServletContext().getContextPath() + "/Error?message=" + "Studente non iscritto all'appello selezionato.";
+				response.sendRedirect(path);
+				//response.sendError(HttpServletResponse.SC_FORBIDDEN, "Studente non iscritto all'appello selezionato.");
+				return;
+			}
 		}
 		catch (SQLException e) {
 			response.sendError(HttpServletResponse.SC_BAD_GATEWAY, "Failure in registration database extraction");
 			return;
 		}
-		String path = "/ModificaVoto.html";
+		path = "/ModificaVoto.html";
 		JakartaServletWebApplication webApplication = JakartaServletWebApplication.buildApplication(getServletContext());
         WebContext ctx = new WebContext(webApplication.buildExchange(request, response), request.getLocale());
         ctx.setVariable("registration", reg);
