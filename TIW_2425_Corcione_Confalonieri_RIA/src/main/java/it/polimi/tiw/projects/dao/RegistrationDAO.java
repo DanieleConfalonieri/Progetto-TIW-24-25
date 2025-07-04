@@ -101,14 +101,6 @@ public class RegistrationDAO {
 	}
 	
 	/*
-	 * ritorna lista di appelli a cui uno studente studId è iscritto per il corso course.
-	 * usato dallo studente per vedere la lista di iscrizioni effettuate per gli appelli dei suoi corsi.
-	 */
-	public List<Exam> getExamByStudentCourse(int studId, int course) throws SQLException {
-		return null;
-	}
-	
-	/*
 	 * permette ad un docente di inserire o modificare il voto di uno studente per un determinato appello.
 	 */
 	public void updateGrade(String grade, int studId, int examId) throws SQLException {
@@ -134,11 +126,13 @@ public class RegistrationDAO {
 	
 	/*
 	 * permette ad uno studente di rifiutare il voto di un appello.
-	 * ricarica la pagina ESITO dello studente.
 	 */
 	public void refuseGrade(int examId, int studId) throws SQLException {
 		connection.setAutoCommit(false);
 		Registration reg = getRegistration(examId, studId);
+		if(reg == null) {
+			throw new RuntimeException("Iscrizione non presente.");
+		}
 		if(reg.isRefusable()) {
 			String query = "UPDATE iscrizione set StatoVoto = 'RIFIUTATO' WHERE CodiceAppello = ? and MatricolaStudente = ?";
 			try (PreparedStatement statement = connection.prepareStatement(query)){
@@ -149,7 +143,7 @@ public class RegistrationDAO {
 			}
 		}
 		else {
-			throw new RuntimeException("Non puoi rifiutare il seguente voto");
+			throw new RuntimeException("Non puoi rifiutare il seguente voto.");
 		}
 	}
 	
@@ -174,7 +168,7 @@ public class RegistrationDAO {
 	 * 
 	 * @return How the list is ordered
 	 */
-	public int isSorted(List<Registration> list, String column, Comparator<Registration> comparator) {
+	private int isSorted(List<Registration> list, String column, Comparator<Registration> comparator) {
 		boolean isSortedAscending = true, isSortedDescending = true;
 		int len = list.size(), i;
 		for(i=0;i<len;i++) {
@@ -197,7 +191,7 @@ public class RegistrationDAO {
 
 
 	
-	public Comparator<Registration> getComparatorByGivenColumn(String column){
+	private Comparator<Registration> getComparatorByGivenColumn(String column){
 		switch(column) {
 			case "Matricola" -> {
 				return Comparator.comparing(t -> t.getStudent().getId());

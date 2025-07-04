@@ -15,9 +15,9 @@
 	<table id="id_courselistcontainer">
 		<thead>
 			<tr>
-		 		<td>Codice corso</td>
-		 		<td>Nome corso</td>
-		 		<td>Vedi corso</td>
+		 		<th>Codice corso</th>
+		 		<th>Nome corso</th>
+		 		<th>Vedi corso</th>
 		 	</tr>
 	 	</thead>
 	 	<tbody id="id_courselistcontainerbody">
@@ -28,14 +28,66 @@
 	<table id="id_examlistcontainer">
 		<thead>
 			<tr>
-		 		<td>Codice appello</td>
-		 		<td>Data appello</td>
-		 		<td>Codice corso</td>
-		 		<td>Vedi iscritti</td>
+		 		<th>Codice appello</th>
+		 		<th>Data appello</th>
+		 		<th>Codice corso</th>
+		 		<th>Vedi iscritti</th>
 		 	</tr>
 	 	</thead>
 	 	<tbody id="id_examlistcontainerbody">
 		</tbody> 
 	</table>
+	
+	<div id="id_registeredcontainer">
+		<h2 id="id_registeredexamcode"></h2>
+		<span id = "id_registeredalert"></span>
+		<table id="id_registeredlistcontainer">
+			<thead>
+				<tr>
+			 		<th id="id_colmatricola">Matricola</th>
+			 		<th id="id_colcognome">Cognome</th>
+			 		<th id="id_colnome">Nome</th>
+			 		<th id="id_colemail">Email</th>
+			 		<th id="id_colcorsolaurea">Corso di Laurea</th>
+			 		<th id="id_colvoto">Voto</th>
+			 		<th id="id_colstatovoto">Stato Voto</th>
+			 		<th id="id_colverbale">Codice Verbale</th>
+			 	</tr>
+		 	</thead>
+		 	<tbody id="id_registeredlistcontainerbody">
+			</tbody> 
+		</table>
+		<button id="id_pubblica">PUBBLICA</button>
+		<button id="id_verbalizza">VERBALIZZA</button>
+	</div>
+	
+	<div id="id_reportdetailcontainer">
+		<h2>Dettagli verbale:</h2>
+		<table>
+			<thead>
+				<tr>
+			 		<td>Codice Verbale</td>
+			 		<td>Data creazione</td>
+			 		<td>Ora creazione</td>
+			 		<td>Matricola docente</td>
+			 		<td>Codice appello</td>
+			 	</tr> 
+			</thead>
+			<tbody id="id_reportdetailcontainerbody"></tbody>
+		</table>
+		
+		<h3>Elenco studenti verbalizzati:</h3>
+		<table>
+			<thead>
+				<tr>
+			 		<td>Nome</td>
+			 		<td>Cognome</td>
+			 		<td>Matricola</td>
+			 		<td>Voto</td>
+			 	</tr> 
+			</thead>
+			<tbody id="id_reportdetailstudentlistcontainerbody"></tbody>
+		</table>
+	</div>
 </body>
 </html>

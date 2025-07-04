@@ -23,58 +23,65 @@ public class ReportDAO {
 	 * verbalizza i voti nello stato PUBBLICATO. I voti rifiutati sono verbalizzati come RIMANDATO.
 	 * Crea una nuova tupla nella tabella verbale. Aggiorna le iscrizioni degli studenti coinvolti con il verbale nuovo.
 	 */
-	public Report registerPublishedGrades(int examId) throws SQLException {
+	public Report registerPublishedGrades(int examId) throws SQLException, RuntimeException {
 	    int newId = getId();
-	    String query = "SELECT MatricolaDocente FROM appello join corso on appello.CodiceCorso = corso.CodiceCorso WHERE appello.CodiceAppello = ?";
-	    String query3 = "INSERT into verbale VALUES (?, ?, ?, ?, ?)";
-	    String query2 = "UPDATE iscrizione set Voto = 'RIMANDATO', CodiceVerbale = ? WHERE CodiceAppello = ? and StatoVoto = 'RIFIUTATO'";
-	    String query1 = "UPDATE iscrizione set CodiceVerbale = ? WHERE CodiceAppello = ? and StatoVoto = 'PUBBLICATO'";
-	    String query4 = "UPDATE iscrizione set StatoVoto = 'VERBALIZZATO' WHERE CodiceVerbale = ?";
+	    String getTeacherId = "SELECT MatricolaDocente FROM appello join corso on appello.CodiceCorso = corso.CodiceCorso WHERE appello.CodiceAppello = ?";
+	    String verbalizable = "SELECT * FROM iscrizione WHERE CodiceAppello = ? and (StatoVoto = 'PUBBLICATO' or StatoVoto = 'RIFIUTATO')";
+	    String createReport = "INSERT into verbale VALUES (?, ?, ?, ?, ?)";
+	    String setRimandato = "UPDATE iscrizione set Voto = 'RIMANDATO', CodiceVerbale = ? WHERE CodiceAppello = ? and StatoVoto = 'RIFIUTATO'";
+	    String setPubblicato = "UPDATE iscrizione set CodiceVerbale = ? WHERE CodiceAppello = ? and StatoVoto = 'PUBBLICATO'";
+	    String setVerbalizzato = "UPDATE iscrizione set StatoVoto = 'VERBALIZZATO' WHERE CodiceVerbale = ?";
 
 	    connection.setAutoCommit(false);
 	    Report result = new Report();
 
-	    try (PreparedStatement pStatement = connection.prepareStatement(query);
-	         PreparedStatement pStatement3 = connection.prepareStatement(query3);
-	         PreparedStatement pStatement2 = connection.prepareStatement(query2);
-	         PreparedStatement pStatement1 = connection.prepareStatement(query1);
-	    	 PreparedStatement pStatement4 = connection.prepareStatement(query4)) {
+	    try (PreparedStatement pStatementTeacherId = connection.prepareStatement(getTeacherId);
+	    	 PreparedStatement pStatementVerbalizable = connection.prepareStatement(verbalizable);
+	         PreparedStatement pStatementCreateReport = connection.prepareStatement(createReport);
+	         PreparedStatement pStatementRimandato = connection.prepareStatement(setRimandato);
+	         PreparedStatement pStatementPubblicato = connection.prepareStatement(setPubblicato);
+	    	 PreparedStatement pStatementVerbalizzato = connection.prepareStatement(setVerbalizzato)) {
 
-	        pStatement.setInt(1, examId);
+	        pStatementTeacherId.setInt(1, examId);
 	        int teacherId = 0;
-	        try (ResultSet r = pStatement.executeQuery()) {
+	        try (ResultSet r = pStatementTeacherId.executeQuery()) {
 	            if (r.next()) {
 	                teacherId = r.getInt("MatricolaDocente");
 	            }
 	        }
+	        
+	        // Verifica se ci sono voti da verbalizzare
+	        pStatementVerbalizable.setInt(1, examId);
+	        ResultSet res = pStatementVerbalizable.executeQuery();
+	        if(!res.next()) {
+	        	connection.setAutoCommit(true);
+	        	throw new RuntimeException("Nessun voto da verbalizzare per questo appello.");
+	        }
 
 	        // Inserisci verbale
-	        pStatement3.setInt(1, newId);
+	        pStatementCreateReport.setInt(1, newId);
 	        java.util.Date utilDate = new java.util.Date();
 	        java.sql.Date sqlDate = new java.sql.Date(utilDate.getTime());
 	        java.sql.Time sqlTime = new java.sql.Time(utilDate.getTime());
-	        pStatement3.setDate(2, sqlDate);
-	        pStatement3.setTime(3, sqlTime);
-	        pStatement3.setInt(4, teacherId);
-	        pStatement3.setInt(5, examId);
-	        pStatement3.executeUpdate();
-	        //connection.commit();
+	        pStatementCreateReport.setDate(2, sqlDate);
+	        pStatementCreateReport.setTime(3, sqlTime);
+	        pStatementCreateReport.setInt(4, teacherId);
+	        pStatementCreateReport.setInt(5, examId);
+	        pStatementCreateReport.executeUpdate();
 
 	        // Aggiorna iscrizioni PUBBLICATO
-	        pStatement1.setInt(1, newId);
-	        pStatement1.setInt(2, examId);
-	        pStatement1.executeUpdate();
-	        //connection.commit();
+	        pStatementPubblicato.setInt(1, newId);
+	        pStatementPubblicato.setInt(2, examId);
+	        pStatementPubblicato.executeUpdate();
 
 	        // Aggiorna iscrizioni RIFIUTATO
-	        pStatement2.setInt(1, newId);
-	        pStatement2.setInt(2, examId);
-	        pStatement2.executeUpdate();
-	        //connection.commit();
+	        pStatementRimandato.setInt(1, newId);
+	        pStatementRimandato.setInt(2, examId);
+	        pStatementRimandato.executeUpdate();
 	        
 	        // Aggiorna StatoVoto RIMANDATI
-	        pStatement4.setInt(1, newId);
-	        pStatement4.executeUpdate();
+	        pStatementVerbalizzato.setInt(1, newId);
+	        pStatementVerbalizzato.executeUpdate();
 
 	        connection.commit();
 

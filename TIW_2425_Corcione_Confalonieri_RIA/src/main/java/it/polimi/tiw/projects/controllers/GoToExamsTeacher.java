@@ -69,7 +69,7 @@ public class GoToExamsTeacher extends HttpServlet {
 			id = t.getId();
 		} catch (NullPointerException e) {
 			response.setStatus(HttpServletResponse.SC_FORBIDDEN);
-			response.getWriter().println("User not logged in.");
+			response.getWriter().println("Utente non autenticato");
 			return;
 		}
 		int courseId = 0;
