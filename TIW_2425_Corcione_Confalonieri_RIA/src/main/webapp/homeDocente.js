@@ -6,7 +6,7 @@
 
 {
 	let pageOrchestrator = new PageOrchestrator(); // main controller
-	let courseList, examsList, registeredStudents, reportDetails;
+	let courseList, examsList, registeredStudents, reportDetails, reportList;
 	
 	window.addEventListener("load", (e) => {
 		if (sessionStorage.getItem("id") == null) {
@@ -25,6 +25,7 @@
 			examsList = new ExamList(document.getElementById("id_examalert"), document.getElementById("id_examlistcontainer"), document.getElementById("id_examlistcontainerbody"));
 			registeredStudents = new RegisteredStudents(document.getElementById("id_registeredcontainer"), document.getElementById("id_registeredalert"), document.getElementById("id_registeredlistcontainer"), document.getElementById("id_registeredlistcontainerbody"), document.getElementById("id_pubblica"), document.getElementById("id_verbalizza"), document.getElementById("id_registeredexamcode"));
 			reportDetails = new ReportDetails(document.getElementById("id_reportdetailcontainer"), document.getElementById("id_reportdetailcontainerbody"), document.getElementById("id_reportdetailstudentlistcontainerbody"));
+			reportList = new ReportList(document.getElementById("id_reportalert"), document.getElementById("id_reportlistcontainer"), document.getElementById("id_reportlistcontainerbody"));
 		}
 		
 		this.refresh = function(){
@@ -32,7 +33,9 @@
 			examsList.reset();
 			registeredStudents.reset();
 			reportDetails.reset();
+			reportList.reset();
 			courseList.show();
+			reportList.show();
 		}
 	}
 	
@@ -120,6 +123,7 @@
 						if(exams.length === 0){
 							self.listcontainer.style.visibility = "hidden";
 							self.alert.textContent = "Nessun appello da vedere.";
+							registeredStudents.reset();
 							return;
 						}
 						self.update(exams, courseCode);
@@ -215,6 +219,7 @@
 		
 		this.reset = function(){
 			this.container.style.visibility = "hidden";
+			this.listcontainer.style.visibility = "hidden";
 		}
 		
 		this.show = function(examCode){
@@ -353,6 +358,65 @@
 				self.reportDetailStudentListContainerBody.appendChild(row);
 			});
 			this.reportDetailContainer.style.visibility = "visible";
+		}
+	}
+	
+	function ReportList(_alert, _listcontainer, _listcontainerbody){
+		this.alert = _alert;
+		this.listcontainer = _listcontainer;
+		this.listcontainerbody = _listcontainerbody;
+		
+		this.reset = function(){
+			this.listcontainer.style.visibility = "hidden";
+		}
+		
+		this.show = function(){ // deve effettuare la chiamata al server e chiamare update()
+			var self = this; // deve essere accedibile dalla makeCall interna -> chiusura
+			makeCall("GET", "GoToReports?idDocente=" + sessionStorage.getItem("id"), null, function(req){
+				// funzione di callback all'evento di GET della lista dei verbali - è la funzione onreadystatechange della richiesta per come è definita makeCall
+				if(req.readyState === 4){ // richiesta evasa
+					var message = req.responseText;
+					if(req.status === 200){ // OK
+						var reports = JSON.parse(req.responseText);
+						if(reports.length === 0){
+							self.listcontainer.style.visibility = "hidden";
+							self.alert.textContent = "Nessun verbale da vedere.";
+							return;
+						}
+						self.update(reports);
+					} else if(req.status === 403){
+						window.alert(message);
+						window.location.href = req.getResponseHeader("Location");
+						window.sessionStorage.removeItem('username');
+					} else {
+						window.alert(message);
+					}
+				}
+			});
+		}
+		
+		this.update = function(reportList){
+			this.alert.textContent = "";
+			var row, code, date, time, examId;
+			this.listcontainerbody.innerHTML = "";
+			var self = this;
+			reportList.forEach(function(report){ // costruisce la tabella in base alla lista dei corsi
+				row = document.createElement("tr");
+				code = document.createElement("td");
+				code.textContent = report.reportCode;
+				row.appendChild(code);
+				date = document.createElement("td");
+				date.textContent = report.date;
+				row.appendChild(date);
+				time = document.createElement("td");
+				time.textContent = report.time;
+				row.appendChild(time);
+				examId = document.createElement("td");
+				examId.textContent = report.exam;
+				row.appendChild(examId);
+				self.listcontainerbody.appendChild(row);
+			});
+			self.listcontainer.style.visibility = "visible";
 		}
 	}
 }

@@ -15,6 +15,7 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -85,7 +86,7 @@ public class GoToExamsTeacher extends HttpServlet {
 		try {
 			Course c = cDao.getCoursesById(courseId);
 			List<Course> coursesOfTeacher = cDao.getCoursesByTeacher(id);
-			if(!coursesOfTeacher.contains(c)) {
+			if(!coursesOfTeacher.stream().map(course -> course.getCode()).collect(Collectors.toList()).contains(c.getCode())) {
 				response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
 				response.getWriter().println("Questo corso non appartiene al docente.");
 				return;

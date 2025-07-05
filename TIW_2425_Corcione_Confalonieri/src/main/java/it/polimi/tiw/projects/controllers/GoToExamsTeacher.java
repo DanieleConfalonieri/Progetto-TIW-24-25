@@ -15,6 +15,7 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.WebContext;
@@ -113,7 +114,7 @@ public class GoToExamsTeacher extends HttpServlet {
 				return;
 			}
 			List<Course> coursesOfTeacher = cDao.getCoursesByTeacher(teacherId);
-			if(!coursesOfTeacher.contains(c)) {
+			if(!coursesOfTeacher.stream().map(course -> course.getCode()).collect(Collectors.toList()).contains(c.getCode())) {
 				path = getServletContext().getContextPath() + "/Error?message=" + "Questo corso non appartiene al docente.";
 				response.sendRedirect(path);
 				//response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Questo corso non appartiene al docente.");
