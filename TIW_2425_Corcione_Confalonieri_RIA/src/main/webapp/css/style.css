@@ -7,3 +7,11 @@ table, th, td, tr {
 .sortable {
 	cursor: pointer;
 }
+
+.container {
+	border: none;
+}
+
+.error {
+	color: red;
+}

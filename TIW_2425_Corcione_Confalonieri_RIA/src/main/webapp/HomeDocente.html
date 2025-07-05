@@ -11,8 +11,11 @@
 <body>
 	<h1><span>Benvenuto nella home docente, </span>
 	<span id=id_nomeDocente></span></h1>
-	
-	<span id = "id_coursealert"></span>
+<table class="container">
+<thead>	</thead>
+<tbody>
+<tr class="container">
+	<td class="container"><span id = "id_coursealert"></span>
 	<table id="id_courselistcontainer">
 		<thead>
 			<tr>
@@ -23,9 +26,26 @@
 	 	</thead>
 	 	<tbody id="id_courselistcontainerbody">
 		</tbody> 
-	</table>
+	</table></td>
 	
-	<span id = "id_examalert"></span>
+	<td class="container"><h2>Verbali del docente</h2>
+	<span id = "id_reportalert"></span>
+	<table id="id_reportlistcontainer">
+		<thead>
+			<tr>
+		 		<th>Codice verbale</th>
+		 		<th>Data creazione</th>
+		 		<th>Ora creazione</th>
+		 		<th>Codice appello</th>
+		 		<th>Nome corso</th>
+		 		<th>Data appello</th>
+		 	</tr>
+	 	</thead>
+	 	<tbody id="id_reportlistcontainerbody"></tbody> 
+	</table></td>
+</tr>	
+<tr class="container">
+	<td class="container"><span id = "id_examalert"></span>
 	<table id="id_examlistcontainer">
 		<thead>
 			<tr>
@@ -37,9 +57,10 @@
 	 	</thead>
 	 	<tbody id="id_examlistcontainerbody">
 		</tbody> 
-	</table>
-	
-	<div id="id_registeredcontainer">
+	</table></td>
+</tr>	
+<tr class="container">
+	<td class="container"><div id="id_registeredcontainer">
 		<h2 id="id_registeredexamcode"></h2>
 		<span id = "id_registeredalert"></span>
 		<table id="id_registeredlistcontainer">
@@ -60,9 +81,10 @@
 		</table>
 		<button id="id_pubblica">PUBBLICA</button>
 		<button id="id_verbalizza">VERBALIZZA</button>
-	</div>
+		<button id="id_insmult">INSERIMENTO MULTIPLO</button>
+	</div></td>
 	
-	<div id="id_reportdetailcontainer">
+	<td class="container"><div id="id_reportdetailcontainer">
 		<h2>Dettagli verbale:</h2>
 		<table>
 			<thead>
@@ -81,28 +103,39 @@
 		<table>
 			<thead>
 				<tr>
-			 		<td>Nome</td>
-			 		<td>Cognome</td>
-			 		<td>Matricola</td>
-			 		<td>Voto</td>
+			 		<th>Nome</th>
+			 		<th>Cognome</th>
+			 		<th>Matricola</th>
+			 		<th>Voto</th>
 			 	</tr> 
 			</thead>
 			<tbody id="id_reportdetailstudentlistcontainerbody"></tbody>
 		</table>
-	</div>
-	
-	<h2>Verbali del docente</h2>
-	<span id = "id_reportalert"></span>
-	<table id="id_reportlistcontainer">
+	</div></td>
+</tr>
+</tbody>
+</table>
+
+<dialog id="id_modal" class="modal">
+	<span id="id_modaltext"></span>
+	<span id="id_modalerror" class="error"></span>
+	<form id="id_modalform"><table>
 		<thead>
 			<tr>
-		 		<th>Codice verbale</th>
-		 		<th>Data creazione</th>
-		 		<th>Ora creazione</th>
-		 		<th>Codice appello</th>
-		 	</tr>
-	 	</thead>
-	 	<tbody id="id_reportlistcontainerbody"></tbody> 
+				<th>Matricola</th>
+		 		<th>Cognome</th>
+		 		<th>Nome</th>
+		 		<th>Email</th>
+		 		<th>Corso di Laurea</th>
+		 		<th>Voto</th>
+		 		<th>Stato Voto</th>
+		 		<th>Codice Verbale</th>
+			</tr>
+		</thead>
+		<tbody id="id_modaltablebody"></tbody>
 	</table>
+	<button value="cancel" formmethod="dialog">Annulla</button>
+    <button id="id_invia" type="button" value="default">INVIA</button></form>
+</dialog>
 </body>
 </html>

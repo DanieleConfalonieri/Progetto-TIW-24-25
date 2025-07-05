@@ -35,7 +35,7 @@ public class LoginChecker implements Filter {
 	 * @see Filter#doFilter(ServletRequest, ServletResponse, FilterChain)
 	 */
 	public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
-		//System.out.println("Login filter executing...");
+		System.out.println("Login filter executing...");
 		
 		HttpServletRequest req = (HttpServletRequest) request;
 		HttpServletResponse res = (HttpServletResponse) response;
@@ -43,7 +43,9 @@ public class LoginChecker implements Filter {
 		
 		HttpSession s = req.getSession();
 		if (s.isNew() || s.getAttribute("user") == null) {
-			res.sendRedirect(loginpath);
+			res.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+			res.setHeader("Location", loginpath);
+			//res.sendRedirect(loginpath);
 			return;
 		}
 		

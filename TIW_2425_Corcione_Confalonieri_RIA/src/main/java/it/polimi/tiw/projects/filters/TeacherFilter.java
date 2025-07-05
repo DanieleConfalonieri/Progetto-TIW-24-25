@@ -18,7 +18,7 @@ import it.polimi.tiw.projects.beans.Teacher;
 /**
  * Servlet Filter implementation class TeacherFilter
  */
-@WebFilter({"/TeacherFilter", "/GoToExamsTeacher", "/GoToHomeTeacher", "/GoToRegisteredStudents", "/GoToReports", "/GoToUpdate", "/PublishGrades", "/RegisterGrades", "/Reorder", "/UpdateGrade"})
+@WebFilter({"/TeacherFilter", "/GoToExamsTeacher", "/GoToHomeTeacher", "/GoToRegisteredStudents", "/GoToReports", "/GoToUpdate", "/PublishGrades", "/RegisterGrades", "/UpdateGrade"})
 public class TeacherFilter implements Filter {
 
     /**
@@ -39,14 +39,16 @@ public class TeacherFilter implements Filter {
 	 * @see Filter#doFilter(ServletRequest, ServletResponse, FilterChain)
 	 */
 	public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
-		//System.out.println("Teacher filter executing...");
+		System.out.println("Teacher filter executing...");
 		
 		HttpServletRequest req = (HttpServletRequest) request;
 		HttpServletResponse res = (HttpServletResponse) response;
 		String loginpath = req.getServletContext().getContextPath() + "/index.html";
 		HttpSession s = req.getSession();
 		if (!(s.getAttribute("user") instanceof Teacher)) {
-			res.sendRedirect(loginpath);
+			res.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+			res.setHeader("Location", loginpath);
+			//res.sendRedirect(loginpath);
 			return;
 		}
 		

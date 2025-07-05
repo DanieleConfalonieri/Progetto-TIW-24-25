@@ -1,4 +1,3 @@
-
 /**
  * script JavaScript che gestisce la home page del docente.
  * Metodi utili ai componenti: reset(), show(), update(), autoclick() per generare pseudo-eventi
@@ -6,7 +5,7 @@
 
 {
 	let pageOrchestrator = new PageOrchestrator(); // main controller
-	let courseList, examsList, registeredStudents, reportDetails, reportList;
+	let courseList, examsList, registeredStudents, reportDetails, reportList, modalForm;
 	
 	window.addEventListener("load", (e) => {
 		if (sessionStorage.getItem("id") == null) {
@@ -23,9 +22,10 @@
 			document.getElementById("id_nomeDocente").textContent = sessionStorage.getItem('name');
 			courseList = new CourseList(document.getElementById("id_coursealert"), document.getElementById("id_courselistcontainer"), document.getElementById("id_courselistcontainerbody"));
 			examsList = new ExamList(document.getElementById("id_examalert"), document.getElementById("id_examlistcontainer"), document.getElementById("id_examlistcontainerbody"));
-			registeredStudents = new RegisteredStudents(document.getElementById("id_registeredcontainer"), document.getElementById("id_registeredalert"), document.getElementById("id_registeredlistcontainer"), document.getElementById("id_registeredlistcontainerbody"), document.getElementById("id_pubblica"), document.getElementById("id_verbalizza"), document.getElementById("id_registeredexamcode"));
+			registeredStudents = new RegisteredStudents(document.getElementById("id_registeredcontainer"), document.getElementById("id_registeredalert"), document.getElementById("id_registeredlistcontainer"), document.getElementById("id_registeredlistcontainerbody"), document.getElementById("id_pubblica"), document.getElementById("id_verbalizza"), document.getElementById("id_insmult"), document.getElementById("id_registeredexamcode"));
 			reportDetails = new ReportDetails(document.getElementById("id_reportdetailcontainer"), document.getElementById("id_reportdetailcontainerbody"), document.getElementById("id_reportdetailstudentlistcontainerbody"));
 			reportList = new ReportList(document.getElementById("id_reportalert"), document.getElementById("id_reportlistcontainer"), document.getElementById("id_reportlistcontainerbody"));
+			modalForm = new ModalForm(document.getElementById("id_modal"), document.getElementById("id_invia"), document.getElementById("id_modaltablebody"), document.getElementById("id_modaltext"));
 		}
 		
 		this.refresh = function(){
@@ -62,10 +62,10 @@
 							return;
 						}
 						self.update(courses);
-					} else if(req.status === 403){
-						window.alert(message);
+					} else if(req.status === 403 || req.status === 401){
 						window.location.href = req.getResponseHeader("Location");
 						window.sessionStorage.removeItem('username');
+						//window.alert(message);
 					} else {
 						window.alert(message);
 					}
@@ -95,6 +95,7 @@
 				row.appendChild(link);
 				anchor.setAttribute('courseCode', course.courseCode);
 				anchor.addEventListener("click", (e) => {
+					registeredStudents.reset();
 					examsList.show(e.target.getAttribute("courseCode"));
 				}, false);
 				self.listcontainerbody.appendChild(row);
@@ -123,7 +124,6 @@
 						if(exams.length === 0){
 							self.listcontainer.style.visibility = "hidden";
 							self.alert.textContent = "Nessun appello da vedere.";
-							registeredStudents.reset();
 							return;
 						}
 						self.update(exams, courseCode);
@@ -171,13 +171,14 @@
 		}
 	}
 	
-	function RegisteredStudents(_container, _alert, _listcontainer, _listcontainerbody, _botpubblica, _botverbalizza, _examcode){
+	function RegisteredStudents(_container, _alert, _listcontainer, _listcontainerbody, _botpubblica, _botverbalizza, _botinsmult, _examcode){
 		this.container = _container;
 		this.alert = _alert;
 		this.listcontainer = _listcontainer;
 		this.listcontainerbody = _listcontainerbody;
 		this.botpubblica = _botpubblica;
 		this.botverbalizza = _botverbalizza;
+		this.botinsmult = _botinsmult;
 		this.examcode = _examcode;
 		this.examId = 0;
 		
@@ -206,6 +207,7 @@
 					if(req.status === 200){ // OK
 						self.show(self.examId);
 						reportDetails.show(message);
+						reportList.show();
 					} else if(req.status === 403){ // FORBIDDEN
 						window.alert(message);
 						window.location.href = req.getResponseHeader("Location");
@@ -220,6 +222,9 @@
 		this.reset = function(){
 			this.container.style.visibility = "hidden";
 			this.listcontainer.style.visibility = "hidden";
+			this.botpubblica.style.visibility = "hidden";
+			this.botverbalizza.style.visibility = "hidden";
+			this.botinsmult.style.visibility = "hidden";
 		}
 		
 		this.show = function(examCode){
@@ -296,6 +301,12 @@
 				}
 				if(registrations[i].statusGrade === "PUBBLICATO" || registrations[i].statusGrade === "RIFIUTATO"){
 					this.botverbalizza.style.visibility = "visible";
+				}
+				if(registrations[i].statusGrade === "NON_INSERITO"){
+					this.botinsmult.addEventListener("click", (e) =>{
+						modalForm.show(registrations, examCode);
+					});
+					this.botinsmult.style.visibility = "visible";
 				}
 			}
 		}
@@ -384,10 +395,10 @@
 							return;
 						}
 						self.update(reports);
-					} else if(req.status === 403){
-						window.alert(message);
+					} else if(req.status === 403 || req.status === 401){
 						window.location.href = req.getResponseHeader("Location");
 						window.sessionStorage.removeItem('username');
+						//window.alert(message);
 					} else {
 						window.alert(message);
 					}
@@ -397,7 +408,7 @@
 		
 		this.update = function(reportList){
 			this.alert.textContent = "";
-			var row, code, date, time, examId;
+			var row, code, date, time, examId, courseName, examDate;
 			this.listcontainerbody.innerHTML = "";
 			var self = this;
 			reportList.forEach(function(report){ // costruisce la tabella in base alla lista dei corsi
@@ -414,9 +425,105 @@
 				examId = document.createElement("td");
 				examId.textContent = report.exam;
 				row.appendChild(examId);
+				courseName = document.createElement("td");
+				courseName.textContent = report.courseName;
+				row.appendChild(courseName);
+				examDate = document.createElement("td");
+				examDate.textContent = report.examDate;
+				row.appendChild(examDate);
 				self.listcontainerbody.appendChild(row);
 			});
 			self.listcontainer.style.visibility = "visible";
+		}
+	}
+	
+	function ModalForm(_container, _sendbutton, _tablebody, _textcontainer){
+		this.container = _container;
+		this.sendbutton = _sendbutton;
+		this.tablebody = _tablebody;
+		this.textcontainer = _textcontainer;
+		
+		this.sendbutton.addEventListener('click', (e) => {
+			e.preventDefault();
+			const form = document.getElementById("id_modalform");
+			const error = document.getElementById("id_modalerror");
+			console.log(this.checkValidity(form));
+			if(this.checkValidity(form)){
+				makeCall("POST", "updateGrades", form, function(){
+					registeredStudents.show(examCode);
+				});
+				form.reset();
+				error.style.display = "none";
+				this.container.close();
+			} else {
+				error.textContent = "Dati non validi.";
+				error.style.display = "block";
+			}
+		});
+		
+		this.reset = function(){
+			this.container.close();
+		}
+		
+		this.show = function(registrations, examCode){
+			this.textcontainer.textContent = "Inserimento multiplo dei voti per l'appello" + examCode;
+			var row, studentCode, studentCodeInput, surname, name, email, degree, grade, statusGrade, report;
+			this.tablebody.innerHTML = "";
+			var self = this;
+			registrations.forEach(function(reg){
+				if(reg.statusGrade === "NON_INSERITO"){
+					row = document.createElement("tr");
+					studentCodeInput = document.createElement("input");
+					studentCode = document.createElement("td");
+					studentCode.textContent = reg.student.id;
+					row.appendChild(studentCode);
+					surname = document.createElement("td");
+					surname.textContent = reg.student.surname;
+					row.appendChild(surname);
+					name = document.createElement("td");
+					name.textContent = reg.student.name;
+					row.appendChild(name);
+					email = document.createElement("td");
+					email.textContent = reg.student.email;
+					row.appendChild(email);
+					degree = document.createElement("td");
+					degree.textContent = reg.student.degree;
+					row.appendChild(degree);
+					grade = document.createElement("input");
+					grade.setAttribute("name", reg.student.id);
+					grade.setAttribute("type", "text");
+					grade.setAttribute("placeholder", "Voto");
+					row.appendChild(grade);
+					statusGrade = document.createElement("td");
+					statusGrade.textContent = "NON INSERITO";
+					row.appendChild(statusGrade);
+					report = document.createElement("td");
+					report.textContent = "-";
+					row.appendChild(report);
+					self.tablebody.appendChild(row);
+				}
+			});
+			
+			this.container.showModal();
+		}
+		
+		this.checkValidity = function(form){
+			const validData = ["ASSENTE", "RIMANDATO", "RIPROVATO", "18", "19", "20", "21", "22", "23", "24", "25", "26", "27", "28", "29", "30", "30L"];
+			
+			var isValid = true;
+		    var inputs = form.querySelectorAll("input[name]");
+
+		    inputs.forEach(input => {
+		        var value = input.value.toLocaleUpperCase();
+		        input.style.border = "";
+
+		        if (value!== null && value !== "" && !validData.includes(value)) {
+		            input.style.border = "2px solid red";
+		            isValid = false;
+		        }
+		    });
+
+		    return isValid;
 		}
 	}
 }

@@ -37,14 +37,16 @@ public class StudentFilter implements Filter {
 	 * @see Filter#doFilter(ServletRequest, ServletResponse, FilterChain)
 	 */
 	public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
-		//System.out.println("Student filter executing...");
+		System.out.println("Student filter executing...");
 		
 		HttpServletRequest req = (HttpServletRequest) request;
 		HttpServletResponse res = (HttpServletResponse) response;
 		String loginpath = req.getServletContext().getContextPath() + "/index.html";
 		HttpSession s = req.getSession();
 		if (!(s.getAttribute("user") instanceof Student)) {
-			res.sendRedirect(loginpath);
+			res.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+			res.setHeader("Location", loginpath);
+			//res.sendRedirect(loginpath);
 			return;
 		}
 		
