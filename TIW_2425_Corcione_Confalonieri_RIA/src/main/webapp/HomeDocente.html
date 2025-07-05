@@ -5,6 +5,7 @@
 <title>Home Docente</title>
 <script src="homeDocente.js" charset="utf-8" defer></script>
 <script src="utils.js" charset="utf-8" defer></script>
+<script src="reorder.js" charset="utf-8" defer></script>
 <link rel="stylesheet" href=css/style.css>
 </head>
 <body>
@@ -15,9 +16,9 @@
 	<table id="id_courselistcontainer">
 		<thead>
 			<tr>
-		 		<td>Codice corso</td>
-		 		<td>Nome corso</td>
-		 		<td>Vedi corso</td>
+		 		<th>Codice corso</th>
+		 		<th>Nome corso</th>
+		 		<th>Vedi corso</th>
 		 	</tr>
 	 	</thead>
 	 	<tbody id="id_courselistcontainerbody">
@@ -28,14 +29,66 @@
 	<table id="id_examlistcontainer">
 		<thead>
 			<tr>
-		 		<td>Codice appello</td>
-		 		<td>Data appello</td>
-		 		<td>Codice corso</td>
-		 		<td>Vedi iscritti</td>
+		 		<th>Codice appello</th>
+		 		<th>Data appello</th>
+		 		<th>Codice corso</th>
+		 		<th>Vedi iscritti</th>
 		 	</tr>
 	 	</thead>
 	 	<tbody id="id_examlistcontainerbody">
 		</tbody> 
 	</table>
+	
+	<div id="id_registeredcontainer">
+		<h2 id="id_registeredexamcode"></h2>
+		<span id = "id_registeredalert"></span>
+		<table id="id_registeredlistcontainer">
+			<thead>
+				<tr>
+			 		<th class="sortable">Matricola</th>
+			 		<th class="sortable">Cognome</th>
+			 		<th class="sortable">Nome</th>
+			 		<th class="sortable">Email</th>
+			 		<th class="sortable">Corso di Laurea</th>
+			 		<th class="sortable">Voto</th>
+			 		<th class="sortable">Stato Voto</th>
+			 		<th class="sortable">Codice Verbale</th>
+			 	</tr>
+		 	</thead>
+		 	<tbody id="id_registeredlistcontainerbody">
+			</tbody> 
+		</table>
+		<button id="id_pubblica">PUBBLICA</button>
+		<button id="id_verbalizza">VERBALIZZA</button>
+	</div>
+	
+	<div id="id_reportdetailcontainer">
+		<h2>Dettagli verbale:</h2>
+		<table>
+			<thead>
+				<tr>
+			 		<td>Codice Verbale</td>
+			 		<td>Data creazione</td>
+			 		<td>Ora creazione</td>
+			 		<td>Matricola docente</td>
+			 		<td>Codice appello</td>
+			 	</tr> 
+			</thead>
+			<tbody id="id_reportdetailcontainerbody"></tbody>
+		</table>
+		
+		<h3>Elenco studenti verbalizzati:</h3>
+		<table>
+			<thead>
+				<tr>
+			 		<td>Nome</td>
+			 		<td>Cognome</td>
+			 		<td>Matricola</td>
+			 		<td>Voto</td>
+			 	</tr> 
+			</thead>
+			<tbody id="id_reportdetailstudentlistcontainerbody"></tbody>
+		</table>
+	</div>
 </body>
 </html>

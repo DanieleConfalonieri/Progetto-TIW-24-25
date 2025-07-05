@@ -62,14 +62,14 @@ public class GoToExamsTeacher extends HttpServlet {
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		// recupero dai parametri della request il corso di cui estrarre gli appelli
-		int id = 0;
+		Integer id = 0;
 		try {
 			HttpSession s = request.getSession();
 			Teacher t = (Teacher) s.getAttribute("user");
 			id = t.getId();
 		} catch (NullPointerException e) {
 			response.setStatus(HttpServletResponse.SC_FORBIDDEN);
-			response.getWriter().println("User not logged in.");
+			response.getWriter().println("Utente non autenticato");
 			return;
 		}
 		int courseId = 0;
@@ -80,7 +80,21 @@ public class GoToExamsTeacher extends HttpServlet {
 			response.getWriter().println("Missing parameters");
 			return;
 		}
-		// TODO controllo utente
+		
+		CourseDAO cDao = new CourseDAO(connection);
+		try {
+			Course c = cDao.getCoursesById(courseId);
+			List<Course> coursesOfTeacher = cDao.getCoursesByTeacher(id);
+			if(!coursesOfTeacher.contains(c)) {
+				response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+				response.getWriter().println("Questo corso non appartiene al docente.");
+				return;
+			}
+		} catch (SQLException e) {
+			response.setStatus(HttpServletResponse.SC_BAD_GATEWAY);
+			response.getWriter().println("Failure in course's exams database extraction");
+			return;
+		}
 		
 		List<Exam> exams = new ArrayList<>();
 		ExamDAO eDao = new ExamDAO(connection);
