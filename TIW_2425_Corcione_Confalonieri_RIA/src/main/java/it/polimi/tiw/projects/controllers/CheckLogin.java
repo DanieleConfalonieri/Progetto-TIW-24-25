@@ -62,7 +62,6 @@ public class CheckLogin extends HttpServlet {
 	 * il login è una richiesta di tipo POST perche' avviene tramite una form
 	 */
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		// TODO Auto-generated method stub
 		String user = request.getParameter("username");
 		String pwd = request.getParameter("pwd");
 		String role = request.getParameter("role");

@@ -63,9 +63,10 @@
 						}
 						self.update(courses);
 					} else if(req.status === 403 || req.status === 401){
-						window.location.href = req.getResponseHeader("Location");
-						window.sessionStorage.removeItem('username');
-						//window.alert(message);
+						window.sessionStorage.removeItem('id');
+						window.sessionStorage.removeItem('name');
+						window.location.href = "index.html";
+						window.alert(message);
 					} else {
 						window.alert(message);
 					}
@@ -128,9 +129,10 @@
 						}
 						self.update(exams, courseCode);
 					} else if(req.status === 403){
+						window.sessionStorage.removeItem('id');
+						window.sessionStorage.removeItem('name');
+						window.location.href = "index.html";
 						window.alert(message);
-						window.location.href = req.getResponseHeader("Location");
-						window.sessionStorage.removeItem('username');
 					} else {
 						window.alert(message);
 					}
@@ -180,7 +182,7 @@
 		this.botverbalizza = _botverbalizza;
 		this.botinsmult = _botinsmult;
 		this.examcode = _examcode;
-		this.examId = 0;
+		this.registrationsList = null;
 		
 		this.botpubblica.addEventListener("click", (e) =>{
 			var self = this;
@@ -190,9 +192,10 @@
 					if(req.status === 200){ // OK
 						self.show(self.examId);
 					} else if(req.status === 403){ // FORBIDDEN
+						window.sessionStorage.removeItem('id');
+						window.sessionStorage.removeItem('name');
+						window.location.href = "index.html";
 						window.alert(message);
-						window.location.href = req.getResponseHeader("Location");
-						window.sessionStorage.removeItem('username');
 					} else {
 						window.alert(message);
 					}
@@ -209,17 +212,21 @@
 						reportDetails.show(message);
 						reportList.show();
 					} else if(req.status === 403){ // FORBIDDEN
-						window.alert(message);
-						window.location.href = req.getResponseHeader("Location");
-						window.sessionStorage.removeItem('username');
+						window.sessionStorage.removeItem('id');
+						window.sessionStorage.removeItem('name');
+						window.location.href = "index.html";
 					} else {
 						window.alert(message);
 					}
 				}
 			})		
 		});
+		this.botinsmult.addEventListener("click", (e) =>{
+			modalForm.show(this.registrationsList, this.examcode);
+		});
 		
 		this.reset = function(){
+			//console.log("RegisteredStudents reset...")
 			this.container.style.visibility = "hidden";
 			this.listcontainer.style.visibility = "hidden";
 			this.botpubblica.style.visibility = "hidden";
@@ -228,14 +235,16 @@
 		}
 		
 		this.show = function(examCode){
-			this.examId = examCode;
 			var self = this; // deve essere accedibile dalla makeCall interna -> chiusura
 			makeCall("GET", "GoToRegisteredStudents?examId="+examCode, null, function(req){
 				// funzione di callback all'evento di GET della lista degli iscritti - è la funzione onreadystatechange della richiesta per come è definita makeCall
 				if(req.readyState === 4){ // richiesta evasa
 					var message = req.responseText;
+					//console.log("stato GoToRegisteredStudents " + req.status);
 					if(req.status === 200){ // OK
 						var registrations = JSON.parse(req.responseText);
+						self.registrationsList = registrations;
+						self.examcode = examCode;
 						if(registrations.length === 0){
 							self.listcontainer.style.visibility = "hidden";
 							self.botpubblica.style.visibility = "hidden";
@@ -247,9 +256,10 @@
 						}
 						self.update(registrations, examCode);
 					} else if(req.status === 403){
+						window.sessionStorage.removeItem('id');
+						window.sessionStorage.removeItem('name');
+						window.location.href = "index.html";
 						window.alert(message);
-						window.location.href = req.getResponseHeader("Location");
-						window.sessionStorage.removeItem('username');
 					} else {
 						window.alert(message);
 					}
@@ -262,7 +272,7 @@
 			this.botpubblica.style.visibility = "hidden";
 			this.botverbalizza.style.visibility = "hidden";
 			this.examcode.textContent = "Iscritti all'appello " + examCode;
-			var row, studentCode, surname, name, email, degree, grade, statusGrade, report, publishable, verbalizable;
+			var row, studentCode, surname, name, email, degree, grade, statusGrade, report;
 			this.listcontainerbody.innerHTML = "";
 			var self = this;
 			registrations.forEach(function(reg){
@@ -292,21 +302,25 @@
 				report.textContent = reg.reportCode ? reg.reportCode : "-";
 				row.appendChild(report);
 				self.listcontainerbody.appendChild(row);
+				//console.log(reg.statusGrade);
 			});
 			this.container.style.visibility = "visible";
 			this.listcontainer.style.visibility = "visible";
 			for(i=0; i<registrations.length; i++){
 				if(registrations[i].statusGrade === "INSERITO"){
 					this.botpubblica.style.visibility = "visible";
+				} else {
+					this.botpubblica.style.visibility = "hidden";
 				}
 				if(registrations[i].statusGrade === "PUBBLICATO" || registrations[i].statusGrade === "RIFIUTATO"){
 					this.botverbalizza.style.visibility = "visible";
+				} else {
+					this.botverbalizza.style.visibility = "hidden";
 				}
 				if(registrations[i].statusGrade === "NON_INSERITO"){
-					this.botinsmult.addEventListener("click", (e) =>{
-						modalForm.show(registrations, examCode);
-					});
 					this.botinsmult.style.visibility = "visible";
+				} else {
+					this.botinsmult.style.visibility = "hidden";
 				}
 			}
 		}
@@ -396,9 +410,10 @@
 						}
 						self.update(reports);
 					} else if(req.status === 403 || req.status === 401){
-						window.location.href = req.getResponseHeader("Location");
-						window.sessionStorage.removeItem('username');
-						//window.alert(message);
+						window.sessionStorage.removeItem('id');
+						window.sessionStorage.removeItem('name');
+						window.location.href = "index.html";
+						window.alert(message);
 					} else {
 						window.alert(message);
 					}
@@ -442,15 +457,34 @@
 		this.sendbutton = _sendbutton;
 		this.tablebody = _tablebody;
 		this.textcontainer = _textcontainer;
-		
+		this.examId = 0;
+				
 		this.sendbutton.addEventListener('click', (e) => {
 			e.preventDefault();
-			const form = document.getElementById("id_modalform");
-			const error = document.getElementById("id_modalerror");
-			console.log(this.checkValidity(form));
-			if(this.checkValidity(form)){
-				makeCall("POST", "updateGrades", form, function(){
-					registeredStudents.show(examCode);
+			var form = document.getElementById("id_modalform");
+			var error = document.getElementById("id_modalerror");
+			if(this.checkEmpty(form)){
+				error.textContent = "Dati assenti.";
+				error.style.display = "block";
+			} else if(this.checkValidity(form)){
+				var self = this;
+				makeCall("POST", "UpdateGrades", form, function(req){
+					//console.log(req.readyState);
+					if(req.readyState == XMLHttpRequest.DONE){
+						//console.log("stato UpdateGrades " + req.status);
+						var message = req.responseText;
+						if(req.status === 200){ // OK
+							registeredStudents.reset();
+							registeredStudents.show(self.examId);
+						} else if(req.status === 403 || req.status === 401){
+							window.sessionStorage.removeItem('id');
+							window.sessionStorage.removeItem('name');
+							window.location.href = "index.html";
+							window.alert(message);
+						} else {
+							window.alert(message);
+						}
+					}
 				});
 				form.reset();
 				error.style.display = "none";
@@ -466,14 +500,24 @@
 		}
 		
 		this.show = function(registrations, examCode){
-			this.textcontainer.textContent = "Inserimento multiplo dei voti per l'appello" + examCode;
-			var row, studentCode, studentCodeInput, surname, name, email, degree, grade, statusGrade, report;
+			this.examId = examCode;
+			this.textcontainer.textContent = "Inserimento multiplo dei voti per l'appello " + examCode;
+			var row, studentCode, surname, name, email, degree, grade, statusGrade, report;
+			var form = document.getElementById("id_modalform");
+			var examCodeInput = form.querySelector("input[name='examCode']");
 			this.tablebody.innerHTML = "";
+			if(!examCodeInput){
+				examCodeInput = document.createElement("input");
+				examCodeInput.style.display = "none";
+				examCodeInput.setAttribute("name", "examCode");
+				document.getElementById("id_modalform").appendChild(examCodeInput); // aggiunge questo campo di input al form
+			}
+			examCodeInput.setAttribute("value", examCode);
+			console.log(examCodeInput.value);
 			var self = this;
 			registrations.forEach(function(reg){
 				if(reg.statusGrade === "NON_INSERITO"){
 					row = document.createElement("tr");
-					studentCodeInput = document.createElement("input");
 					studentCode = document.createElement("td");
 					studentCode.textContent = reg.student.id;
 					row.appendChild(studentCode);
@@ -514,16 +558,34 @@
 		    var inputs = form.querySelectorAll("input[name]");
 
 		    inputs.forEach(input => {
-		        var value = input.value.toLocaleUpperCase();
-		        input.style.border = "";
-
-		        if (value!== null && value !== "" && !validData.includes(value)) {
-		            input.style.border = "2px solid red";
-		            isValid = false;
-		        }
+				var value = input.value.toLocaleUpperCase();
+				if(input.getAttribute("name") !== "examCode"){
+			        input.style.border = "";
+	
+			        if (value!== null && value !== "" && !validData.includes(value)) {
+			            input.style.border = "2px solid red";
+			            isValid = false;
+			        }
+				} else {
+					if(value===null || isNaN(Number(value))) isValid = false;
+				}
 		    });
 
 		    return isValid;
+		}
+		
+		this.checkEmpty = function(form){
+			var inputs = form.querySelectorAll("input[name]");
+			var result = true; 
+			
+			inputs.forEach(input => {
+				if(input.getAttribute("name") !== "examCode"){
+					var value = input.value;
+					if(value !== null && value !== "") result = false;
+				}
+			});
+			
+			return result;
 		}
 	}
 }

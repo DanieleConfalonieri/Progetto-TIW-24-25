@@ -9,6 +9,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Map;
 
 import it.polimi.tiw.projects.beans.Course;
 import it.polimi.tiw.projects.beans.Exam;
@@ -110,6 +111,30 @@ public class RegistrationDAO {
 			statement.setInt(2, examId);
 			statement.setInt(3, studId);
 			statement.execute();
+		}
+	}
+	
+	/*
+	 * permette ad un docente di inserire una serie di voti tutti insieme per lo stesso appello
+	 */
+	public void updateGrades(int examId, Map<String, String> grades) throws SQLException {
+		String query = "UPDATE iscrizione set Voto = ?, StatoVoto = 'INSERITO' WHERE CodiceAppello = ? and MatricolaStudente = ?";
+		connection.setAutoCommit(false);
+		try(PreparedStatement statement = connection.prepareStatement(query)){
+			statement.setInt(2, examId);
+			for(String id : grades.keySet()) {
+				if(grades.get(id)!=null && !grades.get(id).equals("")) {
+					statement.setString(1, grades.get(id).toUpperCase());
+					statement.setInt(3, Integer.parseInt(id));
+					statement.executeUpdate();
+				}
+			}
+			connection.commit();
+		} catch (SQLException e) {
+			connection.rollback();
+			throw e;
+		} finally {
+			connection.setAutoCommit(true);
 		}
 	}
 	
