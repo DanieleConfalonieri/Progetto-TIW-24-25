@@ -16,7 +16,7 @@ USE `tiw`;
 -- =================================================================
 LOCK TABLES `docente` WRITE;
 /*!40000 ALTER TABLE `docente` DISABLE KEYS */;
-INSERT INTO `docente` VALUES (100000,'Piero','Fraternali','piero.fraternali','passPiero'),(200000,'Mario','Santi','mario.santi','passSanti'),(300000,'Andrea','Martin','andrea.martin','passMartin');
+INSERT INTO `docente` VALUES (100000,'Piero','Fraternali','piero.fraternali','passPiero'),(200000,'Mario','Santi','mario.santi','passSanti'),(300000,'Antonio','Martin','antonio.martin','passMartin');
 /*!40000 ALTER TABLE `docente` ENABLE KEYS */;
 UNLOCK TABLES;
 

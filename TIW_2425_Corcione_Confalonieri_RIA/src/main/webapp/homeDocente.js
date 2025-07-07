@@ -21,7 +21,7 @@
 		this.start = function(){
 			document.getElementById("id_nomeDocente").textContent = sessionStorage.getItem('name');
 			courseList = new CourseList(document.getElementById("id_coursealert"), document.getElementById("id_courselistcontainer"), document.getElementById("id_courselistcontainerbody"));
-			examsList = new ExamList(document.getElementById("id_examalert"), document.getElementById("id_examlistcontainer"), document.getElementById("id_examlistcontainerbody"));
+			examsList = new ExamList(document.getElementById("id_examalert"), document.getElementById("id_examtextcontent"), document.getElementById("id_examlistcontainer"), document.getElementById("id_examlistcontainerbody"));
 			registeredStudents = new RegisteredStudents(document.getElementById("id_registeredcontainer"), document.getElementById("id_registeredalert"), document.getElementById("id_registeredlistcontainer"), document.getElementById("id_registeredlistcontainerbody"), document.getElementById("id_pubblica"), document.getElementById("id_verbalizza"), document.getElementById("id_insmult"), document.getElementById("id_registeredexamcode"));
 			reportDetails = new ReportDetails(document.getElementById("id_reportdetailcontainer"), document.getElementById("id_reportdetailcontainerbody"), document.getElementById("id_reportdetailstudentlistcontainerbody"));
 			reportList = new ReportList(document.getElementById("id_reportalert"), document.getElementById("id_reportlistcontainer"), document.getElementById("id_reportlistcontainerbody"));
@@ -107,13 +107,15 @@
 		}
 	}
 	
-	function ExamList(alert, listcontainer, listcontainerbody){ // costruttore della lista degli appelli
+	function ExamList(alert, textcontent, listcontainer, listcontainerbody){ // costruttore della lista degli appelli
 		this.alert = alert;
 		this.listcontainer = listcontainer;
 		this.listcontainerbody = listcontainerbody;
+		this.textcontent = textcontent;
 				
 		this.reset = function(){
 			this.listcontainer.style.visibility = "hidden";
+			this.textcontent.style.visibility = "hidden";
 		}
 		
 		this.show = function(courseCode){
@@ -122,6 +124,8 @@
 				// funzione di callback all'evento di GET della lista degli appelli - è la funzione onreadystatechange della richiesta per come è definita makeCall
 				if(req.readyState === 4){ // richiesta evasa
 					var message = req.responseText;
+					self.textcontent.textContent = "Appelli per il corso " + courseCode;
+					self.textcontent.style.visibility = "Visible";
 					if(req.status === 200){ // OK
 						var exams = JSON.parse(req.responseText);
 						if(exams.length === 0){
@@ -184,6 +188,7 @@
 		this.botverbalizza = _botverbalizza;
 		this.botinsmult = _botinsmult;
 		this.examcode = _examcode;
+		this.examId = 0;
 		this.registrationsList = null;
 		
 		this.botpubblica.addEventListener("click", (e) =>{
@@ -224,16 +229,16 @@
 			})		
 		});
 		this.botinsmult.addEventListener("click", (e) =>{
-			modalForm.show(this.registrationsList, this.examcode);
+			modalForm.show(this.registrationsList, this.examId);
 		});
 		
 		this.reset = function(){
 			//console.log("RegisteredStudents reset...")
 			this.container.style.visibility = "hidden";
 			this.listcontainer.style.visibility = "hidden";
-			this.botpubblica.style.visibility = "hidden";
-			this.botverbalizza.style.visibility = "hidden";
-			this.botinsmult.style.visibility = "hidden";
+			this.botpubblica.style.display = "none";
+			this.botverbalizza.style.display = "none";
+			this.botinsmult.style.display = "none";
 		}
 		
 		this.show = function(examCode){
@@ -246,11 +251,12 @@
 					if(req.status === 200){ // OK
 						var registrations = JSON.parse(req.responseText);
 						self.registrationsList = registrations;
-						self.examcode = examCode;
+						self.examId = examCode;
 						if(registrations.length === 0){
 							self.listcontainer.style.visibility = "hidden";
-							self.botpubblica.style.visibility = "hidden";
-							self.botverbalizza.style.visibility = "hidden";
+							self.botpubblica.style.display = "none";
+							self.botverbalizza.style.display = "none";
+							self.botinsmult.style.display = "none";
 							self.examcode.textContent = "Iscritti all'appello " + examCode;
 							self.alert.textContent = "Nessun iscritto per questo appello.";
 							self.container.style.visibility = "visible";
@@ -270,9 +276,7 @@
 		}
 		
 		this.update = function(registrations, examCode){
-			this.alert.textContent = "";
-			this.botpubblica.style.visibility = "hidden";
-			this.botverbalizza.style.visibility = "hidden";
+			this.reset();
 			this.examcode.textContent = "Iscritti all'appello " + examCode;
 			var row, studentCode, surname, name, email, degree, grade, statusGrade, report, updateButton;
 			this.listcontainerbody.innerHTML = "";
@@ -316,22 +320,32 @@
 			});
 			this.container.style.visibility = "visible";
 			this.listcontainer.style.visibility = "visible";
+			var publishable = false, verbalizable = false, insertable = false;
 			for(i=0; i<registrations.length; i++){
 				if(registrations[i].statusGrade === "INSERITO"){
-					this.botpubblica.style.visibility = "visible";
-				} else {
-					this.botpubblica.style.visibility = "hidden";
+					publishable = true;
 				}
 				if(registrations[i].statusGrade === "PUBBLICATO" || registrations[i].statusGrade === "RIFIUTATO"){
-					this.botverbalizza.style.visibility = "visible";
-				} else {
-					this.botverbalizza.style.visibility = "hidden";
+					verbalizable = true;
 				}
 				if(registrations[i].statusGrade === "NON_INSERITO"){
-					this.botinsmult.style.visibility = "visible";
-				} else {
-					this.botinsmult.style.visibility = "hidden";
+					insertable = true;
 				}
+			}
+			if(publishable) {
+				this.botpubblica.style.display = "block";
+			} else {
+				this.botpubblica.style.display = "none";
+			}
+			if(verbalizable) {
+				this.botverbalizza.style.display = "block";
+			} else {
+				this.botverbalizza.style.display = "none";
+			}
+			if(insertable) {
+				this.botinsmult.style.display = "block";
+			} else {
+				this.botinsmult.style.display = "none";
 			}
 		}
 	}
@@ -523,7 +537,6 @@
 				document.getElementById("id_modalform").appendChild(examCodeInput); // aggiunge questo campo di input al form
 			}
 			examCodeInput.setAttribute("value", examCode);
-			console.log(examCodeInput.value);
 			var self = this;
 			registrations.forEach(function(reg){
 				if(reg.statusGrade === "NON_INSERITO"){

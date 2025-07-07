@@ -18,7 +18,7 @@ import it.polimi.tiw.projects.beans.Teacher;
 /**
  * Servlet Filter implementation class TeacherFilter
  */
-@WebFilter({"/TeacherFilter", "/GoToExamsTeacher", "/GoToHomeTeacher", "/GoToRegisteredStudents", "/GoToReports", "/GoToUpdate", "/PublishGrades", "/RegisterGrades", "/UpdateGrade"})
+@WebFilter({"/TeacherFilter", "/GoToExamsTeacher", "/GoToHomeTeacher", "/GoToRegisteredStudents", "/GoToReports", "/GoToUpdate", "/PublishGrades", "/RegisterGrades", "/UpdateGrades"})
 public class TeacherFilter implements Filter {
 
     /**
