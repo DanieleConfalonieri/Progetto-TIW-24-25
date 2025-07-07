@@ -5,7 +5,7 @@
 
 {
 	let pageOrchestrator = new PageOrchestrator(); // main controller
-	let courseList, examsList, registeredStudents, reportDetails, reportList, modalForm;
+	let courseList, examsList, registeredStudents, reportDetails, reportList, modalForm, gradeUpdateForm;
 	
 	window.addEventListener("load", (e) => {
 		if (sessionStorage.getItem("id") == null) {
@@ -26,6 +26,7 @@
 			reportDetails = new ReportDetails(document.getElementById("id_reportdetailcontainer"), document.getElementById("id_reportdetailcontainerbody"), document.getElementById("id_reportdetailstudentlistcontainerbody"));
 			reportList = new ReportList(document.getElementById("id_reportalert"), document.getElementById("id_reportlistcontainer"), document.getElementById("id_reportlistcontainerbody"));
 			modalForm = new ModalForm(document.getElementById("id_modal"), document.getElementById("id_invia"), document.getElementById("id_modaltablebody"), document.getElementById("id_modaltext"));
+			gradeUpdateForm = new GradeUpdateForm(document.getElementById("id_gradeupdate"));
 		}
 		
 		this.refresh = function(){
@@ -34,6 +35,7 @@
 			registeredStudents.reset();
 			reportDetails.reset();
 			reportList.reset();
+			gradeUpdateForm.reset();
 			courseList.show();
 			reportList.show();
 		}
@@ -272,7 +274,7 @@
 			this.botpubblica.style.visibility = "hidden";
 			this.botverbalizza.style.visibility = "hidden";
 			this.examcode.textContent = "Iscritti all'appello " + examCode;
-			var row, studentCode, surname, name, email, degree, grade, statusGrade, report;
+			var row, studentCode, surname, name, email, degree, grade, statusGrade, report, updateButton;
 			this.listcontainerbody.innerHTML = "";
 			var self = this;
 			registrations.forEach(function(reg){
@@ -301,6 +303,14 @@
 				report = document.createElement("td");
 				report.textContent = reg.reportCode ? reg.reportCode : "-";
 				row.appendChild(report);
+				if(reg.statusGrade === "NON_INSERITO" || reg.statusGrade === "INSERITO"){
+					updateButton = document.createElement("button");
+					updateButton.textContent = "MODIFICA";
+					updateButton.addEventListener("click", (e) => {
+						gradeUpdateForm.show(reg);
+					});
+					row.appendChild(updateButton);
+				}
 				self.listcontainerbody.appendChild(row);
 				//console.log(reg.statusGrade);
 			});
@@ -463,10 +473,10 @@
 			e.preventDefault();
 			var form = document.getElementById("id_modalform");
 			var error = document.getElementById("id_modalerror");
-			if(this.checkEmpty(form)){
+			if(checkEmpty(form)){
 				error.textContent = "Dati assenti.";
 				error.style.display = "block";
-			} else if(this.checkValidity(form)){
+			} else if(checkValidity(form)){
 				var self = this;
 				makeCall("POST", "UpdateGrades", form, function(req){
 					//console.log(req.readyState);
@@ -551,7 +561,7 @@
 			this.container.showModal();
 		}
 		
-		this.checkValidity = function(form){
+		/*this.checkValidity = function(form){
 			const validData = ["ASSENTE", "RIMANDATO", "RIPROVATO", "18", "19", "20", "21", "22", "23", "24", "25", "26", "27", "28", "29", "30", "30L"];
 			
 			var isValid = true;
@@ -586,6 +596,169 @@
 			});
 			
 			return result;
+		}*/
+	}
+	
+	function GradeUpdateForm(container){
+		this.container = container;
+		this.textbanner = this.container.querySelector("h3");
+		this.errormessage = this.container.querySelector("h3.error");
+		this.form = container.querySelector("form");
+		this.examCode = 0;
+		/*this.submitbutton = container.querySelector("button");
+		this.submitbutton.addEventListener("click", (e) => {
+			e.preventDefault();
+			// controllo parametri
+			if(checkEmpty(this.form)){
+				this.errormessage.textContent = "Dati assenti.";
+				this.errormessage.style.display = "block";
+			} else if(checkValidity(this.form)){
+				var self = this;
+				makeCall("POST", "UpdateGrades", this.form, function(req){
+					if(req.readyState == XMLHttpRequest.DONE){
+						var message = req.responseText;
+						if(req.status === 200){ // OK
+							self.reset();
+							registeredStudents.reset();
+							registeredStudents.show(self.examCode);
+						} else if(req.status === 403 || req.status === 401){
+							window.sessionStorage.removeItem('id');
+							window.sessionStorage.removeItem('name');
+							window.location.href = "index.html";
+							window.alert(message);
+						} else {
+							window.alert(message);
+						}
+					}
+				});
+			}
+		});*/
+		
+		this.reset = function(){
+			this.container.style.visibility = "hidden";
+			this.textbanner.textContent = "";
+			this.errormessage.textContent = "";
+			this.errormessage.style.display = "none";
+			this.form.innerHTML = "";
+			this.form.style.visibility = "hidden";
 		}
+		
+		this.show = function(registration){
+			this.reset();
+			this.examCode = registration.examCode;
+			this.textbanner.textContent = "Modifica voto per lo studente " + registration.student.id + " per l'appello " + registration.examCode;
+			var studId, name, surname, email, degree, grade, statusGrade, examCodeInput, submitbutton;
+			examCodeInput = document.createElement("input");
+			examCodeInput.style.display = "none";
+			examCodeInput.setAttribute("name", "examCode");
+			examCodeInput.setAttribute("value", registration.examCode);
+			this.form.appendChild(examCodeInput);
+			studId = document.createElement("span");
+			studId.textContent = registration.student.id;
+			this.form.appendChild(studId);
+			this.form.appendChild(document.createElement("br"));
+			name = document.createElement("span");
+			name.textContent = registration.student.name;
+			this.form.appendChild(name);
+			this.form.appendChild(document.createElement("br"));
+			surname = document.createElement("span");
+			surname.textContent = registration.student.surname;
+			this.form.appendChild(surname);
+			this.form.appendChild(document.createElement("br"));
+			email = document.createElement("span");
+			email.textContent = registration.student.email;
+			this.form.appendChild(email);
+			this.form.appendChild(document.createElement("br"));
+			degree = document.createElement("span");
+			degree.textContent = registration.student.degree;
+			this.form.appendChild(degree);
+			this.form.appendChild(document.createElement("br"));
+			grade = document.createElement("input");
+			grade.setAttribute("name", registration.student.id);
+			grade.setAttribute("type", "text");
+			grade.setAttribute("placeholder", registration.grade);
+			this.form.appendChild(grade);
+			this.form.appendChild(document.createElement("br"));
+			statusGrade = document.createElement("span");
+			statusGrade.textContent = statusGrade.textContent = registration.statusGrade === "NON_INSERITO" ? "NON INSERITO" : registration.statusGrade;
+			this.form.appendChild(statusGrade);
+			this.form.appendChild(document.createElement("br"));
+			
+			submitbutton = document.createElement("button");
+			submitbutton.setAttribute("action", "submit");
+			submitbutton.textContent = "MODIFICA";
+			submitbutton.addEventListener("click", (e) => {
+				e.preventDefault();
+				// controllo parametri
+				if(checkEmpty(this.form)){
+					this.errormessage.textContent = "Dati assenti.";
+					this.errormessage.style.display = "block";
+				} else if(checkValidity(this.form)){
+					var self = this;
+					makeCall("POST", "UpdateGrades", this.form, function(req){
+						if(req.readyState == XMLHttpRequest.DONE){
+							var message = req.responseText;
+							if(req.status === 200){ // OK
+								self.reset();
+								registeredStudents.reset();
+								registeredStudents.show(self.examCode);
+							} else if(req.status === 403 || req.status === 401){
+								window.sessionStorage.removeItem('id');
+								window.sessionStorage.removeItem('name');
+								window.location.href = "index.html";
+								window.alert(message);
+							} else {
+								window.alert(message);
+							}
+						}
+					});
+				} else {
+					this.errormessage.textContent = "Dati non validi.";
+					this.errormessage.style.display = "block";
+				}
+			});
+			this.form.appendChild(submitbutton);
+			
+			this.textbanner.style.visibility = "visible";
+			this.form.style.visibility = "visible";
+			this.container.style.visibility = "visible";
+		}
+	}
+	
+	var checkValidity = function(form){
+		const validData = ["ASSENTE", "RIMANDATO", "RIPROVATO", "18", "19", "20", "21", "22", "23", "24", "25", "26", "27", "28", "29", "30", "30L"];
+		
+		var isValid = true;
+	    var inputs = form.querySelectorAll("input[name]");
+
+	    inputs.forEach(input => {
+			var value = input.value.toLocaleUpperCase();
+			if(input.getAttribute("name") !== "examCode"){
+		        input.style.border = "";
+
+		        if (value!== null && value !== "" && !validData.includes(value)) {
+		            input.style.border = "2px solid red";
+		            isValid = false;
+		        }
+			} else {
+				if(value===null || isNaN(Number(value))) isValid = false;
+			}
+	    });
+
+	    return isValid;
+	}
+	
+	var checkEmpty = function(form){
+		var inputs = form.querySelectorAll("input[name]");
+		var result = true; 
+		
+		inputs.forEach(input => {
+			if(input.getAttribute("name") !== "examCode"){
+				var value = input.value;
+				if(value !== null && value !== "") result = false;
+			}
+		});
+		
+		return result;
 	}
 }
