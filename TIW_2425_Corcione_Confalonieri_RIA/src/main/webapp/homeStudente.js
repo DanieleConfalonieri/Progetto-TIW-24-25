@@ -121,7 +121,7 @@
 						return;
 					}
 					self.update(exams, courseCode);
-				} else if(req.status === 403){
+				} else if(req.status === 403 || req.status === 401){
 					window.location.href = "index.html"
 					window.sessionStorage.removeItem('id');
 					window.sessionStorage.removeItem('name');
@@ -189,7 +189,7 @@
 						return;
 					}
 					self.update(examResult, courseCode, examCode);
-				} else if(req.status === 403){
+				} else if(req.status === 403 || req.status === 401){
 					window.location.href = "index.html"
 					window.sessionStorage.removeItem('id');
 					window.sessionStorage.removeItem('name');
@@ -289,7 +289,7 @@
 							return;
 						}
 						examResult.show(self.currentExamData.examCode, self.currentExamData.courseCode);
-					} else if(req.status === 403){
+					} else if(req.status === 403 || req.status === 401){
 						window.location.href = "index.html"
 						window.sessionStorage.removeItem('id');
 						window.sessionStorage.removeItem('name');
@@ -329,8 +329,18 @@
 		lowCaseStatusGrade = reg.statusGrade.toLowerCase();
   		return !(lowCaseGrade === "assente" || lowCaseGrade === "rimandato" || lowCaseGrade === "riprovato" || lowCaseGrade === "") && lowCaseStatusGrade === "pubblicato";
 	}
-	/*function Logout(id_logout){
+	
+	function Logout(id_logout){
 		this.logoutbutton = id_logout;
-		id_logout.addEventListener)
-	}*/
+		this.logoutbutton.addEventListener("click", (e) => {
+			makeCall("GET", "Logout", null, function(req){
+				// funzione di callback all'evento di GET della lista dei verbali - è la funzione onreadystatechange della richiesta per come è definita makeCall
+				if(req.readyState === 4){ // richiesta evasa
+					window.sessionStorage.removeItem('id');
+					window.sessionStorage.removeItem('name');
+					window.location.href = "index.html";
+				}
+			});
+		});
+		}
 }

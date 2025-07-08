@@ -134,7 +134,7 @@ public class ReportDAO {
 	public List<Report> getReportsByTeacher(int teacherId) throws SQLException {
 		List<Report> result = new ArrayList<>();
 		String query = "SELECT * FROM verbale join appello join corso on verbale.CodiceAppello=appello.CodiceAppello and appello.CodiceCorso=corso.CodiceCorso"
-				+ " WHERE CodiceDocente = ? ORDER BY corso.NomeCorso DESC, appello.DataAppello ASC";
+				+ " WHERE CodiceDocente = ? ORDER BY corso.NomeCorso ASC, appello.DataAppello ASC";
 		try (PreparedStatement statement = connection.prepareStatement(query)){
 			statement.setInt(1, teacherId);
 			try(ResultSet res = statement.executeQuery()){

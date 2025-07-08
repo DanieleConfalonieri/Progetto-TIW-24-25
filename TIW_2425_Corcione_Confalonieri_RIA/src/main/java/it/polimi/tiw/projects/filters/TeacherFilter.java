@@ -45,6 +45,7 @@ public class TeacherFilter implements Filter {
 		if (!(s.getAttribute("user") instanceof Teacher)) {
 			res.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
 			res.setHeader("Location", loginpath);
+			res.getWriter().println("L'utente non è un Docente");
 			//res.sendRedirect(loginpath);
 			return;
 		}

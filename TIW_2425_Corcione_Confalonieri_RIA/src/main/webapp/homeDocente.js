@@ -5,7 +5,7 @@
 
 {
 	let pageOrchestrator = new PageOrchestrator(); // main controller
-	let courseList, examsList, registeredStudents, reportDetails, reportList, modalForm, gradeUpdateForm;
+	let courseList, examsList, registeredStudents, reportDetails, reportList, modalForm, gradeUpdateForm, logout;
 	
 	window.addEventListener("load", (e) => {
 		if (sessionStorage.getItem("id") == null) {
@@ -27,6 +27,7 @@
 			reportList = new ReportList(document.getElementById("id_reportalert"), document.getElementById("id_reportlistcontainer"), document.getElementById("id_reportlistcontainerbody"));
 			modalForm = new ModalForm(document.getElementById("id_modal"), document.getElementById("id_invia"), document.getElementById("id_modaltablebody"), document.getElementById("id_modaltext"));
 			gradeUpdateForm = new GradeUpdateForm(document.getElementById("id_gradeupdate"));
+			logout = new Logout(document.getElementById("id_logout"));
 		}
 		
 		this.refresh = function(){
@@ -134,7 +135,8 @@
 							return;
 						}
 						self.update(exams, courseCode);
-					} else if(req.status === 403){
+						gradeUpdateForm.reset();
+					} else if(req.status === 403 || req.status === 401){
 						window.sessionStorage.removeItem('id');
 						window.sessionStorage.removeItem('name');
 						window.location.href = "index.html";
@@ -198,7 +200,7 @@
 					var message = req.responseText;
 					if(req.status === 200){ // OK
 						self.show(self.examId);
-					} else if(req.status === 403){ // FORBIDDEN
+					} else if(req.status === 403 || req.status === 401){ // FORBIDDEN & UNAUTHORIZED
 						window.sessionStorage.removeItem('id');
 						window.sessionStorage.removeItem('name');
 						window.location.href = "index.html";
@@ -218,7 +220,7 @@
 						self.show(self.examId);
 						reportDetails.show(message);
 						reportList.show();
-					} else if(req.status === 403){ // FORBIDDEN
+					} else if(req.status === 403 || req.status === 401){
 						window.sessionStorage.removeItem('id');
 						window.sessionStorage.removeItem('name');
 						window.location.href = "index.html";
@@ -263,7 +265,8 @@
 							return;
 						}
 						self.update(registrations, examCode);
-					} else if(req.status === 403){
+						gradeUpdateForm.reset();
+					} else if(req.status === 403 || req.status === 401){
 						window.sessionStorage.removeItem('id');
 						window.sessionStorage.removeItem('name');
 						window.location.href = "index.html";
@@ -573,43 +576,6 @@
 			
 			this.container.showModal();
 		}
-		
-		/*this.checkValidity = function(form){
-			const validData = ["ASSENTE", "RIMANDATO", "RIPROVATO", "18", "19", "20", "21", "22", "23", "24", "25", "26", "27", "28", "29", "30", "30L"];
-			
-			var isValid = true;
-		    var inputs = form.querySelectorAll("input[name]");
-
-		    inputs.forEach(input => {
-				var value = input.value.toLocaleUpperCase();
-				if(input.getAttribute("name") !== "examCode"){
-			        input.style.border = "";
-	
-			        if (value!== null && value !== "" && !validData.includes(value)) {
-			            input.style.border = "2px solid red";
-			            isValid = false;
-			        }
-				} else {
-					if(value===null || isNaN(Number(value))) isValid = false;
-				}
-		    });
-
-		    return isValid;
-		}
-		
-		this.checkEmpty = function(form){
-			var inputs = form.querySelectorAll("input[name]");
-			var result = true; 
-			
-			inputs.forEach(input => {
-				if(input.getAttribute("name") !== "examCode"){
-					var value = input.value;
-					if(value !== null && value !== "") result = false;
-				}
-			});
-			
-			return result;
-		}*/
 	}
 	
 	function GradeUpdateForm(container){
@@ -773,5 +739,18 @@
 		});
 		
 		return result;
+	}
+	function Logout(id_logout){
+		this.logoutbutton = id_logout;
+		this.logoutbutton.addEventListener("click", (e) => {
+			makeCall("GET", "Logout", null, function(req){
+				// funzione di callback all'evento di GET della lista dei verbali - è la funzione onreadystatechange della richiesta per come è definita makeCall
+				if(req.readyState === 4){ // richiesta evasa
+					window.sessionStorage.removeItem('id');
+					window.sessionStorage.removeItem('name');
+					window.location.href = "index.html";
+				}
+			});
+		});
 	}
 }

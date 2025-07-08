@@ -44,6 +44,7 @@ public class StudentFilter implements Filter {
 		if (!(s.getAttribute("user") instanceof Student)) {
 			res.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
 			res.setHeader("Location", loginpath);
+			res.getWriter().println("L'utente non è uno Studente");
 			//res.sendRedirect(loginpath);
 			return;
 		}
