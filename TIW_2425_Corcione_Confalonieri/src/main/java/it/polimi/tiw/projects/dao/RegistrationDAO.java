@@ -128,7 +128,6 @@ public class RegistrationDAO {
 	 * permette ad uno studente di rifiutare il voto di un appello.
 	 */
 	public void refuseGrade(int examId, int studId) throws SQLException {
-		connection.setAutoCommit(false);
 		Registration reg = getRegistration(examId, studId);
 		if(reg == null) {
 			throw new RuntimeException("Iscrizione non presente.");
@@ -138,8 +137,7 @@ public class RegistrationDAO {
 			try (PreparedStatement statement = connection.prepareStatement(query)){
 				statement.setInt(1, examId);
 				statement.setInt(2, studId);
-				statement.executeUpdate();
-				connection.commit();
+				statement.executeUpdate();	
 			}
 		}
 		else {

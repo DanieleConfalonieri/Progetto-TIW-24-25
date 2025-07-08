@@ -48,7 +48,7 @@ DROP TABLE IF EXISTS `corso`;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `corso` (
   `CodiceCorso` int NOT NULL,
-  `NomeCorso` varchar(20) NOT NULL,
+  `NomeCorso` varchar(50) NOT NULL,
   `MatricolaDocente` int NOT NULL,
   PRIMARY KEY (`CodiceCorso`),
   KEY `MatricolaDocente` (`MatricolaDocente`),
@@ -68,9 +68,9 @@ DROP TABLE IF EXISTS `docente`;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `docente` (
   `MatricolaDocente` int NOT NULL,
-  `Nome` varchar(20) NOT NULL,
-  `Cognome` varchar(20) NOT NULL,
-  `Mail` varchar(60) NOT NULL,
+  `Nome` varchar(50) NOT NULL,
+  `Cognome` varchar(50) NOT NULL,
+  `Mail` varchar(150) NOT NULL,
   `PasswordDocente` varchar(100) NOT NULL,
   PRIMARY KEY (`MatricolaDocente`),
   UNIQUE KEY `Mail` (`Mail`)
@@ -140,7 +140,7 @@ CREATE TABLE `studente` (
   `Cognome` varchar(20) NOT NULL,
   `Mail` varchar(60) NOT NULL,
   `PasswordStudente` varchar(100) NOT NULL,
-  `CorsoLaurea` varchar(30) NOT NULL,
+  `CorsoLaurea` varchar(50) NOT NULL,
   PRIMARY KEY (`MatricolaStudente`),
   UNIQUE KEY `Mail` (`Mail`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;

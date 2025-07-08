@@ -159,7 +159,8 @@
 				anchor.setAttribute('examCode', exam.examCode);
 				anchor.setAttribute('courseCode', courseCode);
 				anchor.addEventListener("click", (e) => {
-				examResult.show(e.target.getAttribute("examCode"), e.target.getAttribute("courseCode"));
+					
+					examResult.show(e.target.getAttribute("examCode"), e.target.getAttribute("courseCode"));
 				}, false);	
 			self.listcontainerbody.appendChild(row);
 			});
@@ -172,7 +173,7 @@
 		this.listcontainerbody = listcontainerbody;
 											
 		this.reset = function(){
-		this.listcontainer.style.visibility = "hidden";
+			this.listcontainer.style.visibility = "hidden";
 		}
 				
 		this.show = function(examCode,courseCode){
@@ -186,7 +187,6 @@
 					if(examResult.length === 0 || (examResult.statusGrade != "PUBBLICATO" && examResult.statusGrade != "RIFIUTATO")){
 						self.listcontainer.style.visibility = "hidden";
 						self.alert.textContent = "Voto non disponibile";
-						return;
 					}
 					self.update(examResult, courseCode, examCode);
 				} else if(req.status === 403 || req.status === 401){
@@ -234,6 +234,7 @@
 			row.appendChild(report);
 			self.listcontainerbody.appendChild(row);
 			this.listcontainer.style.visibility = "visible";
+			this.listcontainerbody.style.visibility = "visible";
 			row.addEventListener("dragstart",(e) => {
 	            const dataToTransfer = {
 	                courseCode: courseCode,
