@@ -1,6 +1,5 @@
 /**
  * script JavaScript che gestisce la home page del docente.
- * Metodi utili ai componenti: reset(), show(), update(), autoclick() per generare pseudo-eventi
  */
 
 {
