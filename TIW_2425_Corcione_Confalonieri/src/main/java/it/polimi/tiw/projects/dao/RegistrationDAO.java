@@ -32,31 +32,26 @@ public class RegistrationDAO {
 	public Registration getRegistration(int examId, int studId) throws SQLException{
 		Registration result = new Registration();
 		String query = "SELECT * FROM iscrizione JOIN studente ON studente.MatricolaStudente=iscrizione.MatricolaStudente WHERE CodiceAppello = ? and studente.MatricolaStudente = ?";
-		PreparedStatement statement = null;
-		ResultSet res = null;
-		try {
-			statement = connection.prepareStatement(query);
+		try (PreparedStatement statement = connection.prepareStatement(query)) {
 			statement.setInt(1, examId);
 			statement.setInt(2, studId);
-			res = statement.executeQuery();
-			if(res.next()) {
-				Student s = new Student();
-				s.setId(res.getInt("MatricolaStudente"));
-				s.setName(res.getString("Nome"));
-				s.setSurname(res.getString("Cognome"));
-				s.setEmail(res.getString("Mail"));
-				s.setDegree(res.getString("CorsoLaurea"));
-				result.setStudent(s);
-				result.setExamCode(examId);
-				result.setGrade(res.getString("Voto"));
-				result.setStatusGrade(StatusGrade.getStatusGradeFromString(res.getString("StatoVoto")));
+			try(ResultSet res = statement.executeQuery()){
+				if(res.next()) {
+					Student s = new Student();
+					s.setId(res.getInt("MatricolaStudente"));
+					s.setName(res.getString("Nome"));
+					s.setSurname(res.getString("Cognome"));
+					s.setEmail(res.getString("Mail"));
+					s.setDegree(res.getString("CorsoLaurea"));
+					result.setStudent(s);
+					result.setExamCode(examId);
+					result.setGrade(res.getString("Voto"));
+					result.setStatusGrade(StatusGrade.getStatusGradeFromString(res.getString("StatoVoto")));
+				}
+				else {
+					result = null;
+				}
 			}
-			else {
-				result = null;
-			}
-		} finally {
-			res.close();
-			statement.close();
 		}
 		
 		return result;
@@ -81,30 +76,25 @@ public class RegistrationDAO {
 	public List<Registration> getStudentsByExam(int examId) throws SQLException {
 		List<Registration> registered = new ArrayList<>();
 		String query = "SELECT * FROM studente JOIN iscrizione ON studente.MatricolaStudente=iscrizione.MatricolaStudente WHERE iscrizione.CodiceAppello=?";
-		PreparedStatement statement = null;
-		ResultSet res = null;
-		try {
-			statement = connection.prepareStatement(query);
+		try (PreparedStatement statement = connection.prepareStatement(query)){
 			statement.setInt(1, examId);
-			res = statement.executeQuery();
-			while(res.next()) {
-				Student s = new Student();
-				s.setId(res.getInt("MatricolaStudente"));
-				s.setName(res.getString("Nome"));
-				s.setSurname(res.getString("Cognome"));
-				s.setEmail(res.getString("Mail"));
-				s.setDegree(res.getString("CorsoLaurea"));
-				Registration r = new Registration();
-				r.setStudent(s);
-				r.setExamCode(examId);
-				r.setGrade(res.getString("Voto")!=null ? res.getString("Voto") : "-");
-				r.setStatusGrade(StatusGrade.getStatusGradeFromString(res.getString("StatoVoto")));
-				r.setReportCode(res.getInt("CodiceVerbale"));
-				registered.add(r);
+			try(ResultSet res = statement.executeQuery()){
+				while(res.next()) {
+					Student s = new Student();
+					s.setId(res.getInt("MatricolaStudente"));
+					s.setName(res.getString("Nome"));
+					s.setSurname(res.getString("Cognome"));
+					s.setEmail(res.getString("Mail"));
+					s.setDegree(res.getString("CorsoLaurea"));
+					Registration r = new Registration();
+					r.setStudent(s);
+					r.setExamCode(examId);
+					r.setGrade(res.getString("Voto")!=null ? res.getString("Voto") : "-");
+					r.setStatusGrade(StatusGrade.getStatusGradeFromString(res.getString("StatoVoto")));
+					r.setReportCode(res.getInt("CodiceVerbale"));
+					registered.add(r);
+				}
 			}
-		} finally {
-			res.close();
-			statement.close();
 		}
 		
 		return registered;
@@ -115,15 +105,11 @@ public class RegistrationDAO {
 	 */
 	public void updateGrade(String grade, int studId, int examId) throws SQLException {
 		String query = "UPDATE iscrizione set Voto = ?, StatoVoto = 'INSERITO' WHERE CodiceAppello = ? and MatricolaStudente = ?";
-		PreparedStatement statement = null;
-		try {
-			statement = connection.prepareStatement(query);
+		try (PreparedStatement statement = connection.prepareStatement(query)){
 			statement.setString(1, grade);
 			statement.setInt(2, examId);
 			statement.setInt(3, studId);
 			statement.execute();
-		} finally {
-			statement.close();
 		}
 	}
 	
@@ -132,13 +118,9 @@ public class RegistrationDAO {
 	 */
 	public void publishInsertedGrades(int examId) throws SQLException {
 		String query = "UPDATE iscrizione set StatoVoto = 'PUBBLICATO' WHERE CodiceAppello = ? and StatoVoto = 'INSERITO'";
-		PreparedStatement statement = null;
-		try {
-			statement = connection.prepareStatement(query);
+		try (PreparedStatement statement = connection.prepareStatement(query)){
 			statement.setInt(1, examId);
 			statement.execute();
-		} finally {
-			statement.close();
 		}
 	}
 	
@@ -146,7 +128,6 @@ public class RegistrationDAO {
 	 * permette ad uno studente di rifiutare il voto di un appello.
 	 */
 	public void refuseGrade(int examId, int studId) throws SQLException {
-		connection.setAutoCommit(false);
 		Registration reg = getRegistration(examId, studId);
 		if(reg == null) {
 			throw new RuntimeException("Iscrizione non presente.");
@@ -156,8 +137,7 @@ public class RegistrationDAO {
 			try (PreparedStatement statement = connection.prepareStatement(query)){
 				statement.setInt(1, examId);
 				statement.setInt(2, studId);
-				statement.executeUpdate();
-				connection.commit();
+				statement.executeUpdate();	
 			}
 		}
 		else {
