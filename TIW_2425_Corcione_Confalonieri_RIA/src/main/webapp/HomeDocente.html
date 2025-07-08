@@ -45,7 +45,9 @@
 	</table></td>
 </tr>	
 <tr class="container">
-	<td class="container"><span id = "id_examalert"></span>
+	<td class="container">
+	<h2 id = "id_examtextcontent"></h2>
+	<span id = "id_examalert"></span>
 	<table id="id_examlistcontainer">
 		<thead>
 			<tr>
@@ -58,32 +60,7 @@
 	 	<tbody id="id_examlistcontainerbody">
 		</tbody> 
 	</table></td>
-</tr>	
-<tr class="container">
-	<td class="container"><div id="id_registeredcontainer">
-		<h2 id="id_registeredexamcode"></h2>
-		<span id = "id_registeredalert"></span>
-		<table id="id_registeredlistcontainer">
-			<thead>
-				<tr>
-			 		<th class="sortable">Matricola</th>
-			 		<th class="sortable">Cognome</th>
-			 		<th class="sortable">Nome</th>
-			 		<th class="sortable">Email</th>
-			 		<th class="sortable">Corso di Laurea</th>
-			 		<th class="sortable">Voto</th>
-			 		<th class="sortable">Stato Voto</th>
-			 		<th class="sortable">Codice Verbale</th>
-			 	</tr>
-		 	</thead>
-		 	<tbody id="id_registeredlistcontainerbody">
-			</tbody> 
-		</table>
-		<button id="id_pubblica">PUBBLICA</button>
-		<button id="id_verbalizza">VERBALIZZA</button>
-		<button id="id_insmult">INSERIMENTO MULTIPLO</button>
-	</div></td>
-	
+
 	<td class="container"><div id="id_reportdetailcontainer">
 		<h2>Dettagli verbale:</h2>
 		<table>
@@ -111,6 +88,39 @@
 			</thead>
 			<tbody id="id_reportdetailstudentlistcontainerbody"></tbody>
 		</table>
+	</div></td>	
+</tr>	
+<tr class="container">
+	<td class="container"><div id="id_registeredcontainer">
+		<h2 id="id_registeredexamcode"></h2>
+		<span id = "id_registeredalert"></span>
+		<table id="id_registeredlistcontainer">
+			<thead>
+				<tr>
+			 		<th class="sortable">Matricola</th>
+			 		<th class="sortable">Cognome</th>
+			 		<th class="sortable">Nome</th>
+			 		<th class="sortable">Email</th>
+			 		<th class="sortable">Corso di Laurea</th>
+			 		<th class="sortable">Voto</th>
+			 		<th class="sortable">Stato Voto</th>
+			 		<th class="sortable">Codice Verbale</th>
+			 	</tr>
+		 	</thead>
+		 	<tbody id="id_registeredlistcontainerbody">
+			</tbody> 
+		</table>
+		<button id="id_pubblica">PUBBLICA</button>
+		<button id="id_verbalizza">VERBALIZZA</button>
+		<button id="id_insmult">INSERIMENTO MULTIPLO</button>
+	</div></td>
+	
+	<td class="container"><div id="id_gradeupdate">
+	<h3></h3>
+	<h3 class="error"></h3>
+	<form>
+		<button action="submit">MODIFICA</button>
+	</form>
 	</div></td>
 </tr>
 </tbody>

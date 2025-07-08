@@ -11,7 +11,7 @@
 		<span> per l'appello </span>
 		<span th:text="${registration.examCode}">examId</span>
 	</h1>
-	<form method="GET" th:action="@{/UpdateGrade}">
+	<form method="POST" th:action="@{/UpdateGrade}">
 			<input type="hidden" name="examId" th:value="${registration.examCode}" /> <br>
 		    <input type="hidden" name="studId" th:value="${registration.student.id}" /> <br>
 		    <span th:text="'Matricola: ' + ${registration.student.id}">Matricola</span> <br>

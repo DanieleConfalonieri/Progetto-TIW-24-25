@@ -18,7 +18,7 @@ import it.polimi.tiw.projects.beans.Teacher;
 /**
  * Servlet Filter implementation class TeacherFilter
  */
-@WebFilter({"/TeacherFilter", "/GoToExamsTeacher", "/GoToHomeTeacher", "/GoToRegisteredStudents", "/GoToReports", "/GoToUpdate", "/PublishGrades", "/RegisterGrades", "/UpdateGrade"})
+@WebFilter({"/TeacherFilter", "/GoToExamsTeacher", "/GoToHomeTeacher", "/GoToRegisteredStudents", "/GoToReports", "/GoToUpdate", "/PublishGrades", "/RegisterGrades", "/UpdateGrades"})
 public class TeacherFilter implements Filter {
 
     /**
@@ -38,10 +38,7 @@ public class TeacherFilter implements Filter {
 	/**
 	 * @see Filter#doFilter(ServletRequest, ServletResponse, FilterChain)
 	 */
-	public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
-		System.out.println("Teacher filter executing...");
-		
-		HttpServletRequest req = (HttpServletRequest) request;
+	public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {HttpServletRequest req = (HttpServletRequest) request;
 		HttpServletResponse res = (HttpServletResponse) response;
 		String loginpath = req.getServletContext().getContextPath() + "/index.html";
 		HttpSession s = req.getSession();

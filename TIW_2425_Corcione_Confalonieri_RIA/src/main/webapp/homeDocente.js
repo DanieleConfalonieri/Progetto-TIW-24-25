@@ -5,7 +5,7 @@
 
 {
 	let pageOrchestrator = new PageOrchestrator(); // main controller
-	let courseList, examsList, registeredStudents, reportDetails, reportList, modalForm;
+	let courseList, examsList, registeredStudents, reportDetails, reportList, modalForm, gradeUpdateForm;
 	
 	window.addEventListener("load", (e) => {
 		if (sessionStorage.getItem("id") == null) {
@@ -21,11 +21,12 @@
 		this.start = function(){
 			document.getElementById("id_nomeDocente").textContent = sessionStorage.getItem('name');
 			courseList = new CourseList(document.getElementById("id_coursealert"), document.getElementById("id_courselistcontainer"), document.getElementById("id_courselistcontainerbody"));
-			examsList = new ExamList(document.getElementById("id_examalert"), document.getElementById("id_examlistcontainer"), document.getElementById("id_examlistcontainerbody"));
+			examsList = new ExamList(document.getElementById("id_examalert"), document.getElementById("id_examtextcontent"), document.getElementById("id_examlistcontainer"), document.getElementById("id_examlistcontainerbody"));
 			registeredStudents = new RegisteredStudents(document.getElementById("id_registeredcontainer"), document.getElementById("id_registeredalert"), document.getElementById("id_registeredlistcontainer"), document.getElementById("id_registeredlistcontainerbody"), document.getElementById("id_pubblica"), document.getElementById("id_verbalizza"), document.getElementById("id_insmult"), document.getElementById("id_registeredexamcode"));
 			reportDetails = new ReportDetails(document.getElementById("id_reportdetailcontainer"), document.getElementById("id_reportdetailcontainerbody"), document.getElementById("id_reportdetailstudentlistcontainerbody"));
 			reportList = new ReportList(document.getElementById("id_reportalert"), document.getElementById("id_reportlistcontainer"), document.getElementById("id_reportlistcontainerbody"));
 			modalForm = new ModalForm(document.getElementById("id_modal"), document.getElementById("id_invia"), document.getElementById("id_modaltablebody"), document.getElementById("id_modaltext"));
+			gradeUpdateForm = new GradeUpdateForm(document.getElementById("id_gradeupdate"));
 		}
 		
 		this.refresh = function(){
@@ -34,6 +35,7 @@
 			registeredStudents.reset();
 			reportDetails.reset();
 			reportList.reset();
+			gradeUpdateForm.reset();
 			courseList.show();
 			reportList.show();
 		}
@@ -63,9 +65,10 @@
 						}
 						self.update(courses);
 					} else if(req.status === 403 || req.status === 401){
-						window.location.href = req.getResponseHeader("Location");
-						window.sessionStorage.removeItem('username');
-						//window.alert(message);
+						window.sessionStorage.removeItem('id');
+						window.sessionStorage.removeItem('name');
+						window.location.href = "index.html";
+						window.alert(message);
 					} else {
 						window.alert(message);
 					}
@@ -104,13 +107,15 @@
 		}
 	}
 	
-	function ExamList(alert, listcontainer, listcontainerbody){ // costruttore della lista degli appelli
+	function ExamList(alert, textcontent, listcontainer, listcontainerbody){ // costruttore della lista degli appelli
 		this.alert = alert;
 		this.listcontainer = listcontainer;
 		this.listcontainerbody = listcontainerbody;
+		this.textcontent = textcontent;
 				
 		this.reset = function(){
 			this.listcontainer.style.visibility = "hidden";
+			this.textcontent.style.visibility = "hidden";
 		}
 		
 		this.show = function(courseCode){
@@ -119,6 +124,8 @@
 				// funzione di callback all'evento di GET della lista degli appelli - è la funzione onreadystatechange della richiesta per come è definita makeCall
 				if(req.readyState === 4){ // richiesta evasa
 					var message = req.responseText;
+					self.textcontent.textContent = "Appelli per il corso " + courseCode;
+					self.textcontent.style.visibility = "Visible";
 					if(req.status === 200){ // OK
 						var exams = JSON.parse(req.responseText);
 						if(exams.length === 0){
@@ -128,9 +135,10 @@
 						}
 						self.update(exams, courseCode);
 					} else if(req.status === 403){
+						window.sessionStorage.removeItem('id');
+						window.sessionStorage.removeItem('name');
+						window.location.href = "index.html";
 						window.alert(message);
-						window.location.href = req.getResponseHeader("Location");
-						window.sessionStorage.removeItem('username');
 					} else {
 						window.alert(message);
 					}
@@ -181,6 +189,7 @@
 		this.botinsmult = _botinsmult;
 		this.examcode = _examcode;
 		this.examId = 0;
+		this.registrationsList = null;
 		
 		this.botpubblica.addEventListener("click", (e) =>{
 			var self = this;
@@ -190,9 +199,10 @@
 					if(req.status === 200){ // OK
 						self.show(self.examId);
 					} else if(req.status === 403){ // FORBIDDEN
+						window.sessionStorage.removeItem('id');
+						window.sessionStorage.removeItem('name');
+						window.location.href = "index.html";
 						window.alert(message);
-						window.location.href = req.getResponseHeader("Location");
-						window.sessionStorage.removeItem('username');
 					} else {
 						window.alert(message);
 					}
@@ -209,37 +219,44 @@
 						reportDetails.show(message);
 						reportList.show();
 					} else if(req.status === 403){ // FORBIDDEN
-						window.alert(message);
-						window.location.href = req.getResponseHeader("Location");
-						window.sessionStorage.removeItem('username');
+						window.sessionStorage.removeItem('id');
+						window.sessionStorage.removeItem('name');
+						window.location.href = "index.html";
 					} else {
 						window.alert(message);
 					}
 				}
 			})		
 		});
+		this.botinsmult.addEventListener("click", (e) =>{
+			modalForm.show(this.registrationsList, this.examId);
+		});
 		
 		this.reset = function(){
+			//console.log("RegisteredStudents reset...")
 			this.container.style.visibility = "hidden";
 			this.listcontainer.style.visibility = "hidden";
-			this.botpubblica.style.visibility = "hidden";
-			this.botverbalizza.style.visibility = "hidden";
-			this.botinsmult.style.visibility = "hidden";
+			this.botpubblica.style.display = "none";
+			this.botverbalizza.style.display = "none";
+			this.botinsmult.style.display = "none";
 		}
 		
 		this.show = function(examCode){
-			this.examId = examCode;
 			var self = this; // deve essere accedibile dalla makeCall interna -> chiusura
 			makeCall("GET", "GoToRegisteredStudents?examId="+examCode, null, function(req){
 				// funzione di callback all'evento di GET della lista degli iscritti - è la funzione onreadystatechange della richiesta per come è definita makeCall
 				if(req.readyState === 4){ // richiesta evasa
 					var message = req.responseText;
+					//console.log("stato GoToRegisteredStudents " + req.status);
 					if(req.status === 200){ // OK
 						var registrations = JSON.parse(req.responseText);
+						self.registrationsList = registrations;
+						self.examId = examCode;
 						if(registrations.length === 0){
 							self.listcontainer.style.visibility = "hidden";
-							self.botpubblica.style.visibility = "hidden";
-							self.botverbalizza.style.visibility = "hidden";
+							self.botpubblica.style.display = "none";
+							self.botverbalizza.style.display = "none";
+							self.botinsmult.style.display = "none";
 							self.examcode.textContent = "Iscritti all'appello " + examCode;
 							self.alert.textContent = "Nessun iscritto per questo appello.";
 							self.container.style.visibility = "visible";
@@ -247,9 +264,10 @@
 						}
 						self.update(registrations, examCode);
 					} else if(req.status === 403){
+						window.sessionStorage.removeItem('id');
+						window.sessionStorage.removeItem('name');
+						window.location.href = "index.html";
 						window.alert(message);
-						window.location.href = req.getResponseHeader("Location");
-						window.sessionStorage.removeItem('username');
 					} else {
 						window.alert(message);
 					}
@@ -258,11 +276,9 @@
 		}
 		
 		this.update = function(registrations, examCode){
-			this.alert.textContent = "";
-			this.botpubblica.style.visibility = "hidden";
-			this.botverbalizza.style.visibility = "hidden";
+			this.reset();
 			this.examcode.textContent = "Iscritti all'appello " + examCode;
-			var row, studentCode, surname, name, email, degree, grade, statusGrade, report, publishable, verbalizable;
+			var row, studentCode, surname, name, email, degree, grade, statusGrade, report, updateButton;
 			this.listcontainerbody.innerHTML = "";
 			var self = this;
 			registrations.forEach(function(reg){
@@ -291,23 +307,45 @@
 				report = document.createElement("td");
 				report.textContent = reg.reportCode ? reg.reportCode : "-";
 				row.appendChild(report);
+				if(reg.statusGrade === "NON_INSERITO" || reg.statusGrade === "INSERITO"){
+					updateButton = document.createElement("button");
+					updateButton.textContent = "MODIFICA";
+					updateButton.addEventListener("click", (e) => {
+						gradeUpdateForm.show(reg);
+					});
+					row.appendChild(updateButton);
+				}
 				self.listcontainerbody.appendChild(row);
+				//console.log(reg.statusGrade);
 			});
 			this.container.style.visibility = "visible";
 			this.listcontainer.style.visibility = "visible";
+			var publishable = false, verbalizable = false, insertable = false;
 			for(i=0; i<registrations.length; i++){
 				if(registrations[i].statusGrade === "INSERITO"){
-					this.botpubblica.style.visibility = "visible";
+					publishable = true;
 				}
 				if(registrations[i].statusGrade === "PUBBLICATO" || registrations[i].statusGrade === "RIFIUTATO"){
-					this.botverbalizza.style.visibility = "visible";
+					verbalizable = true;
 				}
 				if(registrations[i].statusGrade === "NON_INSERITO"){
-					this.botinsmult.addEventListener("click", (e) =>{
-						modalForm.show(registrations, examCode);
-					});
-					this.botinsmult.style.visibility = "visible";
+					insertable = true;
 				}
+			}
+			if(publishable) {
+				this.botpubblica.style.display = "block";
+			} else {
+				this.botpubblica.style.display = "none";
+			}
+			if(verbalizable) {
+				this.botverbalizza.style.display = "block";
+			} else {
+				this.botverbalizza.style.display = "none";
+			}
+			if(insertable) {
+				this.botinsmult.style.display = "block";
+			} else {
+				this.botinsmult.style.display = "none";
 			}
 		}
 	}
@@ -396,9 +434,10 @@
 						}
 						self.update(reports);
 					} else if(req.status === 403 || req.status === 401){
-						window.location.href = req.getResponseHeader("Location");
-						window.sessionStorage.removeItem('username');
-						//window.alert(message);
+						window.sessionStorage.removeItem('id');
+						window.sessionStorage.removeItem('name');
+						window.location.href = "index.html";
+						window.alert(message);
 					} else {
 						window.alert(message);
 					}
@@ -442,15 +481,34 @@
 		this.sendbutton = _sendbutton;
 		this.tablebody = _tablebody;
 		this.textcontainer = _textcontainer;
-		
+		this.examId = 0;
+				
 		this.sendbutton.addEventListener('click', (e) => {
 			e.preventDefault();
-			const form = document.getElementById("id_modalform");
-			const error = document.getElementById("id_modalerror");
-			console.log(this.checkValidity(form));
-			if(this.checkValidity(form)){
-				makeCall("POST", "updateGrades", form, function(){
-					registeredStudents.show(examCode);
+			var form = document.getElementById("id_modalform");
+			var error = document.getElementById("id_modalerror");
+			if(checkEmpty(form)){
+				error.textContent = "Dati assenti.";
+				error.style.display = "block";
+			} else if(checkValidity(form)){
+				var self = this;
+				makeCall("POST", "UpdateGrades", form, function(req){
+					//console.log(req.readyState);
+					if(req.readyState == XMLHttpRequest.DONE){
+						//console.log("stato UpdateGrades " + req.status);
+						var message = req.responseText;
+						if(req.status === 200){ // OK
+							registeredStudents.reset();
+							registeredStudents.show(self.examId);
+						} else if(req.status === 403 || req.status === 401){
+							window.sessionStorage.removeItem('id');
+							window.sessionStorage.removeItem('name');
+							window.location.href = "index.html";
+							window.alert(message);
+						} else {
+							window.alert(message);
+						}
+					}
 				});
 				form.reset();
 				error.style.display = "none";
@@ -466,14 +524,23 @@
 		}
 		
 		this.show = function(registrations, examCode){
-			this.textcontainer.textContent = "Inserimento multiplo dei voti per l'appello" + examCode;
-			var row, studentCode, studentCodeInput, surname, name, email, degree, grade, statusGrade, report;
+			this.examId = examCode;
+			this.textcontainer.textContent = "Inserimento multiplo dei voti per l'appello " + examCode;
+			var row, studentCode, surname, name, email, degree, grade, statusGrade, report;
+			var form = document.getElementById("id_modalform");
+			var examCodeInput = form.querySelector("input[name='examCode']");
 			this.tablebody.innerHTML = "";
+			if(!examCodeInput){
+				examCodeInput = document.createElement("input");
+				examCodeInput.style.display = "none";
+				examCodeInput.setAttribute("name", "examCode");
+				document.getElementById("id_modalform").appendChild(examCodeInput); // aggiunge questo campo di input al form
+			}
+			examCodeInput.setAttribute("value", examCode);
 			var self = this;
 			registrations.forEach(function(reg){
 				if(reg.statusGrade === "NON_INSERITO"){
 					row = document.createElement("tr");
-					studentCodeInput = document.createElement("input");
 					studentCode = document.createElement("td");
 					studentCode.textContent = reg.student.id;
 					row.appendChild(studentCode);
@@ -507,23 +574,204 @@
 			this.container.showModal();
 		}
 		
-		this.checkValidity = function(form){
+		/*this.checkValidity = function(form){
 			const validData = ["ASSENTE", "RIMANDATO", "RIPROVATO", "18", "19", "20", "21", "22", "23", "24", "25", "26", "27", "28", "29", "30", "30L"];
 			
 			var isValid = true;
 		    var inputs = form.querySelectorAll("input[name]");
 
 		    inputs.forEach(input => {
-		        var value = input.value.toLocaleUpperCase();
+				var value = input.value.toLocaleUpperCase();
+				if(input.getAttribute("name") !== "examCode"){
+			        input.style.border = "";
+	
+			        if (value!== null && value !== "" && !validData.includes(value)) {
+			            input.style.border = "2px solid red";
+			            isValid = false;
+			        }
+				} else {
+					if(value===null || isNaN(Number(value))) isValid = false;
+				}
+		    });
+
+		    return isValid;
+		}
+		
+		this.checkEmpty = function(form){
+			var inputs = form.querySelectorAll("input[name]");
+			var result = true; 
+			
+			inputs.forEach(input => {
+				if(input.getAttribute("name") !== "examCode"){
+					var value = input.value;
+					if(value !== null && value !== "") result = false;
+				}
+			});
+			
+			return result;
+		}*/
+	}
+	
+	function GradeUpdateForm(container){
+		this.container = container;
+		this.textbanner = this.container.querySelector("h3");
+		this.errormessage = this.container.querySelector("h3.error");
+		this.form = container.querySelector("form");
+		this.examCode = 0;
+		/*this.submitbutton = container.querySelector("button");
+		this.submitbutton.addEventListener("click", (e) => {
+			e.preventDefault();
+			// controllo parametri
+			if(checkEmpty(this.form)){
+				this.errormessage.textContent = "Dati assenti.";
+				this.errormessage.style.display = "block";
+			} else if(checkValidity(this.form)){
+				var self = this;
+				makeCall("POST", "UpdateGrades", this.form, function(req){
+					if(req.readyState == XMLHttpRequest.DONE){
+						var message = req.responseText;
+						if(req.status === 200){ // OK
+							self.reset();
+							registeredStudents.reset();
+							registeredStudents.show(self.examCode);
+						} else if(req.status === 403 || req.status === 401){
+							window.sessionStorage.removeItem('id');
+							window.sessionStorage.removeItem('name');
+							window.location.href = "index.html";
+							window.alert(message);
+						} else {
+							window.alert(message);
+						}
+					}
+				});
+			}
+		});*/
+		
+		this.reset = function(){
+			this.container.style.visibility = "hidden";
+			this.textbanner.textContent = "";
+			this.errormessage.textContent = "";
+			this.errormessage.style.display = "none";
+			this.form.innerHTML = "";
+			this.form.style.visibility = "hidden";
+		}
+		
+		this.show = function(registration){
+			this.reset();
+			this.examCode = registration.examCode;
+			this.textbanner.textContent = "Modifica voto per lo studente " + registration.student.id + " per l'appello " + registration.examCode;
+			var studId, name, surname, email, degree, grade, statusGrade, examCodeInput, submitbutton;
+			examCodeInput = document.createElement("input");
+			examCodeInput.style.display = "none";
+			examCodeInput.setAttribute("name", "examCode");
+			examCodeInput.setAttribute("value", registration.examCode);
+			this.form.appendChild(examCodeInput);
+			studId = document.createElement("span");
+			studId.textContent = registration.student.id;
+			this.form.appendChild(studId);
+			this.form.appendChild(document.createElement("br"));
+			name = document.createElement("span");
+			name.textContent = registration.student.name;
+			this.form.appendChild(name);
+			this.form.appendChild(document.createElement("br"));
+			surname = document.createElement("span");
+			surname.textContent = registration.student.surname;
+			this.form.appendChild(surname);
+			this.form.appendChild(document.createElement("br"));
+			email = document.createElement("span");
+			email.textContent = registration.student.email;
+			this.form.appendChild(email);
+			this.form.appendChild(document.createElement("br"));
+			degree = document.createElement("span");
+			degree.textContent = registration.student.degree;
+			this.form.appendChild(degree);
+			this.form.appendChild(document.createElement("br"));
+			grade = document.createElement("input");
+			grade.setAttribute("name", registration.student.id);
+			grade.setAttribute("type", "text");
+			grade.setAttribute("placeholder", registration.grade);
+			this.form.appendChild(grade);
+			this.form.appendChild(document.createElement("br"));
+			statusGrade = document.createElement("span");
+			statusGrade.textContent = statusGrade.textContent = registration.statusGrade === "NON_INSERITO" ? "NON INSERITO" : registration.statusGrade;
+			this.form.appendChild(statusGrade);
+			this.form.appendChild(document.createElement("br"));
+			
+			submitbutton = document.createElement("button");
+			submitbutton.setAttribute("action", "submit");
+			submitbutton.textContent = "MODIFICA";
+			submitbutton.addEventListener("click", (e) => {
+				e.preventDefault();
+				// controllo parametri
+				if(checkEmpty(this.form)){
+					this.errormessage.textContent = "Dati assenti.";
+					this.errormessage.style.display = "block";
+				} else if(checkValidity(this.form)){
+					var self = this;
+					makeCall("POST", "UpdateGrades", this.form, function(req){
+						if(req.readyState == XMLHttpRequest.DONE){
+							var message = req.responseText;
+							if(req.status === 200){ // OK
+								self.reset();
+								registeredStudents.reset();
+								registeredStudents.show(self.examCode);
+							} else if(req.status === 403 || req.status === 401){
+								window.sessionStorage.removeItem('id');
+								window.sessionStorage.removeItem('name');
+								window.location.href = "index.html";
+								window.alert(message);
+							} else {
+								window.alert(message);
+							}
+						}
+					});
+				} else {
+					this.errormessage.textContent = "Dati non validi.";
+					this.errormessage.style.display = "block";
+				}
+			});
+			this.form.appendChild(submitbutton);
+			
+			this.textbanner.style.visibility = "visible";
+			this.form.style.visibility = "visible";
+			this.container.style.visibility = "visible";
+		}
+	}
+	
+	var checkValidity = function(form){
+		const validData = ["ASSENTE", "RIMANDATO", "RIPROVATO", "18", "19", "20", "21", "22", "23", "24", "25", "26", "27", "28", "29", "30", "30L"];
+		
+		var isValid = true;
+	    var inputs = form.querySelectorAll("input[name]");
+
+	    inputs.forEach(input => {
+			var value = input.value.toLocaleUpperCase();
+			if(input.getAttribute("name") !== "examCode"){
 		        input.style.border = "";
 
 		        if (value!== null && value !== "" && !validData.includes(value)) {
 		            input.style.border = "2px solid red";
 		            isValid = false;
 		        }
-		    });
+			} else {
+				if(value===null || isNaN(Number(value))) isValid = false;
+			}
+	    });
 
-		    return isValid;
-		}
+	    return isValid;
+	}
+	
+	var checkEmpty = function(form){
+		var inputs = form.querySelectorAll("input[name]");
+		var result = true; 
+		
+		inputs.forEach(input => {
+			if(input.getAttribute("name") !== "examCode"){
+				var value = input.value;
+				if(value !== null && value !== "") result = false;
+			}
+		});
+		
+		return result;
 	}
 }
