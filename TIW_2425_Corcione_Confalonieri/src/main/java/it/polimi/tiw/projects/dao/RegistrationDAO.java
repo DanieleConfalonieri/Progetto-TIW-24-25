@@ -157,7 +157,7 @@ public class RegistrationDAO {
 			Collections.sort(list, comparator.reversed());
 		}
 		else {
-			throw new RuntimeException("Error: something went wrong while reordering");
+			throw new RuntimeException("Errore nel riordinamento.");
 		}
 		return list;
 	}

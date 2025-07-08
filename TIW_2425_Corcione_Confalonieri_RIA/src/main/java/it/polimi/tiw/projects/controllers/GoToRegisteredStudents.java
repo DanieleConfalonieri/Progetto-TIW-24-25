@@ -39,7 +39,6 @@ public class GoToRegisteredStudents extends HttpServlet {
      */
     public GoToRegisteredStudents() {
         super();
-        // TODO Auto-generated constructor stub
     }
     
     public void init() throws ServletException {
@@ -52,9 +51,9 @@ public class GoToRegisteredStudents extends HttpServlet {
 			Class.forName(driver);
 			connection = DriverManager.getConnection(url, user, password);
 		} catch (ClassNotFoundException e) {
-			throw new UnavailableException("Can't load database driver");
+			throw new UnavailableException("Impossibile caricare il database driver.");
 		} catch (SQLException e) {
-			throw new UnavailableException("Couldn't get db connection");
+			throw new UnavailableException("Impossibile ottenere la connessione al database.");
 		}
     }
 
@@ -68,7 +67,7 @@ public class GoToRegisteredStudents extends HttpServlet {
 			examId = Integer.parseInt(request.getParameter("examId"));
 		} catch (NumberFormatException e) {
 			response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-			response.getWriter().println("Missing parameters");
+			response.getWriter().println("Parametri mancanti o errati.");
 			return;
 		}
 		String examDate, courseName;
@@ -81,7 +80,7 @@ public class GoToRegisteredStudents extends HttpServlet {
 			actualTeacherId = t.getId();
 		} catch (NullPointerException e) {
 			response.setStatus(HttpServletResponse.SC_FORBIDDEN);
-			response.getWriter().println("Utente non autenticato");
+			response.getWriter().println("Utente non autenticato.");
 			return;
 		}
 		
@@ -94,13 +93,13 @@ public class GoToRegisteredStudents extends HttpServlet {
 			registeredStudents = rDao.getStudentsByExam(examId);
 			if(examDate == null || courseName == null || teacherId == null || !teacherId.equals(actualTeacherId)) {
 				response.setStatus(HttpServletResponse.SC_BAD_GATEWAY);
-				response.getWriter().println("Dati non validi");
+				response.getWriter().println("Dati non validi.");
 				return;
 			}
 		}
 		catch (SQLException e) {
 			response.setStatus(HttpServletResponse.SC_BAD_GATEWAY);
-			response.getWriter().println("Failure in exam's registered students database extraction");
+			response.getWriter().println("Errore nell'estrazione degli iscritti dal database.");
 			return;
 		}
 		
@@ -116,7 +115,6 @@ public class GoToRegisteredStudents extends HttpServlet {
 	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)
 	 */
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		// TODO Auto-generated method stub
 		doGet(request, response);
 	}
 	

@@ -6,9 +6,11 @@
 <link rel="stylesheet" href=css/style.css>
 </head>
 <body>
-	<!-- <div align="right">
-		<a th:href="@{/Logout}">Logout</a>
-	</div> -->
+	<div align = "right">
+		<form action="Logout" method="GET">
+				<input type="submit" value="Logout">
+		</form>
+	</div>
 	<div align="right">
 		<a th:href="@{/GoToHomeStudent}">Vai alla home</a>
 	</div>
@@ -74,10 +76,5 @@
 		</span>
 	</span>
 	<span th:unless="${isPublished || isRefused}">Voto non ancora definito.</span>
-	<div align = "right">
-		<form action="Logout" method="GET">
-				<input type="submit" value="Logout">
-		</form>
-	</div>
 </body>
 </html>

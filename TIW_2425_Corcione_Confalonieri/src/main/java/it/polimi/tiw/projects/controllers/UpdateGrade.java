@@ -61,9 +61,9 @@ public class UpdateGrade extends HttpServlet {
 			Class.forName(driver);
 			connection = DriverManager.getConnection(url, user, password);
 		} catch (ClassNotFoundException e) {
-			throw new UnavailableException("Can't load database driver");
+			throw new UnavailableException("Impossibile caricare il database driver.");
 		} catch (SQLException e) {
-			throw new UnavailableException("Couldn't get db connection");
+			throw new UnavailableException("Impossibile ottenere la connessione al database.");
 		}
     }
 
@@ -96,7 +96,6 @@ public class UpdateGrade extends HttpServlet {
 			} catch (NullPointerException e) {
 				path = path + "/Error?message=" + "Utente non autenticato.";
 				response.sendRedirect(path);
-				//response.sendError(HttpServletResponse.SC_FORBIDDEN, "Utente non autenticato.");
 				return;
 			}
 			
@@ -125,9 +124,8 @@ public class UpdateGrade extends HttpServlet {
 					path = path + "/GoToRegisteredStudents?examId=" + examId;
 				}
 				catch (SQLException e) {
-					path = path + "/Error?message=" + "Failure in grade database update";
+					path = path + "/Error?message=" + "Impossibile aggiornare il database.";
 					response.sendRedirect(path);
-					//response.sendError(HttpServletResponse.SC_BAD_GATEWAY, "Failure in grade database update");
 					return;
 				}
 			}
@@ -140,7 +138,6 @@ public class UpdateGrade extends HttpServlet {
 		catch (NumberFormatException e) {
 			path = path + "/Error?message=" + "Missing parameters";
 			response.sendRedirect(path);
-			//response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Missing parameters");
 	        return;
 		}
 		

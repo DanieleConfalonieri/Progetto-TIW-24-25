@@ -53,9 +53,9 @@ public class RegisterGrades extends HttpServlet {
 			Class.forName(driver);
 			connection = DriverManager.getConnection(url, user, password);
 		} catch (ClassNotFoundException e) {
-			throw new UnavailableException("Can't load database driver");
+			throw new UnavailableException("Impossibile caricare il database driver.");
 		} catch (SQLException e) {
-			throw new UnavailableException("Couldn't get db connection");
+			throw new UnavailableException("Impossibile ottenere la connessione al database.");
 		}
     }
 
@@ -69,8 +69,7 @@ public class RegisterGrades extends HttpServlet {
 			examId = Integer.parseInt(request.getParameter("examId"));
 		} catch (NumberFormatException e) {
 			response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-			response.getWriter().println("Missing parameters");
-			//response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Missing parameters");
+			response.getWriter().println("Parametri mancanti o errati.");
 	        return;
 		}
 		
@@ -82,7 +81,6 @@ public class RegisterGrades extends HttpServlet {
 		} catch (NullPointerException e) {
 			response.setStatus(HttpServletResponse.SC_FORBIDDEN);
 			response.getWriter().println("Utente non autenticato.");
-			//response.sendError(HttpServletResponse.SC_FORBIDDEN, "Utente non autenticato.");
 			return;
 		}
 		
@@ -95,19 +93,16 @@ public class RegisterGrades extends HttpServlet {
 			if(teacherId == null || !teacherId.equals(actualTeacherId)) {
 				response.setStatus(HttpServletResponse.SC_FORBIDDEN);
 				response.getWriter().println("L'appello e il docente non corrispondono.");
-				//response.sendError(HttpServletResponse.SC_FORBIDDEN, "L'appello e il docente non corrispondono.");
 				return;
 			}
 			report = rDao.registerPublishedGrades(examId);
 		} catch (SQLException e) {
 			response.setStatus(HttpServletResponse.SC_BAD_GATEWAY);
-			response.getWriter().println("Failure in grade database update");
-			//response.sendError(HttpServletResponse.SC_BAD_GATEWAY, "Failure in grade database update");
+			response.getWriter().println("Impossibile aggiornare il database.");
 			return;
 		} catch (RuntimeException e) {
 			response.setStatus(HttpServletResponse.SC_FORBIDDEN);
 			response.getWriter().println(e.getMessage());
-			//response.sendError(HttpServletResponse.SC_BAD_GATEWAY, "Failure in grade database update");
 			return;
 		}
 		List<Registration> students = new ArrayList<>();
@@ -115,8 +110,7 @@ public class RegisterGrades extends HttpServlet {
 			students = rDao.getStudentsByReport(report.getReportCode());
 		} catch (SQLException e) {
 			response.setStatus(HttpServletResponse.SC_BAD_GATEWAY);
-			response.getWriter().println("Failure in report database extraction");
-			//response.sendError(HttpServletResponse.SC_BAD_GATEWAY, "Failure in report database extraction");
+			response.getWriter().println("Errore nell'estrazione del verbale dal database.");
 			return;
 		}
 		

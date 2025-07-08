@@ -43,7 +43,6 @@ public class GoToExamsTeacher extends HttpServlet {
      */
     public GoToExamsTeacher() {
         super();
-        // TODO Auto-generated constructor stub
     }
     
     public void init() throws ServletException {
@@ -63,9 +62,9 @@ public class GoToExamsTeacher extends HttpServlet {
 			Class.forName(driver);
 			connection = DriverManager.getConnection(url, user, password);
 		} catch (ClassNotFoundException e) {
-			throw new UnavailableException("Can't load database driver");
+			throw new UnavailableException("Impossibile caricare il database driver.");
 		} catch (SQLException e) {
-			throw new UnavailableException("Couldn't get db connection");
+			throw new UnavailableException("Impossibile ottenere la connessione al database.");
 		}
     }
 
@@ -79,16 +78,14 @@ public class GoToExamsTeacher extends HttpServlet {
 		try {
 			courseId = Integer.parseInt(request.getParameter("course"));
 		} catch (NumberFormatException e) {
-			path = getServletContext().getContextPath() + "/Error?message=" + "Missing parameters";
+			path = getServletContext().getContextPath() + "/Error?message=" + "Parametri mancanti o errati.";
 			response.sendRedirect(path);
-			//response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Missing parameters");
 			return;
 		}
 		String courseName = request.getParameter("courseName");
 		if(courseName==null) {
-			path = getServletContext().getContextPath() + "/Error?message=" + "Missing parameters";
+			path = getServletContext().getContextPath() + "/Error?message=" + "Parametri mancanti o errati.";
 			response.sendRedirect(path);
-			//response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Missing parameters");
 			return;
 		}
 		
@@ -100,7 +97,6 @@ public class GoToExamsTeacher extends HttpServlet {
 		} catch (NullPointerException e) {
 			path = getServletContext().getContextPath() + "/Error?message=" + "Utente non autenticato.";
 			response.sendRedirect(path);
-			//response.sendError(HttpServletResponse.SC_FORBIDDEN, "Utente non autenticato.");
 			return;
 		}
 		
@@ -110,20 +106,17 @@ public class GoToExamsTeacher extends HttpServlet {
 			if(c==null || !c.getName().equals(courseName)) {
 				path = getServletContext().getContextPath() + "/Error?message=" + "Il codice corso e il nome corso non corrispondono.";
 				response.sendRedirect(path);
-				//response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Il codice corso e il nome corso non corrispondono.");
 				return;
 			}
 			List<Course> coursesOfTeacher = cDao.getCoursesByTeacher(teacherId);
 			if(!coursesOfTeacher.stream().map(course -> course.getCode()).collect(Collectors.toList()).contains(c.getCode())) {
 				path = getServletContext().getContextPath() + "/Error?message=" + "Questo corso non appartiene al docente.";
 				response.sendRedirect(path);
-				//response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Questo corso non appartiene al docente.");
 				return;
 			}
 		} catch (SQLException e) {
-			path = getServletContext().getContextPath() + "/Error?message=" + "Failure in course's exams database extraction";
+			path = getServletContext().getContextPath() + "/Error?message=" + "Errore nell'estrazione degli appelli dal database.";
 			response.sendRedirect(path);
-			//response.sendError(HttpServletResponse.SC_BAD_GATEWAY, "Failure in course's exams database extraction");
 			return;
 		}
 		
@@ -134,9 +127,8 @@ public class GoToExamsTeacher extends HttpServlet {
 			exams = eDao.getExamsByCourse(courseId);
 		}
 		catch (SQLException e) {
-			path = getServletContext().getContextPath() + "/Error?message=" + "Failure in course's exams database extraction";
+			path = getServletContext().getContextPath() + "/Error?message=" + "Errore nell'estrazione degli appelli dal database.";
 			response.sendRedirect(path);
-			//response.sendError(HttpServletResponse.SC_BAD_GATEWAY, "Failure in course's exams database extraction");
 			return;
 		}
 		path = "/AppelliDocente.html";
@@ -151,7 +143,6 @@ public class GoToExamsTeacher extends HttpServlet {
 	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)
 	 */
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		// TODO Auto-generated method stub
 		doGet(request, response);
 	}
 

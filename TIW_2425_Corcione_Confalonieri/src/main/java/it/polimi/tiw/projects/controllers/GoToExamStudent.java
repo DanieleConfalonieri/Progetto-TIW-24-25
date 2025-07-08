@@ -65,9 +65,9 @@ public class GoToExamStudent extends HttpServlet {
 			Class.forName(driver);
 			connection = DriverManager.getConnection(url, user, password);
 		} catch (ClassNotFoundException e) {
-			throw new UnavailableException("Can't load database driver");
+			throw new UnavailableException("Impossibile caricare il database driver.");
 		} catch (SQLException e) {
-			throw new UnavailableException("Couldn't get db connection");
+			throw new UnavailableException("Impossibile ottenere la connessione al database.");
 		}
     }
 
@@ -83,9 +83,8 @@ public class GoToExamStudent extends HttpServlet {
 			studId = student.getId();
 			courseId = Integer.parseInt(request.getParameter("course"));
 		} catch (NullPointerException | NumberFormatException e) {
-			path = getServletContext().getContextPath() + "/Error?message=" + "Missing parameters";
+			path = getServletContext().getContextPath() + "/Error?message=" + "Parametri mancanti o errati.";
 			response.sendRedirect(path);
-			//response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Missing parameters");
 			return;
 		}
 		List<Exam> exams = new ArrayList<Exam>();
@@ -96,22 +95,19 @@ public class GoToExamStudent extends HttpServlet {
 			exams = eDao.getExamsByCourseAndStud(courseId, studId);
 			course = cDao.getCoursesById(courseId);
 			if(course == null) {
-				path = getServletContext().getContextPath() + "/Error?message=" + "Invalid course id";
+				path = getServletContext().getContextPath() + "/Error?message=" + "Codice corso non valido.";
 				response.sendRedirect(path);
-				//response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Invalid course id");
 				return;
 			}
 		}
 		catch (SQLException e) {
-			path = getServletContext().getContextPath() + "/Error?message=" + "Failure in course's exams database extraction";
+			path = getServletContext().getContextPath() + "/Error?message=" + "Errore nell'estrazione degli appelli dal database.";
 			response.sendRedirect(path);
-			//response.sendError(HttpServletResponse.SC_BAD_GATEWAY, "Failure in course's exams database extraction");
 			return;
 		}
 		catch (RuntimeException e) {
 			path = getServletContext().getContextPath() + "/Error?message=" + e.getMessage();
 			response.sendRedirect(path);
-			//response.sendError(HttpServletResponse.SC_BAD_GATEWAY, e.getMessage());
 			return;
 		}
 		path = "/AppelliStudente.html";

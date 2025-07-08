@@ -46,7 +46,6 @@ public class GoToDetailExam extends HttpServlet {
      */
     public GoToDetailExam() {
         super();
-        // TODO Auto-generated constructor stub
     }
     
     public void init() throws ServletException {
@@ -66,9 +65,9 @@ public class GoToDetailExam extends HttpServlet {
 			Class.forName(driver);
 			connection = DriverManager.getConnection(url, user, password);
 		} catch (ClassNotFoundException e) {
-			throw new UnavailableException("Can't load database driver");
+			throw new UnavailableException("Impossibile caricare il database driver.");
 		} catch (SQLException e) {
-			throw new UnavailableException("Couldn't get db connection");
+			throw new UnavailableException("Impossibile ottenere la connessione al database.");
 		}
     }
 
@@ -85,9 +84,8 @@ public class GoToDetailExam extends HttpServlet {
 			examId = Integer.parseInt(request.getParameter("examId"));
 			courseId = Integer.parseInt(request.getParameter("courseId"));
 		} catch (NumberFormatException e) {
-			path = getServletContext().getContextPath() + "/Error?message=" + "Missing parameters";
+			path = getServletContext().getContextPath() + "/Error?message=" + "Parametri mancanti o errati.";
 			response.sendRedirect(path);
-			//response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Missing parameters");
 			return;
 		}
 		// verificare che lo studente stia richiedendo i dati per un appello a cui è iscritto, di un corso di cui l'appello fa parte
@@ -97,30 +95,26 @@ public class GoToDetailExam extends HttpServlet {
 		RegistrationDAO rDao = new RegistrationDAO(connection);
 		try {
 			registration = rDao.getRegistration(examId, studId); // appare solo se lo studente è effettivamente iscritto all'appello
-			course = cDao.getCoursesById(courseId); // 
+			course = cDao.getCoursesById(courseId);
 			if(registration == null) {
-				path = getServletContext().getContextPath() + "/Error?message=" + "Appello non valido";
+				path = getServletContext().getContextPath() + "/Error?message=" + "Appello non valido.";
 				response.sendRedirect(path);
-				//response.sendError(HttpServletResponse.SC_BAD_GATEWAY, "Invalid exam");
 				return;
 			}
 			if(course == null) {
-				path = getServletContext().getContextPath() + "/Error?message=" + "Corso non valido";
+				path = getServletContext().getContextPath() + "/Error?message=" + "Corso non valido.";
 				response.sendRedirect(path);
-				//response.sendError(HttpServletResponse.SC_BAD_GATEWAY, "Invalid course");
 				return;
 			}
 			ExamDAO eDao = new ExamDAO(connection);
 			if(!eDao.validExamForCourse(courseId, examId)) {
-				path = getServletContext().getContextPath() + "/Error?message=" + "Questo appello non fa parte del corso selezionato";
+				path = getServletContext().getContextPath() + "/Error?message=" + "Questo appello non fa parte del corso selezionato.";
 				response.sendRedirect(path);
-				//response.sendError(HttpServletResponse.SC_BAD_GATEWAY, "Questo appello non fa parte del corso selezionato");
 				return;
 			}
 		} catch (SQLException e) {
-			path = getServletContext().getContextPath() + "/Error?message=" + "Failure in course's exams database extraction";
+			path = getServletContext().getContextPath() + "/Error?message=" + "Impossibile ottenere gli appelli dal database.";
 			response.sendRedirect(path);
-			//response.sendError(HttpServletResponse.SC_BAD_GATEWAY, "Failure in course's exams database extraction");
 			return;
 		}
 		path = "/DettaglioIscrizione.html";
@@ -139,7 +133,6 @@ public class GoToDetailExam extends HttpServlet {
 	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)
 	 */
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		// TODO Auto-generated method stub
 		doGet(request, response);
 	}
 

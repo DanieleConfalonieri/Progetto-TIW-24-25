@@ -35,7 +35,7 @@ UNLOCK TABLES;
 -- =================================================================
 LOCK TABLES `corso` WRITE;
 /*!40000 ALTER TABLE `corso` DISABLE KEYS */;
-INSERT INTO `corso` VALUES (1,'Tecnologie Informatiche per il Web',100000),(2,'Basi di Dati',100000),(3,'Sicurezza delle reti',200000),(4,'Teoria dei Segnali',200000),(5,'Calcolatori Elettronici',300000),(6,'Programmazione',300000);
+INSERT INTO `corso` VALUES (1,'Tecnologie per il Web',100000),(2,'Basi di Dati',100000),(3,'Sicurezza delle reti',200000),(4,'Teoria dei Segnali',200000),(5,'Calcolatori Elettronici',300000),(6,'Programmazione',300000);
 /*!40000 ALTER TABLE `corso` ENABLE KEYS */;
 UNLOCK TABLES;
 

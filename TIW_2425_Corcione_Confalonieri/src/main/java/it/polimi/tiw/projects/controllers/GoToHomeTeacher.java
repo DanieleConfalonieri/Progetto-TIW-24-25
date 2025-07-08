@@ -60,9 +60,9 @@ public class GoToHomeTeacher extends HttpServlet {
 			Class.forName(driver);
 			connection = DriverManager.getConnection(url, user, password);
 		} catch (ClassNotFoundException e) {
-			throw new UnavailableException("Can't load database driver");
+			throw new UnavailableException("Impossibile caricare il database driver.");
 		} catch (SQLException e) {
-			throw new UnavailableException("Couldn't get db connection");
+			throw new UnavailableException("Impossibile ottenere la connessione al database.");
 		}
     }
 
@@ -77,7 +77,7 @@ public class GoToHomeTeacher extends HttpServlet {
 			Teacher t = (Teacher) s.getAttribute("user");
 			id = t.getId();
 		} catch (NullPointerException e) {
-			response.sendError(HttpServletResponse.SC_FORBIDDEN, "User not logged in");
+			response.sendError(HttpServletResponse.SC_FORBIDDEN, "Utente non autenticato.");
 			return;
 		}
 		List<Course> courses = null;
@@ -87,7 +87,7 @@ public class GoToHomeTeacher extends HttpServlet {
 			courses = cDao.getCoursesByTeacher(id);
 		}
 		catch (SQLException e) {
-			response.sendError(HttpServletResponse.SC_BAD_GATEWAY, "Failure in student's courses database extraction");
+			response.sendError(HttpServletResponse.SC_BAD_GATEWAY, "Errore nell'estrazione dei corsi dal database.");
 			return;
 		}
 		String path = "/HomeDocente.html";

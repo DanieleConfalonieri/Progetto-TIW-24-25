@@ -35,7 +35,6 @@ public class GoToHomeTeacher extends HttpServlet {
      */
     public GoToHomeTeacher() {
         super();
-        // TODO Auto-generated constructor stub
     }
     
     public void init() throws ServletException {
@@ -48,9 +47,9 @@ public class GoToHomeTeacher extends HttpServlet {
 			Class.forName(driver);
 			connection = DriverManager.getConnection(url, user, password);
 		} catch (ClassNotFoundException e) {
-			throw new UnavailableException("Can't load database driver");
+			throw new UnavailableException("Impossibile caricare il database driver.");
 		} catch (SQLException e) {
-			throw new UnavailableException("Couldn't get db connection");
+			throw new UnavailableException("Impossibile ottenere la connessione al database.");
 		}
     }
 
@@ -66,7 +65,7 @@ public class GoToHomeTeacher extends HttpServlet {
 			id = t.getId();
 		} catch (NullPointerException e) {
 			response.setStatus(HttpServletResponse.SC_FORBIDDEN);
-			response.getWriter().println("User not logged in.");
+			response.getWriter().println("Utente non autenticato.");
 			return;
 		}
 		List<Course> courses = null;
@@ -77,7 +76,7 @@ public class GoToHomeTeacher extends HttpServlet {
 		}
 		catch (SQLException e) {
 			response.setStatus(HttpServletResponse.SC_BAD_GATEWAY);
-			response.getWriter().println("Failure in teacher's courses database extraction");
+			response.getWriter().println("Errore nell'estrazione dei corsi dal database.");
 			return;
 		}
 		
@@ -93,7 +92,6 @@ public class GoToHomeTeacher extends HttpServlet {
 	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)
 	 */
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		// TODO Auto-generated method stub
 		doGet(request, response);
 	}
 	

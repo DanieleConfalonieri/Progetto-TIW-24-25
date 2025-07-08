@@ -6,9 +6,11 @@
 <link rel="stylesheet" href=css/style.css>
 </head>
 <body>
-	<!-- <div align="right">
-		<a th:href="@{/Logout}">Logout</a>
-	</div> -->
+	<div align = "right">
+		<form action="Logout" method="GET">
+				<input type="submit" value="Logout">
+		</form>
+	</div>
 	<div align="right">
 		<a th:href="@{/GoToHomeTeacher}">Vai alla home</a>
 	</div>
@@ -58,10 +60,5 @@
 		 	</tr>
 		</tbody>
 	</table>
-	<div align = "right">
-		<form action="Logout" method="GET">
-				<input type="submit" value="Logout">
-		</form>
-	</div>
 </body>
 </html>

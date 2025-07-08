@@ -28,7 +28,6 @@ public class LoginChecker implements Filter {
 	 * @see Filter#destroy()
 	 */
 	public void destroy() {
-		// TODO Auto-generated method stub
 	}
 
 	/**
@@ -43,8 +42,7 @@ public class LoginChecker implements Filter {
 		if (s.isNew() || s.getAttribute("user") == null) {
 			res.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
 			res.setHeader("Location", loginpath);
-			res.getWriter().println("L'utente non ha fatto login");
-			//res.sendRedirect(loginpath);
+			res.getWriter().println("Utente non autenticato.");
 			return;
 		}
 		
@@ -55,7 +53,6 @@ public class LoginChecker implements Filter {
 	 * @see Filter#init(FilterConfig)
 	 */
 	public void init(FilterConfig fConfig) throws ServletException {
-		// TODO Auto-generated method stub
 	}
 
 }

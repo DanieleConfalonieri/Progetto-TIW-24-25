@@ -6,12 +6,17 @@
 <link rel="stylesheet" href=css/style.css>
 </head>
 <body>
-	<!-- <div align="right">
-		<a th:href="@{/Logout}">Logout</a>
-	</div> -->
+	<div align = "right">
+		<form action="Logout" method="GET">
+				<input type="submit" value="Logout">
+		</form>
+	</div>
+	<div align="right">
+		<a th:href="@{/GoToReports(idDocente=${session.user.id})}">Vai ai verbali</a>
+	</div>
 	<h1><span>Benvenuto nella home Docente, </span>
 	<span th:text="${session.user.name}">Nome</span></h1>
-	<span th:if="${courses == null or #lists.isEmpty(courses)}">Nessun corso da vedere. </span>
+	<span th:if="${courses == null or #lists.isEmpty(courses)}">Nessun corso da vedere.</span>
 	<span th:unless="${courses == null or #lists.isEmpty(courses)}">
 		<table> 
 			<thead>
@@ -30,14 +35,5 @@
 			</tbody>
 		</table>
 	</span>
-	
-	<div align="right">
-		<a th:href="@{/GoToReports(idDocente=${session.user.id})}">Vai ai verbali</a>
-	</div>
-	<div align = "right">
-		<form action="Logout" method="GET">
-				<input type="submit" value="Logout">
-		</form>
-	</div>
 </body>
 </html>

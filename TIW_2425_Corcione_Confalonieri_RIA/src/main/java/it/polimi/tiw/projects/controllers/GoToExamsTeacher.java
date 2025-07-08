@@ -39,7 +39,6 @@ public class GoToExamsTeacher extends HttpServlet {
      */
     public GoToExamsTeacher() {
         super();
-        // TODO Auto-generated constructor stub
     }
     
     public void init() throws ServletException {
@@ -52,9 +51,9 @@ public class GoToExamsTeacher extends HttpServlet {
 			Class.forName(driver);
 			connection = DriverManager.getConnection(url, user, password);
 		} catch (ClassNotFoundException e) {
-			throw new UnavailableException("Can't load database driver");
+			throw new UnavailableException("Impossibile caricare il database driver.");
 		} catch (SQLException e) {
-			throw new UnavailableException("Couldn't get db connection");
+			throw new UnavailableException("Impossibile ottenere la connessione al database.");
 		}
     }
 
@@ -70,7 +69,7 @@ public class GoToExamsTeacher extends HttpServlet {
 			id = t.getId();
 		} catch (NullPointerException e) {
 			response.setStatus(HttpServletResponse.SC_FORBIDDEN);
-			response.getWriter().println("Utente non autenticato");
+			response.getWriter().println("Utente non autenticato.");
 			return;
 		}
 		int courseId = 0;
@@ -78,7 +77,7 @@ public class GoToExamsTeacher extends HttpServlet {
 			courseId = Integer.parseInt(request.getParameter("courseId"));
 		} catch (NumberFormatException e) {
 			response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-			response.getWriter().println("Missing parameters");
+			response.getWriter().println("Parametri mancanti o errati.");
 			return;
 		}
 		
@@ -98,7 +97,7 @@ public class GoToExamsTeacher extends HttpServlet {
 			}
 		} catch (SQLException e) {
 			response.setStatus(HttpServletResponse.SC_BAD_GATEWAY);
-			response.getWriter().println("Failure in course's exams database extraction");
+			response.getWriter().println("Errore nell'estrazione degli appelli dal database.");
 			return;
 		}
 		
@@ -109,7 +108,7 @@ public class GoToExamsTeacher extends HttpServlet {
 		}
 		catch (SQLException e) {
 			response.setStatus(HttpServletResponse.SC_BAD_GATEWAY);
-			response.getWriter().println("Failure in course's exams database extraction");
+			response.getWriter().println("Errore nell'estrazione degli appelli dal database.");
 			return;
 		}
 		
@@ -125,7 +124,6 @@ public class GoToExamsTeacher extends HttpServlet {
 	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)
 	 */
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		// TODO Auto-generated method stub
 		doGet(request, response);
 	}
 

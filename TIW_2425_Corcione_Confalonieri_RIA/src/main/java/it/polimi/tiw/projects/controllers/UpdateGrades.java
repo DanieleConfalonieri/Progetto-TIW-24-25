@@ -49,9 +49,9 @@ public class UpdateGrades extends HttpServlet {
 			Class.forName(driver);
 			connection = DriverManager.getConnection(url, user, password);
 		} catch (ClassNotFoundException e) {
-			throw new UnavailableException("Can't load database driver");
+			throw new UnavailableException("Impossibile caricare il database driver.");
 		} catch (SQLException e) {
-			throw new UnavailableException("Couldn't get db connection");
+			throw new UnavailableException("Impossibile ottenere la connessione al database.");
 		}
     }
 
@@ -91,7 +91,6 @@ public class UpdateGrades extends HttpServlet {
 			} catch (NullPointerException e) { // nella sessione non c'è un utente autenticato
 				response.setStatus(HttpServletResponse.SC_FORBIDDEN);
 				response.getWriter().println("Utente non autenticato.");
-				System.out.println("Utente non autenticato.");
 				return;
 			}
 			
@@ -118,13 +117,11 @@ public class UpdateGrades extends HttpServlet {
 						if(r == null) { // l'iscrizione non è presente, quindi lo studente non è iscritto all'appello per cui si vuole modificare il suo voto.
 							response.setStatus(HttpServletResponse.SC_FORBIDDEN);
 							response.getWriter().println("Lo studente non e' iscritto all'appello.");
-							System.out.println("Lo studente non e' iscritto all'appello. Codice appello: " + examId);
 							return;
 						}
 						if(r.getStatusGrade().equals(StatusGrade.PUBBLICATO) || r.getStatusGrade().equals(StatusGrade.RIFIUTATO) || r.getStatusGrade().equals(StatusGrade.VERBALIZZATO)) { // stati in cui il voto non è più modificabile
 							response.setStatus(HttpServletResponse.SC_FORBIDDEN);
 							response.getWriter().println("Voto non modificabile.");
-							System.out.println("Voto non modificabile. Stato voto: " + r.getStatusGrade());
 							return;
 						}
 					} catch (SQLException e) {
@@ -135,7 +132,6 @@ public class UpdateGrades extends HttpServlet {
 				} else if(newGrade!=null && !newGrade.equals("")){ // il voto non è una stringa valida
 					response.setStatus(HttpServletResponse.SC_FORBIDDEN);
 					response.getWriter().println("Voto non valido.");
-					System.out.println("Voto non valido." + "Voto: " + newGrade);
 					return;
 				}
 			}
@@ -145,13 +141,12 @@ public class UpdateGrades extends HttpServlet {
 			} catch (SQLException e) {
 				response.setStatus(HttpServletResponse.SC_BAD_GATEWAY);
 				response.getWriter().println("Impossibile aggiornare il database.");
-				e.printStackTrace();
 				return;
 			}
 		}
 		catch (NumberFormatException e) {
 			response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-			response.getWriter().println("Parametri mancanti.");
+			response.getWriter().println("Parametri mancanti o errati.");
 	        return;
 		}
 	}

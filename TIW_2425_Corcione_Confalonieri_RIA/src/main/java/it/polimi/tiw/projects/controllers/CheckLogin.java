@@ -42,9 +42,9 @@ public class CheckLogin extends HttpServlet {
 			Class.forName(driver);
 			connection = DriverManager.getConnection(url, user, password);
 		} catch (ClassNotFoundException e) {
-			throw new UnavailableException("Can't load database driver");
+			throw new UnavailableException("Impossibile caricare il database driver.");
 		} catch (SQLException e) {
-			throw new UnavailableException("Couldn't get db connection");
+			throw new UnavailableException("Impossibile ottenere la connessione al database.");
 		}
 	}
 
@@ -52,7 +52,6 @@ public class CheckLogin extends HttpServlet {
 	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		// TODO Auto-generated method stub
 		response.getWriter().append("Served at: ").append(request.getContextPath());
 		System.out.println("GET");
 	}
@@ -68,7 +67,7 @@ public class CheckLogin extends HttpServlet {
 		
 		if (user == null || user.isEmpty() || pwd == null || pwd.isEmpty() || role == null || role.isEmpty()) {
 			response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-			response.getWriter().println("Credentials must be not null");
+			response.getWriter().println("Le credenziali non possono essere nulle.");
 			return;
 		}
 		
@@ -80,14 +79,14 @@ public class CheckLogin extends HttpServlet {
 				t = tDAO.checkCredentials(user, pwd);
 			} catch (SQLException e) {
 				response.setStatus(HttpServletResponse.SC_BAD_GATEWAY);
-				response.getWriter().println("Failure in database credential checking");
+				response.getWriter().println("Errore nel controllo credenziali.");
 				return;
 			}
 			
 			if(t==null) {
 				// docente non presente nel db, non si puo' autenticare
 				response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-				response.getWriter().println("Credenziali non riconosciute");
+				response.getWriter().println("Credenziali non riconosciute.");
 			}
 			else {
 				request.getSession().setAttribute("user", t);
@@ -105,14 +104,14 @@ public class CheckLogin extends HttpServlet {
 				s = sDAO.checkCredentials(user, pwd);
 			} catch (SQLException e) {
 				response.setStatus(HttpServletResponse.SC_BAD_GATEWAY);
-				response.getWriter().println("Failure in database credential checking");
+				response.getWriter().println("Errore nel controllo credenziali.");
 				return;
 			}
 			
 			if(s == null) {
 				// studente non presente nel db, non si puo' autenticare
 				response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-				response.getWriter().println("Credenziali non riconosciute");
+				response.getWriter().println("Credenziali non riconosciute.");
 			}
 			else {
 				request.getSession().setAttribute("user", s);

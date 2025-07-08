@@ -66,9 +66,9 @@ public class RefuseGrade extends HttpServlet {
 			Class.forName(driver);
 			connection = DriverManager.getConnection(url, user, password);
 		} catch (ClassNotFoundException e) {
-			throw new UnavailableException("Can't load database driver");
+			throw new UnavailableException("Impossibile caricare il database driver.");
 		} catch (SQLException e) {
-			throw new UnavailableException("Couldn't get db connection");
+			throw new UnavailableException("Impossibile ottenere la connessione al database.");
 		}
     }
 
@@ -85,9 +85,8 @@ public class RefuseGrade extends HttpServlet {
 			courseId = Integer.parseInt(request.getParameter("courseId"));
 			examId = Integer.parseInt(request.getParameter("examId"));
 		} catch (NumberFormatException | NullPointerException e) {
-			path = path + "/Error?message=" + "Missing parameters";
+			path = path + "/Error?message=" + "Parametri mancanti o errati.";
 			response.sendRedirect(path);
-			//response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Missing parameters");
 			return;
 		}
 		Registration registration;
@@ -106,15 +105,13 @@ public class RefuseGrade extends HttpServlet {
 			} catch (RuntimeException e) {
 				path = path + "/Error?message=" + e.getMessage();
 				response.sendRedirect(path);
-				//response.sendError(HttpServletResponse.SC_FORBIDDEN, e.getMessage());
 				return;
 			}
 			registration = rDao.getRegistration(examId, studId);
 			course = cDao.getCoursesById(courseId);
 		} catch (SQLException e) {
-			path = path + "/Error?message=" + "Failure in course's exams database extraction";
+			path = path + "/Error?message=" + "Errore nell'estrazione degli appelli dal database.";
 			response.sendRedirect(path);
-			//response.sendError(HttpServletResponse.SC_BAD_GATEWAY, "Failure in course's exams database extraction");
 			return;
 		}
 		path = "/DettaglioIscrizione.html";

@@ -23,14 +23,12 @@ public class StudentFilter implements Filter {
 
     public StudentFilter() {
         super();
-        // TODO Auto-generated constructor stub
     }
 
 	/**
 	 * @see Filter#destroy()
 	 */
 	public void destroy() {
-		// TODO Auto-generated method stub
 	}
 
 	/**
@@ -44,8 +42,7 @@ public class StudentFilter implements Filter {
 		if (!(s.getAttribute("user") instanceof Student)) {
 			res.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
 			res.setHeader("Location", loginpath);
-			res.getWriter().println("L'utente non è uno Studente");
-			//res.sendRedirect(loginpath);
+			res.getWriter().println("L'utente non è uno Studente.");
 			return;
 		}
 		
@@ -56,7 +53,6 @@ public class StudentFilter implements Filter {
 	 * @see Filter#init(FilterConfig)
 	 */
 	public void init(FilterConfig fConfig) throws ServletException {
-		// TODO Auto-generated method stub
 	}
 
 }

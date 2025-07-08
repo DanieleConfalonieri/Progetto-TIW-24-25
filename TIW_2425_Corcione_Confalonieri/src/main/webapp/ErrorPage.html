@@ -6,24 +6,23 @@
 <link rel="stylesheet" href=css/style.css>
 </head>
 <body>
-	<h1>
-		<span class="error" th:text="${message}">Generic Error</span>
-	</h1>
 	<div align = "right">
 		<form action="Logout" method="GET">
 				<input type="submit" value="Logout">
 		</form>
 	</div>
-	<div th:if="${isStudent}" align = "left">
+	<div th:if="${isStudent}" align = "right">
 		<form action="GoToHomeStudent" method="GET">
 				<input type="submit" value="HomeStudent">
 		</form>
 	</div>
-	<div th:unless="${isStudent}" align = "left">
+	<div th:unless="${isStudent}" align = "right">
 		<form action="GoToHomeTeacher" method="GET">
 				<input type="submit" value="HomeTeacher">
 		</form>
 	</div>
-
+	<h1>
+		<span class="error" th:text="${message}">Generic Error</span>
+	</h1>
 </body>
 </html>

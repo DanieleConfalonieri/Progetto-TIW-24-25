@@ -6,9 +6,11 @@
 <link rel="stylesheet" href=css/style.css>
 </head>
 <body>
-	<!-- <div align="right">
-		<a th:href="@{/Logout}">Logout</a>
-	</div> -->
+	<div align = "right">
+		<form action="Logout" method="GET">
+				<input type="submit" value="Logout">
+		</form>
+	</div>
 	<h1><span>Benvenuto nella home Studente</span>
 	<span th:text="${session.user.name}">Nome</span></h1>
 	<span th:if="${courses == null or #lists.isEmpty(courses)}">Nessun corso da vedere. </span>
@@ -30,10 +32,5 @@
 			</tbody>
 		</table>
 	</span>
-	<div align = "right">
-		<form action="Logout" method="GET">
-				<input type="submit" value="Logout">
-		</form>
-	</div>
 </body>
 </html>

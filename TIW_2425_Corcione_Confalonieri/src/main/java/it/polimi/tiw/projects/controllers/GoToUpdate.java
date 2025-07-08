@@ -40,7 +40,6 @@ public class GoToUpdate extends HttpServlet {
      */
     public GoToUpdate() {
         super();
-        // TODO Auto-generated constructor stub
     }
     
     public void init() throws ServletException {
@@ -60,9 +59,9 @@ public class GoToUpdate extends HttpServlet {
 			Class.forName(driver);
 			connection = DriverManager.getConnection(url, user, password);
 		} catch (ClassNotFoundException e) {
-			throw new UnavailableException("Can't load database driver");
+			throw new UnavailableException("Impossibile caricare il database driver.");
 		} catch (SQLException e) {
-			throw new UnavailableException("Couldn't get db connection");
+			throw new UnavailableException("Impossibile ottenere la connessione al database.");
 		}
     }
 
@@ -77,9 +76,8 @@ public class GoToUpdate extends HttpServlet {
 			examId = Integer.parseInt(request.getParameter("examId"));
 			studId = Integer.parseInt(request.getParameter("studId"));
 		} catch (NumberFormatException e) {
-			path = getServletContext().getContextPath() + "/Error?message=" + "Missing parameters";
+			path = getServletContext().getContextPath() + "/Error?message=" + "Parametri mancanti o errati.";
 			response.sendRedirect(path);
-			//response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Missing parameters");
 			return;
 		}
 		
@@ -91,7 +89,6 @@ public class GoToUpdate extends HttpServlet {
 		} catch (NullPointerException e) {
 			path = getServletContext().getContextPath() + "/Error?message=" + "Utente non autenticato.";
 			response.sendRedirect(path);
-			//response.sendError(HttpServletResponse.SC_FORBIDDEN, "Utente non autenticato.");
 			return;
 		}
 		
@@ -106,7 +103,6 @@ public class GoToUpdate extends HttpServlet {
 			if(teacherId == null || !teacherId.equals(actualTeacherId)) {
 				path = getServletContext().getContextPath() + "/Error?message=" + "Appello non valido.";
 				response.sendRedirect(path);
-				//response.sendError(HttpServletResponse.SC_FORBIDDEN, "Appello non valido.");
 				return;
 			}
 			reg = rDao.getRegistration(examId, studId);
@@ -115,18 +111,16 @@ public class GoToUpdate extends HttpServlet {
 				if(status == StatusGrade.PUBBLICATO || status == StatusGrade.RIFIUTATO || status == StatusGrade.VERBALIZZATO) {
 					path = getServletContext().getContextPath() + "/Error?message=" + "Questo voto non e' modificabile.";
 					response.sendRedirect(path);
-					//response.sendError(HttpServletResponse.SC_FORBIDDEN, "Questo voto non è modificabile.");
 					return;
 				}
 			} catch (NullPointerException e) {
 				path = getServletContext().getContextPath() + "/Error?message=" + "Studente non iscritto all'appello selezionato.";
 				response.sendRedirect(path);
-				//response.sendError(HttpServletResponse.SC_FORBIDDEN, "Studente non iscritto all'appello selezionato.");
 				return;
 			}
 		}
 		catch (SQLException e) {
-			response.sendError(HttpServletResponse.SC_BAD_GATEWAY, "Failure in registration database extraction");
+			response.sendError(HttpServletResponse.SC_BAD_GATEWAY, "Errore nell'estrazione dell'iscrizione dal database.");
 			return;
 		}
 		path = "/ModificaVoto.html";

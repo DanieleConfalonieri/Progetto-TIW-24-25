@@ -42,9 +42,9 @@ public class CheckLogin extends HttpServlet {
 			Class.forName(driver);
 			connection = DriverManager.getConnection(url, user, password);
 		} catch (ClassNotFoundException e) {
-			throw new UnavailableException("Can't load database driver");
+			throw new UnavailableException("Impossibile caricare il database driver.");
 		} catch (SQLException e) {
-			throw new UnavailableException("Couldn't get db connection");
+			throw new UnavailableException("Impossibile ottenere la connessione al database.");
 		}
 	}
 
@@ -60,13 +60,12 @@ public class CheckLogin extends HttpServlet {
 	 * il login è una richiesta di tipo POST perche' avviene tramite una form
 	 */
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		// TODO Auto-generated method stub
 		String user = request.getParameter("username");
 		String pwd = request.getParameter("pwd");
 		String role = request.getParameter("role");
 		
 		if (user == null || user.isEmpty() || pwd == null || pwd.isEmpty() || role == null || role.isEmpty()) {
-			response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Missing parameters");
+			response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Parametri mancanti o errati.");
 			return;
 		}
 		
@@ -79,8 +78,7 @@ public class CheckLogin extends HttpServlet {
 			try {
 				t = tDAO.checkCredentials(user, pwd);
 			} catch (SQLException e) {
-				// throw new ServletException(e);
-				response.sendError(HttpServletResponse.SC_BAD_GATEWAY, "Failure in database credential checking");
+				response.sendError(HttpServletResponse.SC_BAD_GATEWAY, "Impossibile controllare le credenziali.");
 				return;
 			}
 			
@@ -101,8 +99,7 @@ public class CheckLogin extends HttpServlet {
 			try {
 				s = sDAO.checkCredentials(user, pwd);
 			} catch (SQLException e) {
-				// throw new ServletException(e);
-				response.sendError(HttpServletResponse.SC_BAD_GATEWAY, "Failure in database credential checking");
+				response.sendError(HttpServletResponse.SC_BAD_GATEWAY, "Impossibile controllare le credenziali.");
 				return;
 			}
 			

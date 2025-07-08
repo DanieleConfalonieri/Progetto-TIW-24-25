@@ -16,12 +16,6 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.thymeleaf.TemplateEngine;
-import org.thymeleaf.context.WebContext;
-import org.thymeleaf.templatemode.TemplateMode;
-import org.thymeleaf.templateresolver.WebApplicationTemplateResolver;
-import org.thymeleaf.web.servlet.JakartaServletWebApplication;
-
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
@@ -42,24 +36,15 @@ import it.polimi.tiw.projects.dao.RegistrationDAO;
 public class RefuseGrade extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 	Connection connection;
-	private TemplateEngine templateEngine;
-       
+	
     /**
      * @see HttpServlet#HttpServlet()
      */
     public RefuseGrade() {
         super();
-        // TODO Auto-generated constructor stub
     }
     
     public void init() throws ServletException {
-    	ServletContext servletContext = getServletContext();
-		JakartaServletWebApplication webApplication = JakartaServletWebApplication.buildApplication(servletContext);
-	    WebApplicationTemplateResolver templateResolver = new WebApplicationTemplateResolver(webApplication);
-		templateResolver.setTemplateMode(TemplateMode.HTML);
-		this.templateEngine = new TemplateEngine();
-		this.templateEngine.setTemplateResolver(templateResolver);
-		templateResolver.setSuffix(".html");
 		try {
 			ServletContext context = getServletContext();
 			String driver = context.getInitParameter("dbDriver");
@@ -69,9 +54,9 @@ public class RefuseGrade extends HttpServlet {
 			Class.forName(driver);
 			connection = DriverManager.getConnection(url, user, password);
 		} catch (ClassNotFoundException e) {
-			throw new UnavailableException("Can't load database driver");
+			throw new UnavailableException("Impossibile caricare il database driver.");
 		} catch (SQLException e) {
-			throw new UnavailableException("Couldn't get db connection");
+			throw new UnavailableException("Impossibile ottenere la connessione al database.");
 		}
     }
 
@@ -86,7 +71,7 @@ public class RefuseGrade extends HttpServlet {
 			id = std.getId();
 		} catch (NullPointerException e) {
 			response.setStatus(HttpServletResponse.SC_FORBIDDEN);
-			response.getWriter().println("User not logged in.");
+			response.getWriter().println("Utente non autenticato.");
 			return;
 		}
 		try {
@@ -94,7 +79,7 @@ public class RefuseGrade extends HttpServlet {
 			examId = Integer.parseInt(request.getParameter("examId"));
 		} catch (NumberFormatException e) {
 			response.setStatus(HttpServletResponse.SC_FORBIDDEN);
-			response.getWriter().println("Missing parameters");
+			response.getWriter().println("Parametri mancanti o errati.");
 			return;
 		}
 		
@@ -120,7 +105,7 @@ public class RefuseGrade extends HttpServlet {
 			course = cDao.getCoursesById(courseId);
 		} catch (SQLException e) {
 			response.setStatus(HttpServletResponse.SC_FORBIDDEN);
-			response.getWriter().println("Failure in course's exams database extraction");
+			response.getWriter().println("Errore nell'estrazione degli appelli dal database.");
 			return;
 		}
 		Gson gson = new GsonBuilder().setDateFormat("yyyy MMM dd").create();

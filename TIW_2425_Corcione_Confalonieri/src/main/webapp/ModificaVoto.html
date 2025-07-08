@@ -6,6 +6,11 @@
 <link rel="stylesheet" href=css/style.css>
 </head>
 <body>
+	<div align = "right">
+		<form action="Logout" method="GET">
+				<input type="submit" value="Logout">
+		</form>
+	</div>
 	<h1>Modifica del voto per lo studente
 		<span th:text="${registration.student.id}">studId</span>
 		<span> per l'appello </span>
@@ -22,10 +27,5 @@
 		    <input type="text" th:name="newGrade" th:value="${registration.grade}" /> <br>
 		    <span th:text="${'Stato attuale: ' + registration.statusGrade}">Stato attuale</span> <br>
 	</form>
-	<div align = "right">
-		<form action="Logout" method="GET">
-				<input type="submit" value="Logout">
-		</form>
-	</div>
 </body>
 </html>

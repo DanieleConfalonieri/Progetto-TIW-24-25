@@ -59,9 +59,9 @@ public class Reorder extends HttpServlet {
 			Class.forName(driver);
 			connection = DriverManager.getConnection(url, user, password);
 		} catch (ClassNotFoundException e) {
-			throw new UnavailableException("Can't load database driver");
+			throw new UnavailableException("Impossibile caricare il database driver.");
 		} catch (SQLException e) {
-			throw new UnavailableException("Couldn't get db connection");
+			throw new UnavailableException("Impossibile ottenere la connessione al database.");
 		}
     }
 
@@ -79,9 +79,8 @@ public class Reorder extends HttpServlet {
 			examDate = request.getParameter("data");
 			courseName = request.getParameter("courseName");
 		} catch (NumberFormatException e) {
-			path = path + "/Error?message=" + "Missing parameters";
+			path = path + "/Error?message=" + "Parametri mancanti o errati.";
 			response.sendRedirect(path);
-			//response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Missing parameters");
 	        return;
 		}
 		

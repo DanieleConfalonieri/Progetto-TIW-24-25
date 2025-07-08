@@ -16,12 +16,6 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.thymeleaf.TemplateEngine;
-import org.thymeleaf.context.WebContext;
-import org.thymeleaf.templatemode.TemplateMode;
-import org.thymeleaf.templateresolver.WebApplicationTemplateResolver;
-import org.thymeleaf.web.servlet.JakartaServletWebApplication;
-
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
@@ -38,24 +32,15 @@ import it.polimi.tiw.projects.dao.CourseDAO;
 public class GoToHomeStudent extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 	Connection connection;
-	private TemplateEngine templateEngine;
        
     /**
      * @see HttpServlet#HttpServlet()
      */
     public GoToHomeStudent() {
         super();
-        // TODO Auto-generated constructor stub
     }
     
     public void init() throws ServletException {
-    	ServletContext servletContext = getServletContext();
-		JakartaServletWebApplication webApplication = JakartaServletWebApplication.buildApplication(servletContext);
-	    WebApplicationTemplateResolver templateResolver = new WebApplicationTemplateResolver(webApplication);
-		templateResolver.setTemplateMode(TemplateMode.HTML);
-		this.templateEngine = new TemplateEngine();
-		this.templateEngine.setTemplateResolver(templateResolver);
-		templateResolver.setSuffix(".html");
 		try {
 			ServletContext context = getServletContext();
 			String driver = context.getInitParameter("dbDriver");
@@ -65,9 +50,9 @@ public class GoToHomeStudent extends HttpServlet {
 			Class.forName(driver);
 			connection = DriverManager.getConnection(url, user, password);
 		} catch (ClassNotFoundException e) {
-			throw new UnavailableException("Can't load database driver");
+			throw new UnavailableException("Impossibile caricare il database driver.");
 		} catch (SQLException e) {
-			throw new UnavailableException("Couldn't get db connection");
+			throw new UnavailableException("Impossibile ottenere la connessione al database.");
 		}
     }
 
@@ -83,7 +68,7 @@ public class GoToHomeStudent extends HttpServlet {
 			id = std.getId();
 		} catch (NullPointerException e) {
 			response.setStatus(HttpServletResponse.SC_FORBIDDEN);
-			response.getWriter().println("User not logged in.");
+			response.getWriter().println("Utente non autenticato.");
 			return;
 		}
 		List<Course> courses = null;
@@ -94,7 +79,7 @@ public class GoToHomeStudent extends HttpServlet {
 		}
 		catch (SQLException e) {
 			response.setStatus(HttpServletResponse.SC_BAD_GATEWAY);
-			response.getWriter().println("Failure in teacher's courses database extraction");
+			response.getWriter().println("Errore nell'estrazione dei corsi dal database.");
 			return;
 		}
 		
@@ -110,7 +95,6 @@ public class GoToHomeStudent extends HttpServlet {
 	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)
 	 */
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		// TODO Auto-generated method stub
 		doGet(request, response);
 	}
 	

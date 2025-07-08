@@ -25,14 +25,12 @@ public class TeacherFilter implements Filter {
      * Default constructor. 
      */
     public TeacherFilter() {
-        // TODO Auto-generated constructor stub
     }
 
 	/**
 	 * @see Filter#destroy()
 	 */
 	public void destroy() {
-		// TODO Auto-generated method stub
 	}
 
 	/**
@@ -45,8 +43,7 @@ public class TeacherFilter implements Filter {
 		if (!(s.getAttribute("user") instanceof Teacher)) {
 			res.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
 			res.setHeader("Location", loginpath);
-			res.getWriter().println("L'utente non è un Docente");
-			//res.sendRedirect(loginpath);
+			res.getWriter().println("L'utente non è un Docente.");
 			return;
 		}
 		
@@ -57,7 +54,6 @@ public class TeacherFilter implements Filter {
 	 * @see Filter#init(FilterConfig)
 	 */
 	public void init(FilterConfig fConfig) throws ServletException {
-		// TODO Auto-generated method stub
 	}
 
 }

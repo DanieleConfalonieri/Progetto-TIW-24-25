@@ -56,9 +56,9 @@ public class GoToReports extends HttpServlet {
 			Class.forName(driver);
 			connection = DriverManager.getConnection(url, user, password);
 		} catch (ClassNotFoundException e) {
-			throw new UnavailableException("Can't load database driver");
+			throw new UnavailableException("Impossibile caricare il database driver.");
 		} catch (SQLException e) {
-			throw new UnavailableException("Couldn't get db connection");
+			throw new UnavailableException("Impossibile ottenere la connessione al database.");
 		}
     }
 
@@ -71,9 +71,8 @@ public class GoToReports extends HttpServlet {
 		try {
 			idDocente = Integer.parseInt(request.getParameter("idDocente"));
 		} catch (NumberFormatException e) {
-			path = getServletContext().getContextPath() + "/Error?message=" + "Missing parameters";
+			path = getServletContext().getContextPath() + "/Error?message=" + "Parametri mancanti o errati.";
 			response.sendRedirect(path);
-			//response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Missing parameters");
 			return;
 		}
 		
@@ -83,14 +82,12 @@ public class GoToReports extends HttpServlet {
 		} catch (ClassCastException e) {
 			path = getServletContext().getContextPath() + "/Error?message=" + "Utente non autenticato.";
 			response.sendRedirect(path);
-			//response.sendError(HttpServletResponse.SC_FORBIDDEN, "User not logged in");
 			return;
 		}
 		
 		if(t.getId() != idDocente) { // controlla che il docente per cui si stanno richiedendo i verbali sia lo stesso che è il titolare della sessione
 			path = getServletContext().getContextPath() + "/Error?message=" + "Utente non autenticato.";
 			response.sendRedirect(path);
-			//response.sendError(HttpServletResponse.SC_FORBIDDEN, "User not logged in");
 			return;
 		}
 		
@@ -99,9 +96,8 @@ public class GoToReports extends HttpServlet {
 		try {
 			verbali = rDao.getReportsByTeacher(idDocente);
 		} catch (SQLException e) {
-			path = getServletContext().getContextPath() + "/Error?message=" + "Failure in report database extraction";
+			path = getServletContext().getContextPath() + "/Error?message=" + "Errore nell'estrazione dei report dal database.";
 			response.sendRedirect(path);
-			//response.sendError(HttpServletResponse.SC_BAD_GATEWAY, "Failure in report database extraction");
 			return;
 		}
 		
