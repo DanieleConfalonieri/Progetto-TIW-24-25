@@ -85,6 +85,11 @@ public class GoToExamsTeacher extends HttpServlet {
 		CourseDAO cDao = new CourseDAO(connection);
 		try {
 			Course c = cDao.getCoursesById(courseId);
+			if(c == null) {
+				response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+				response.getWriter().println("Questo corso non esiste.");
+				return;
+			}
 			List<Course> coursesOfTeacher = cDao.getCoursesByTeacher(id);
 			if(!coursesOfTeacher.stream().map(course -> course.getCode()).collect(Collectors.toList()).contains(c.getCode())) {
 				response.setStatus(HttpServletResponse.SC_BAD_REQUEST);

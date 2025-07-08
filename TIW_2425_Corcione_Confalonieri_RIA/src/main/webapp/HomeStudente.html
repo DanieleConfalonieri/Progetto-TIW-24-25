@@ -4,11 +4,73 @@
 <meta charset="UTF-8">
 <title>Home Studente</title>
 <script src="homeStudente.js" charset="utf-8" defer></script>
+<script src="utils.js" charset="utf-8" defer></script>
 <link rel="stylesheet" href=css/style.css>
 </head>
 <body>
-	<h1><span>Benvenuto nella home studente, </span>
+<div align = "right">
+	<button id="id_logout">LOGOUT</button>
+</div>
+<table class="container">
+<thead>	</thead>
+<tbody>
+<tr class="container">
+	<td class = "container">
+	<h1><span>Benvenuto/a nella home studente, </span>
 	<span id=id_nomeStudente></span></h1>
+	<span id = "id_coursealert"></span>
+	<table id="id_courselistcontainer">
+		<thead>
+			<tr>
+		 		<th>Codice corso</th>
+		 		<th>Nome corso</th>
+		 		<th>Vedi corso</th>
+		 	</tr>
+	 	</thead>
+	 	<tbody id="id_courselistcontainerbody">
+		</tbody> 
+	</table></td>
 	
+	<td class="container"><span id = "id_examresultalert"></span>
+	<table id="id_examresultcontainer">
+		<thead>
+			<tr>
+		 		<th>Matricola</th>
+		 		<th>Cognome</th>
+		 		<th >Nome</th>
+		 		<th >Email</th>
+		 		<th >Corso di Laurea</th>
+		 		<th >Voto</th>
+		 		<th >Stato Voto</th>
+		 		<th >Codice Verbale</th>
+		 	</tr>
+	 	</thead>
+	 	<tbody id="id_examresultcontainerbody">
+		</tbody> 
+	</table></td></tr>
+	<tr class="container">
+	<td class="container">
+	<span id = "id_examalert"></span>
+	<table id="id_examlistcontainer">
+		<thead>
+			<tr>
+		 		<th>Codice appello</th>
+		 		<th>Data appello</th>
+		 		<th>Codice corso</th>
+		 		<th>Vedi iscritti</th>
+		 	</tr>
+	 	</thead>
+	 	<tbody id="id_examlistcontainerbody">
+		</tbody> 
+	</table></td></tr>
+</tbody>
+</table>
+
+<div align = "right"><img id="bin" src="bin.png" alt="bin_image" width="50" height="50"><br></div>
+
+<dialog id="id_modal" class="modal">
+	<button id="id_annulla">Annulla</button>
+    <button id="id_conferma">Conferma</button>
+</dialog>
 </body>
 </html>

@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xmi:XMI xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ifml="http://www.omg.org/spec/IFML/20140301" xmlns:ifmldi="http://www.omg.org/spec/IFML/20130218/IFML-DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:xmi="http://www.omg.org/spec/XMI/20131001" xmlns:uml="http://www.omg.org/spec/UML/20110701/">
+  <ifml:IFMLModel>
+    <interactionFlowModel xmi:type="ifml:InteractionFlowModel" xmi:id="_myModel">
+      <interactionFlowModelElements xmi:type="ifml:Window" xmi:id="ViewContainer_0vu5arj" uml:name="index.html">
+        <inInteractionFlows>Flow_0xiri0t</inInteractionFlows>
+        <inInteractionFlows>Flow_1duvi61</inInteractionFlows>
+        <viewElements xmi:type="ifml:Form" xmi:id="ViewComponent_1c62y54">
+          <viewElementEvents xmi:type="ifml:ViewElementEvent" xmi:id="Event_0waji2l" uml:name="Submit">
+            <outInteractionFlows>Flow_18oix4e</outInteractionFlows>
+            <outInteractionFlows>Flow_0ajjx0m</outInteractionFlows>
+            <outInteractionFlows>Flow_0amk5a7</outInteractionFlows>
+          </viewElementEvents>
+        </viewElements>
+      </interactionFlowModelElements>
+      <interactionFlowModelElements xmi:type="ifml:Window" xmi:id="ViewContainer_186uyx9" uml:name="HomeStudente">
+        <inInteractionFlows>Flow_18oix4e</inInteractionFlows>
+        <viewElementEvents xmi:type="ifml:ViewElementEvent" xmi:id="Event_19lrfhc" uml:name="Click">
+          <outInteractionFlows>Flow_0xiri0t</outInteractionFlows>
+          <outInteractionFlows>Flow_1a9d290</outInteractionFlows>
+        </viewElementEvents>
+        <viewElements xmi:type="ifml:List" xmi:id="ViewComponent_0u19hby" uml:name="Courses">
+          <viewElementEvents xmi:type="ifml:ViewElementEvent" xmi:id="Event_1jlk472" uml:name="Click">
+            <outInteractionFlows>Flow_0zazf2n</outInteractionFlows>
+            <outInteractionFlows>Flow_1e2spmo</outInteractionFlows>
+          </viewElementEvents>
+        </viewElements>
+        <viewElements xmi:type="ifml:List" xmi:id="ViewComponent_042d001" uml:name="Exams">
+          <inInteractionFlows>Flow_0zazf2n</inInteractionFlows>
+          <viewElementEvents xmi:type="ifml:ViewElementEvent" xmi:id="Event_00omfjv" uml:name="Click">
+            <outInteractionFlows>Flow_0pj1esz</outInteractionFlows>
+            <outInteractionFlows>Flow_14ilnyl</outInteractionFlows>
+          </viewElementEvents>
+        </viewElements>
+        <viewElements xmi:type="ifml:Details" xmi:id="ViewComponent_1trxcwy" uml:name="DetailExam">
+          <inInteractionFlows>Flow_0pj1esz</inInteractionFlows>
+          <inInteractionFlows>Flow_12w4rjf</inInteractionFlows>
+          <viewElementEvents xmi:type="ifml:ViewElementEvent" xmi:id="Event_1jgyj70" uml:name="Drag&
