@@ -22,22 +22,27 @@ public class TeacherDAO {
 	
 	public Teacher checkCredentials(String email, String pwd) throws SQLException {
 		String query = "SELECT * FROM docente WHERE Mail=? and PasswordDocente=?";
-		try (PreparedStatement statement = connection.prepareStatement(query);) {
+		PreparedStatement statement = null;
+		ResultSet result = null;
+		try {
+			statement = connection.prepareStatement(query);
 			statement.setString(1,  email);
 			statement.setString(2, pwd);
-			try (ResultSet result = statement.executeQuery();) {
-				if (!result.isBeforeFirst()) // no results, credential check failed
-					return null;
-				else {
-					result.next();
-					Teacher teacher = new Teacher();
-					teacher.setId(result.getInt("MatricolaDocente"));
-					teacher.setEmail(result.getString("Mail"));
-					teacher.setName(result.getString("Nome"));
-					teacher.setSurname(result.getString("Cognome"));
-					return teacher;
-				}
+			result = statement.executeQuery();
+			if (!result.isBeforeFirst()) // no results, credential check failed
+				return null;
+			else {
+				result.next();
+				Teacher teacher = new Teacher();
+				teacher.setId(result.getInt("MatricolaDocente"));
+				teacher.setEmail(result.getString("Mail"));
+				teacher.setName(result.getString("Nome"));
+				teacher.setSurname(result.getString("Cognome"));
+				return teacher;
 			}
+		} finally {
+			result.close();
+			statement.close();
 		}
 	}
 
