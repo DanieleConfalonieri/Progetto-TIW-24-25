@@ -174,6 +174,7 @@
 		this.reset = function(){
 			this.listcontainer.style.visibility = "hidden";
 			this.listcontainerbody.innerHTML = "";
+			this.alert.textContent = "";
 		}
 				
 		this.show = function(examCode,courseCode){
@@ -185,10 +186,12 @@
 				if(req.status === 200){ // OK
 					var examResult = JSON.parse(req.responseText);
 					if(examResult.length === 0 || (examResult.statusGrade != "PUBBLICATO" && examResult.statusGrade != "RIFIUTATO")){
+						self.reset();
 						self.listcontainer.style.visibility = "hidden";
 						self.alert.textContent = "Voto non disponibile";
 					}
-					self.update(examResult, courseCode, examCode);
+					else
+						self.update(examResult, courseCode, examCode);
 				} else if(req.status === 403 || req.status === 401){
 					window.location.href = "index.html"
 					window.sessionStorage.removeItem('id');
