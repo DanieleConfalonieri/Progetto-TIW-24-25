@@ -159,7 +159,6 @@
 				anchor.setAttribute('examCode', exam.examCode);
 				anchor.setAttribute('courseCode', courseCode);
 				anchor.addEventListener("click", (e) => {
-					
 					examResult.show(e.target.getAttribute("examCode"), e.target.getAttribute("courseCode"));
 				}, false);	
 			self.listcontainerbody.appendChild(row);
@@ -174,6 +173,7 @@
 											
 		this.reset = function(){
 			this.listcontainer.style.visibility = "hidden";
+			this.listcontainerbody.innerHTML = "";
 		}
 				
 		this.show = function(examCode,courseCode){
