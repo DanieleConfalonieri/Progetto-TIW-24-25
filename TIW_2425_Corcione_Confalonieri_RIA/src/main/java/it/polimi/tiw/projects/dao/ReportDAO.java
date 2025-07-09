@@ -35,24 +35,31 @@ public class ReportDAO {
 	    connection.setAutoCommit(false);
 	    Report result = new Report();
 
-	    try (PreparedStatement pStatementTeacherId = connection.prepareStatement(getTeacherId);
-	    	 PreparedStatement pStatementVerbalizable = connection.prepareStatement(verbalizable);
-	         PreparedStatement pStatementCreateReport = connection.prepareStatement(createReport);
-	         PreparedStatement pStatementRimandato = connection.prepareStatement(setRimandato);
-	         PreparedStatement pStatementPubblicato = connection.prepareStatement(setPubblicato);
-	    	 PreparedStatement pStatementVerbalizzato = connection.prepareStatement(setVerbalizzato)) {
-
+	    PreparedStatement pStatementTeacherId = null;
+	    PreparedStatement pStatementVerbalizable = null;
+	    PreparedStatement pStatementCreateReport = null;
+	    PreparedStatement pStatementRimandato = null;
+	    PreparedStatement pStatementPubblicato = null;
+	    PreparedStatement pStatementVerbalizzato = null;
+	    ResultSet r = null, res = null;
+	    try {
+	    	pStatementTeacherId = connection.prepareStatement(getTeacherId);
+	    	pStatementVerbalizable = connection.prepareStatement(verbalizable);
+	        pStatementCreateReport = connection.prepareStatement(createReport);
+	        pStatementRimandato = connection.prepareStatement(setRimandato);
+	        pStatementPubblicato = connection.prepareStatement(setPubblicato);
+	    	pStatementVerbalizzato = connection.prepareStatement(setVerbalizzato);
+	    	
 	        pStatementTeacherId.setInt(1, examId);
 	        int teacherId = 0;
-	        try (ResultSet r = pStatementTeacherId.executeQuery()) {
-	            if (r.next()) {
-	                teacherId = r.getInt("MatricolaDocente");
-	            }
-	        }
+	        r = pStatementTeacherId.executeQuery();
+            if (r.next()) {
+                teacherId = r.getInt("MatricolaDocente");
+            }
 	        
 	        // Verifica se ci sono voti da verbalizzare
 	        pStatementVerbalizable.setInt(1, examId);
-	        ResultSet res = pStatementVerbalizable.executeQuery();
+	        res = pStatementVerbalizable.executeQuery();
 	        if(!res.next()) {
 	        	connection.setAutoCommit(true);
 	        	throw new RuntimeException("Nessun voto da verbalizzare per questo appello.");
@@ -95,6 +102,14 @@ public class ReportDAO {
 	        throw e;
 	    } finally {
 	        connection.setAutoCommit(true);
+	        r.close();
+	        res.close();
+	        pStatementTeacherId.close();
+	    	pStatementVerbalizable.close();
+	        pStatementCreateReport.close();
+	        pStatementRimandato.close();
+	        pStatementPubblicato.close();
+	    	pStatementVerbalizzato.close();
 	    }
 
 	    return result;
@@ -107,25 +122,30 @@ public class ReportDAO {
 	public List<Registration> getStudentsByReport(int reportCode) throws SQLException {
 		List<Registration> result = new ArrayList<>();	
 		String query = "SELECT * FROM iscrizione JOIN studente ON studente.MatricolaStudente=iscrizione.MatricolaStudente WHERE iscrizione.CodiceVerbale = ?";
-		try (PreparedStatement statement = connection.prepareStatement(query)){
+		PreparedStatement statement = null;
+		ResultSet res = null;
+		try {
+			statement = connection.prepareStatement(query);
 			statement.setInt(1, reportCode);
-			try(ResultSet res = statement.executeQuery()){
-				while(res.next()) {
-					Student s = new Student();
-					s.setId(res.getInt("MatricolaStudente"));
-					s.setName(res.getString("Nome"));
-					s.setSurname(res.getString("Cognome"));
-					s.setEmail(res.getString("Mail"));
-					s.setDegree(res.getString("CorsoLaurea"));
-					Registration r = new Registration();
-					r.setStudent(s);
-					r.setExamCode(res.getInt("CodiceAppello"));
-					r.setGrade(res.getString("Voto")!=null ? res.getString("Voto") : "-");
-					r.setStatusGrade(StatusGrade.getStatusGradeFromString(res.getString("StatoVoto")));
-					r.setReportCode(reportCode);
-					result.add(r);
-				}
+			res = statement.executeQuery();
+			while(res.next()) {
+				Student s = new Student();
+				s.setId(res.getInt("MatricolaStudente"));
+				s.setName(res.getString("Nome"));
+				s.setSurname(res.getString("Cognome"));
+				s.setEmail(res.getString("Mail"));
+				s.setDegree(res.getString("CorsoLaurea"));
+				Registration r = new Registration();
+				r.setStudent(s);
+				r.setExamCode(res.getInt("CodiceAppello"));
+				r.setGrade(res.getString("Voto")!=null ? res.getString("Voto") : "-");
+				r.setStatusGrade(StatusGrade.getStatusGradeFromString(res.getString("StatoVoto")));
+				r.setReportCode(reportCode);
+				result.add(r);
 			}
+		} finally {
+			res.close();
+			statement.close();
 		}
 		
 		return result;
@@ -135,21 +155,26 @@ public class ReportDAO {
 		List<Report> result = new ArrayList<>();
 		String query = "SELECT * FROM verbale join appello join corso on verbale.CodiceAppello=appello.CodiceAppello and appello.CodiceCorso=corso.CodiceCorso"
 				+ " WHERE CodiceDocente = ? ORDER BY corso.NomeCorso ASC, appello.DataAppello ASC";
-		try (PreparedStatement statement = connection.prepareStatement(query)){
+		PreparedStatement statement = null;
+		ResultSet res = null;
+		try {
+			statement = connection.prepareStatement(query);
 			statement.setInt(1, teacherId);
-			try(ResultSet res = statement.executeQuery()){
-				while(res.next()) {
-					Report s = new Report();
-					s.setReportCode(res.getInt("CodiceVerbale"));
-					s.setDate(res.getString("DataVerbale"));
-					s.setTime(res.getString("Ora"));
-					s.setTeacher(res.getInt("CodiceDocente"));
-					s.setExam(res.getInt("CodiceAppello"));
-					s.setCourseName(res.getString("NomeCorso"));
-					s.setExamDate(res.getString("DataAppello"));
-					result.add(s);
-				}
+			res = statement.executeQuery();
+			while(res.next()) {
+				Report s = new Report();
+				s.setReportCode(res.getInt("CodiceVerbale"));
+				s.setDate(res.getString("DataVerbale"));
+				s.setTime(res.getString("Ora"));
+				s.setTeacher(res.getInt("CodiceDocente"));
+				s.setExam(res.getInt("CodiceAppello"));
+				s.setCourseName(res.getString("NomeCorso"));
+				s.setExamDate(res.getString("DataAppello"));
+				result.add(s);
 			}
+		} finally {
+			res.close();
+			statement.close();
 		}
 		
 		return result;

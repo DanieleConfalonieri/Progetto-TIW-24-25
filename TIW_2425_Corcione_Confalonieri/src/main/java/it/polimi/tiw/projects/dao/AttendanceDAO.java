@@ -19,17 +19,22 @@ private Connection connection;
 	public List<Course> getCoursesByStudent (int studentId) throws SQLException{
 		List<Course> courses = new ArrayList<>();
 		String query = "SELECT * FROM frequenza AS f JOIN corso AS c ON f.CodiceCorso = c.CodiceCorso WHERE f.MatricolaStudente = ?";
-		try (PreparedStatement statement = connection.prepareStatement(query);) {
+		PreparedStatement statement = null;
+		ResultSet res = null;
+		try {
+			statement = connection.prepareStatement(query);
 			statement.setString(1, String.valueOf(studentId));
-			try (ResultSet res = statement.executeQuery();) {
-				while(res.next()) {
-					Course c = new Course();
-					c.setCode(res.getInt("CodiceCorso"));
-					c.setName(res.getString("NomeCorso"));
-					c.setTeacher(res.getInt("MatricolaDocente"));
-					courses.add(c);
-				}
+			res = statement.executeQuery();
+			while(res.next()) {
+				Course c = new Course();
+				c.setCode(res.getInt("CodiceCorso"));
+				c.setName(res.getString("NomeCorso"));
+				c.setTeacher(res.getInt("MatricolaDocente"));
+				courses.add(c);
 			}
+		} finally {
+			res.close();
+			statement.close();
 		}
 		return courses;
 	}
